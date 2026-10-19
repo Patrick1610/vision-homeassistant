@@ -179,3 +179,21 @@ read-only boundary, trace/observation limits, procedural installed-source bindin
 and unverified provider billing/full accessibility audit remain documented.
 No personal HA data or credentials were uploaded. No future write capability
 or recovery executor was added.
+
+## Wordmark update — 0.1.1
+
+The owner approved a dark Vision wordmark with a subtle green accent. Replace
+only the header brand; retain the surrounding light red/gold/green interface.
+Increment app/package/runtime/image metadata to 0.1.1 so Supervisor can offer an
+update. The v0.1.0 tag remains immutable. Backend behavior, HA read allowlist,
+provider evidence and credentials are unchanged. Browser publication follows the
+owner's existing workflow after targeted UI checks, tests and external review.
+76 pytest tests, Ruff lint/format, JavaScript syntax, diff checking and the
+publication scan pass. The existing packaging version expectation was updated.
+Real browser checks with synthetic data passed at 1280, 390 and 320 px: dark
+wordmark, decorative 6 px green dot, no page overflow or badge overlap, working
+Overview link and visible 3 px keyboard focus. Browser console has no warnings
+or errors. External review `18dac065-b5be-4e2b-8329-3eb263ccfca4` ended GO with no
+findings after two documentation nits were corrected. Jev remains unavailable
+without its API key; no score is claimed. Public CI, publication and live update
+verification are pending.

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 — prepared; publication pending
+
+- Replace the red/gold V shield with a dark Vision wordmark and a subtle green dot.
+- Preserve the light interface palette and read-only monitoring behavior.
+
 ## 0.1.0 — 2026-10-19
 
 - Read-only Home Assistant device/entity, automation, Repairs and log observation.
