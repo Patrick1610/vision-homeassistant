@@ -10,7 +10,7 @@ ROOT = Path(__file__).parents[1]
 
 def test_supervisor_metadata_and_default_options():
     config = yaml.safe_load((ROOT / "config.yaml").read_text())
-    assert config["version"] == __version__ == "0.1.0"
+    assert config["version"] == __version__ == "0.1.1"
     assert config["homeassistant_api"] is True
     assert config["hassio_api"] is False
     assert config["ingress"] and config["panel_admin"]

@@ -1,4 +1,7 @@
-# Vision v0.1.0 specification
+# Vision specification
+
+The initial functional baseline was delivered as v0.1.0. Presentation amendments
+are recorded below; patch releases retain the same read-only functional scope.
 
 Repository: `vision-homeassistant`. License: MIT. Public custom Home Assistant
 app repository. Philosophy: **Jarvis controls the house. Vision understands the
@@ -22,7 +25,7 @@ Python + FastAPI, SQLite in persistent `/data`, responsive web UI through HA
 Ingress. HA WebSocket and REST transports use only predefined read operations.
 The repository itself is the app build context; no second project root.
 Include app metadata, reproducible dependencies, CI, tests, README, installation,
-configuration, privacy/security documentation, MIT license, changelog and v0.1.0
+configuration, privacy/security documentation, MIT license, changelog and versioned
 tag/release. Validate current official HA documentation before implementing APIs.
 
 ## Local monitoring
@@ -73,6 +76,8 @@ deep red for navigation and primary actions, gold for brand accents and green
 for positive statuses. Keep text contrast and keyboard focus visible. Statuses
 always include text; never convey an execution outcome through color alone.
 Use original interface styling rather than embedding third-party character art.
+The owner-approved 0.1.1 identity uses a dark Vision wordmark with a subtle green
+dot, replacing the red/gold V shield. The surrounding light palette is retained.
 
 ## Absolute security boundary
 

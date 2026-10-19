@@ -4,7 +4,7 @@
 
 Read-only observability for Home Assistant OS, with optional Anthropic and OpenAI
 intelligence. Local monitoring works without AI, cloud accounts or API keys.
-MIT licensed. Version 0.1.0; see [validation](docs/VALIDATION.md)
+MIT licensed. Version 0.1.1; see [validation](docs/VALIDATION.md)
 for what has actually been tested and release status.
 
 ## What it does
@@ -65,7 +65,7 @@ python3.14 -m venv .venv
 .venv/bin/ruff check .
 .venv/bin/ruff format --check vision tests
 node --check vision/static/app.js
-docker build --build-arg BUILD_ARCH=amd64 -t vision:0.1.0 .
+docker build --build-arg BUILD_ARCH=amd64 -t vision:0.1.1 .
 ```
 
 Run locally (loopback only): `VISION_DATA=./data .venv/bin/python -m vision`.

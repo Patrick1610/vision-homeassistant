@@ -1,5 +1,8 @@
 # Validation and release status — 2026-10-19
 
+**0.1.1 wordmark update:** prepared and locally verified; publication and live
+update verification pending. The following v0.1.0 evidence remains historical.
+
 Status: **v0.1.0 qualified on the live Supervisor test installation**.
 Public [Vision v0.1.0 release](https://github.com/Patrick1610/vision-homeassistant/releases/tag/v0.1.0) is published and independently verified.
 Component, container and live results remain distinct evidence below.
@@ -141,3 +144,16 @@ This post-publication checkpoint updates status only and does not move the tag
 or change the tested runtime. Pre-publication status text in the immutable tag's
 execution record describes that earlier snapshot; the actual release page and
 this checkpoint establish completed publication.
+
+## Wordmark update — 0.1.1 preparation
+
+The owner approved a dark text wordmark with a small green decorative dot.
+Only brand HTML/CSS and coordinated app/package/runtime/image version literals
+change; monitoring/provider/HA behavior and dependencies remain unchanged.
+All 76 tests pass; Ruff lint/format, JavaScript syntax, publication scanning and
+diff checks pass. Targeted real-browser checks use synthetic data at 1280, 390
+and 320 px: no document overflow or wordmark/badge overlap, expected dark/green
+colors, working brand navigation and visible keyboard focus. No console warnings
+or errors. External review `18dac065-b5be-4e2b-8329-3eb263ccfca4` ended GO with no
+findings. No new live provider call or full accessibility audit is claimed.
+Public CI and live Supervisor update checks are pending.

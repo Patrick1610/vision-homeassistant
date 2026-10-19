@@ -1,9 +1,9 @@
 # Vision
 
-Canonical repository root: this directory. Serious open-source software, MIT, v0.1.0.
+Canonical repository root: this directory. Serious open-source software, MIT, v0.1.1.
 Read `docs/VISION_SPEC.md`, `docs/ARCHITECTURE.md` and `PLANS.md` before changes.
 
-- Vision observes Home Assistant. v0.1.0 MUST NEVER call services, change state,
+- Vision observes Home Assistant and MUST NEVER call services, change state,
   edit configuration, ignore repairs or execute actions. Only the closed read
   allowlist in `vision/ha.py` may reach HA. No generic HTTP/WS proxy.
 - AI has no HA credentials or tools. Minimize, pseudonymize and redact before
@@ -24,4 +24,4 @@ Read `docs/VISION_SPEC.md`, `docs/ARCHITECTURE.md` and `PLANS.md` before changes
 - Publish no personal HA fixtures, host-specific paths, credentials or raw logs.
 
 Future write actions require a separate capability, policy and authorization
-architecture. Do not implement or enable one as part of v0.1.0.
+architecture. Do not implement or enable one as part of this read-only app.

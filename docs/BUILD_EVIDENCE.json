@@ -120,5 +120,39 @@
       },
       "note": "Subsequent completion-checkpoint documentation does not change runtime or move the release tag."
     }
+  },
+  "wordmark_update": {
+    "version": "0.1.1",
+    "status": "prepared; public CI and live update verification pending",
+    "runtime_manifest": {
+      "Dockerfile": "344b51595af2ce8c734c425d3d6e502fa28f83b3abff47a2544a6fb2058fbb97",
+      "requirements.txt": "38adb3a618e5ae7bfcb0e543d3e637c75e2161c00cbd4217a77c35e81fcae57e",
+      "vision/__init__.py": "45d4daa91ad1c50b7829e549374e20ec77fc370e891fc46c1ddf45dee88c1598",
+      "vision/__main__.py": "4e61df5336733a344bc62a1bb8560dfd994d36a8e89ae1098d13da4b394bc07e",
+      "vision/ai.py": "11b123c72723f3adb5b2adbccad08141c6078a9c5e58bf636762f0c7a414b73d",
+      "vision/app.py": "95d8b1fdbc8d1ad9935c0de1f72f7851f5a83728740135862ddee2eb1a020f5d",
+      "vision/config.py": "35a0e2effb77be06b2581ac19b696040e56983978fa6a85aeaa76f33c4fb66ed",
+      "vision/ha.py": "a598a116c2ac65e1b8e10008983808f1f1a0bfb26c62b65a75227239fae47da7",
+      "vision/monitor.py": "0261257659a8aa7ce9ae63fa4e67a982f987800865bebbe55025f337075cae61",
+      "vision/security.py": "82a929a903ebac854dc67039e78edeaef54875f2af14eb92131bdc971c4b3abd",
+      "vision/static/app.js": "cead8bbf178b699f9ef9ffb6a91cd337513941d1c226b7e3802d2c37a29697dc",
+      "vision/static/index.html": "d12df4ac2b766841f8f3b1b83285d46221e70730d24a3a2f751c7b81d50b3c27",
+      "vision/static/style.css": "35873e5f3a0c8dd34cddc647a129697eede1bc7febd871a8993c61422e16281a",
+      "vision/store.py": "cd52bb94754282f1df46b5e3cec9cd7ff404622662969b5298dc5c7d487ce3c7"
+    },
+    "runtime_sha256": "e59d28ac918eee9239cdc5d39e3b571ba31a245d9e4e6d9d4776d2261e1e078e",
+    "runtime_sha256_method": "SHA256 of compact JSON manifest, sorted keys",
+    "tests_passed": 76,
+    "browser_widths_checked": [
+      1280,
+      390,
+      320
+    ],
+    "browser_data": "synthetic",
+    "keyboard_focus_and_brand_navigation": "passed",
+    "browser_console_warnings_errors": 0,
+    "external_review": "18dac065-b5be-4e2b-8329-3eb263ccfca4 GO; no findings",
+    "read_only_backend_behavior": "unchanged",
+    "live_update": "pending"
   }
 }
