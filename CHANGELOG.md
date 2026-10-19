@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.1 — prepared; publication pending
+## 0.1.1 — 2026-10-19
 
 - Replace the red/gold V shield with a dark Vision wordmark and a subtle green dot.
 - Preserve the light interface palette and read-only monitoring behavior.

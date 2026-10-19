@@ -195,5 +195,14 @@ wordmark, decorative 6 px green dot, no page overflow or badge overlap, working
 Overview link and visible 3 px keyboard focus. Browser console has no warnings
 or errors. External review `18dac065-b5be-4e2b-8329-3eb263ccfca4` ended GO with no
 findings after two documentation nits were corrected. Jev remains unavailable
-without its API key; no score is claimed. Public CI, publication and live update
-verification are pending.
+without its API key; no score is claimed. Public candidate and PR checks passed, then PR #1 was merged atomically.
+The main CI run `39320978798` passed in 1m 24s, including both container
+architectures. All 50 source files match local `88b088f` at tree
+`384e08ae162bdcaab0ecaec0667d4249158781b6`. Supervisor offered and installed
+0.1.1 with the default previous-version backup retained. The new wordmark and
+version rendered, monitoring reconnected and completed fresh sync, and all ten
+sampled incident title/first-seen pairs survived. No HA device or automation
+action was performed. The stable [v0.1.1 release](https://github.com/Patrick1610/vision-homeassistant/releases/tag/v0.1.1)
+was published through the browser; anonymous public-page and Git-tag readback
+confirm `a76cdd916963cd832782e350eb97af74fc42d16c`. The v0.1.0 tag is unchanged.
+This completion checkpoint changes documentation only.
