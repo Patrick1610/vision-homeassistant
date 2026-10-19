@@ -75,6 +75,16 @@
       390,
       320
     ],
-    "container_validation": "pending current GitHub CI; no new local image claimed"
+    "container_validation": {
+      "method": "GitHub Actions build and smoke verification",
+      "source_public_commit": "5ddf6fb12d64bf63dc4f97d323a20d4d5c89e5ba",
+      "source_local_commit": "3e2ca610c9a11f5796026685d8dd1a7b511a761d",
+      "workflow": "https://github.com/Patrick1610/vision-homeassistant/actions/runs/39297543930",
+      "status": "success",
+      "duration": "1m 53s",
+      "tests_and_checks": "passed",
+      "amd64_build_start_restart_persistence": "passed",
+      "arm64_build_start_restart_persistence": "passed"
+    }
   }
 }

@@ -75,6 +75,12 @@ border on white is 3.17:1. This is targeted verification, not a full accessibili
 audit. The 76-test suite, Ruff, JS syntax, diff check and publication scan pass.
 External review `50f1f5ef-998d-40fe-aad5-91f89a742eba` ended GO with no findings.
 
-Current light-UI source publication/readback and the GitHub container matrix are
-pending. The older local image hashes above do not verify the new presentation
-assets. Live Supervisor/Ingress installation is still not performed.
+Public light-UI candidate `5ddf6fb12d64bf63dc4f97d323a20d4d5c89e5ba` matches
+local `3e2ca610c9a11f5796026685d8dd1a7b511a761d` at tree
+`75b3c9c43ce61c91661a32241b41b9901faf5809`: all 50 file contents were independently
+checked. [Light UI CI run 39297543930](https://github.com/Patrick1610/vision-homeassistant/actions/runs/39297543930)
+passed in 1m 53s, including the test/check job and both amd64/arm64 container
+build/start/restart-persistence jobs. BUILD_EVIDENCE.json records the current
+runtime manifest separately from the historical pre-theme local images. Later
+evidence-only documentation changes do not alter this tested runtime. Live
+Supervisor/Ingress installation is still not performed.
