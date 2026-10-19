@@ -68,6 +68,12 @@ and recommendations. Searchable inventories, automation detail, mobile layout.
 Settings display masked configuration; credentials are entered via Supervisor.
 Expected-offline exceptions change only Vision's own database.
 
+The interface uses a light white/warm-white base. Vision's visual identity is
+deep red for navigation and primary actions, gold for brand accents and green
+for positive statuses. Keep text contrast and keyboard focus visible. Statuses
+always include text; never convey an execution outcome through color alone.
+Use original interface styling rather than embedding third-party character art.
+
 ## Absolute security boundary
 
 Read-only refers to Home Assistant: local database writes, exceptions and AI

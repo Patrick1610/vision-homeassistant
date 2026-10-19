@@ -12,6 +12,7 @@ installation, provider billing, GitHub CI or release approval.
 | Release integration: frontend/API, CI, history/tag scanning, privacy claims | `eef64259-009b-4d2b-9be9-642aa8ef9783` | GO |
 | Follow-up: complete bounded HTTP reads and container restart readiness | `48325ab3-5893-4d3f-bc55-8187b45e4637` | GO on correction `898ebb7` |
 | Public CI: repository-relative local-artifact exclusion in packaging test | `b622fc2e-52e8-4e2f-8edb-bd58a1fa0b6f` | GO on correction `fd201aa` |
+| Light UI: palette, responsive layout, status contrast and keyboard focus | `50f1f5ef-998d-40fe-aad5-91f89a742eba` | GO after both low notes corrected |
 
 Corrections include explicit Ingress user authorization, safe options recovery,
 complete log-redaction sinks, cross-task transaction guards, source-backed trace

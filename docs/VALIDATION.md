@@ -9,7 +9,7 @@ Do not interpret component tests as live Home Assistant installation approval.
 | Ruff lint / format | Passed. |
 | JavaScript syntax | `node --check vision/static/app.js` passed. |
 | Dependencies | Exact transitive versions and SHA256 hashes; clean ARM64 and AMD64 image installs succeeded. `pip check` passed. |
-| Container startup and restart history | HTTP health before and after restart, exceptions loaded by the restarted app, and independent SQLite volume persistence passed on ARM64 and emulated AMD64 candidate images. Final source binding recorded in BUILD_EVIDENCE.json. |
+| Container startup and restart history before the light UI | HTTP health before and after restart, exceptions loaded by the restarted app, and independent SQLite volume persistence passed on ARM64 and emulated AMD64 images. These pre-theme images are historical; their exact source binding is recorded in BUILD_EVIDENCE.json. |
 | Browser | Synthetic inventory/detail rendering and saving an exception verified through real browser interaction. 390 px and 1280 px viewports: document widths match, no page overflow or browser console errors. |
 | Upstream trace semantics | Six normalized cases from HA 2026.10.2 official fixtures/assertions, plus mode-block tests. Source downloaded and independently compared byte-for-byte with Git objects at `8d7fd8b68677c2585be36ec86043308f403875b8`. |
 | External review | The four milestone streams and subsequent stream-reader/restart correction ended GO with no open critical/high/medium findings. See REVIEWS.md. Jev unavailable because its API key is not configured; no score claimed. |
@@ -61,3 +61,20 @@ CI reported non-failing runner notices for Node 20 actions forced to Node 24 and
 the ubuntu-latest image migration. Install the
 concrete candidate on HA OS/Supervisor and verify Ingress, capabilities and restart
 history. Only then create the final v0.1.0 tag/release and update this status.
+
+## Light UI verification
+
+The white/light Vision interface uses deep red and gold branding with green
+positive statuses, original CSS branding and local system fonts. All seven
+routes and an automation detail rendered in a real local browser with synthetic
+data. Layouts at 1280, 801, 800, 390 and 320 px showed no page overflow. A local
+exception was saved through the form; keyboard focus/skip-to-content preserved
+the route. No browser errors or warnings were observed. Measured text contrasts
+exceed 4.5:1, including muted on canvas 4.98:1 and red on rose 7.19:1; the input
+border on white is 3.17:1. This is targeted verification, not a full accessibility
+audit. The 76-test suite, Ruff, JS syntax, diff check and publication scan pass.
+External review `50f1f5ef-998d-40fe-aad5-91f89a742eba` ended GO with no findings.
+
+Current light-UI source publication/readback and the GitHub container matrix are
+pending. The older local image hashes above do not verify the new presentation
+assets. Live Supervisor/Ingress installation is still not performed.
