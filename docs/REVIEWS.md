@@ -11,6 +11,7 @@ installation, provider billing, GitHub CI or release approval.
 | Intelligence: minimization, provider contracts, budgets/failover, evidence validation | `1703f92e-a770-469c-aef6-8ed59d053a7d` | GO |
 | Release integration: frontend/API, CI, history/tag scanning, privacy claims | `eef64259-009b-4d2b-9be9-642aa8ef9783` | GO |
 | Follow-up: complete bounded HTTP reads and container restart readiness | `48325ab3-5893-4d3f-bc55-8187b45e4637` | GO on correction `898ebb7` |
+| Public CI: repository-relative local-artifact exclusion in packaging test | `b622fc2e-52e8-4e2f-8edb-bd58a1fa0b6f` | GO on correction `fd201aa` |
 
 Corrections include explicit Ingress user authorization, safe options recovery,
 complete log-redaction sinks, cross-task transaction guards, source-backed trace
@@ -35,3 +36,9 @@ The fixed health endpoint returns a complete object or a request failure, so
 malformed output remains a test failure. Actual rebuilt-container smoke checks
 subsequently passed on both architectures; the Linux and Mac suites each passed
 76 tests. The reviewer did not independently execute those tests.
+
+The public CI correction changes only a test's local `work` exclusion. The low
+note about the adjacent hidden/rootfs filter is accepted: that filter deliberately
+uses absolute path parts to match the official Supervisor implementation. The
+review reported no open critical/high/medium findings. CI results and actual HA
+installation remain separately verified gates.

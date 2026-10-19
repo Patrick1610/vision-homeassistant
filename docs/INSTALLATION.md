@@ -5,6 +5,8 @@
 2. Add **https://github.com/Patrick1610/vision-homeassistant** in the app store's repository
    dialog. Publication status is recorded in `VALIDATION.md`; a local folder is
    not proof of a publicly installable repository.
+   Adding the repository does not install or start Vision; installation can be
+   performed later from its app-store entry.
 3. Refresh the store, select Vision, install and start it. The root `config.yaml`
    is discovered by Supervisor's recursive `**/config.*` scan. The root is the
    build context; there is intentionally no second project directory.

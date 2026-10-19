@@ -1,6 +1,6 @@
 # Validation and release status — 2026-10-19
 
-Status: **local v0.1.0 release candidate, not yet publicly released**.
+Status: **public v0.1.0 release candidate source; final tag/release pending**.
 Do not interpret component tests as live Home Assistant installation approval.
 
 | Evidence | Result |
@@ -15,7 +15,9 @@ Do not interpret component tests as live Home Assistant installation approval.
 | External review | The four milestone streams and subsequent stream-reader/restart correction ended GO with no open critical/high/medium findings. See REVIEWS.md. Jev unavailable because its API key is not configured; no score claimed. |
 | Live HA OS / Supervisor installation | Not performed yet. Existing user browser sessions are not proof of an app installation. |
 | Live billable Anthropic/OpenAI request | Not performed: no provider credentials supplied. Both adapters tested through deterministic HTTP simulations. |
-| GitHub publication / CI / tag / release | Public repository created through GitHub's web interface. Source upload, anonymous content readback, CI and final tag/release are pending. No CLI authentication is required for the chosen browser-upload route. |
+| GitHub source publication | All 50 tracked files uploaded through GitHub's web interface. Anonymous readback confirms identical content and Git trees. No CLI authentication was used for publication. |
+| GitHub CI | [Run 39294357509](https://github.com/Patrick1610/vision-homeassistant/actions/runs/39294357509) passed in 1m 57s: tests/lint/format/JS/publication scan plus build/start/restart-persistence on amd64 and arm64. First run exposed a test-only absolute-path exclusion bug; a repository-relative exclusion fixes it. |
+| Final tag/release | Not created; live Supervisor/Ingress installation remains a release gate. |
 
 ## Reproduction
 
@@ -48,7 +50,14 @@ and two container-readiness cases pass in the 76-test Mac and Linux suites.
 ## Remaining release gate
 
 The source, builds, tests, reviews and local Git-history secret scan are complete.
-Upload the audited tracked tree through GitHub's web interface and verify public
-file hashes and CI. Install the
+The audited source is public at [Patrick1610/vision-homeassistant](https://github.com/Patrick1610/vision-homeassistant).
+Initial public commit `18eef515b85d1f195664aa46bfadf3be0c689b00` exactly matched
+local `889ac87505965d1cdc0518ab97a766189f205805` (50 files; tree
+`46a30cd223178f04c1b0c6800560216585300d49`). The test-only CI correction is public
+at `dc8603ce9eab412cdefd0530622f1d80cd590d1f`, matching local `fd201aa` at tree
+`bb71a410b82b4129081b51c95ec7de9451ec2149`. Its actual workflow is
+[CI run 39294357509](https://github.com/Patrick1610/vision-homeassistant/actions/runs/39294357509).
+CI reported non-failing runner notices for Node 20 actions forced to Node 24 and
+the ubuntu-latest image migration. Install the
 concrete candidate on HA OS/Supervisor and verify Ingress, capabilities and restart
 history. Only then create the final v0.1.0 tag/release and update this status.
