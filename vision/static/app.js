@@ -11,6 +11,10 @@ const pages = [
 const $ = (s) => document.querySelector(s),
   content = $("#content"),
   notice = $("#notice");
+$(".skip-link")?.addEventListener("click", (event) => {
+  event.preventDefault();
+  $("#main").focus();
+});
 const esc = (value) =>
   String(value ?? "—").replace(
     /[&<>"']/g,

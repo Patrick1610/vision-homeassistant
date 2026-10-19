@@ -3,14 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#8e2946" />
     <title>Vision · Home Assistant</title>
     <link rel="stylesheet" href="static/style.css" />
     <script src="static/app.js" defer></script>
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     <aside>
       <a class="brand" href="#overview"
-        ><span class="mark">V</span> Vision <small>0.1.0</small></a
+        ><span class="mark" aria-hidden="true">V</span> Vision <small>0.1.0</small></a
       >
       <p class="tagline">Understand your home.</p>
       <nav id="nav" aria-label="Main navigation"></nav>
@@ -18,7 +20,7 @@
         ◈ READ ONLY<br /><small>No controls. Just clarity.</small>
       </div>
     </aside>
-    <main>
+    <main id="main" tabindex="-1">
       <header>
         <div>
           <p class="eyebrow">HOME ASSISTANT OBSERVATORY</p>
