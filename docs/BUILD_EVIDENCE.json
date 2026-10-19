@@ -123,7 +123,7 @@
   },
   "wordmark_update": {
     "version": "0.1.1",
-    "status": "prepared; public CI and live update verification pending",
+    "status": "published; CI and live Supervisor update verified",
     "runtime_manifest": {
       "Dockerfile": "344b51595af2ce8c734c425d3d6e502fa28f83b3abff47a2544a6fb2058fbb97",
       "requirements.txt": "38adb3a618e5ae7bfcb0e543d3e637c75e2161c00cbd4217a77c35e81fcae57e",
@@ -153,6 +153,29 @@
     "browser_console_warnings_errors": 0,
     "external_review": "18dac065-b5be-4e2b-8329-3eb263ccfca4 GO; no findings",
     "read_only_backend_behavior": "unchanged",
-    "live_update": "pending"
+    "live_update": {
+      "supervisor_version": "0.1.1",
+      "new_wordmark_rendered": true,
+      "connected_and_fresh_sync": true,
+      "incident_title_first_seen_pairs_preserved": 10,
+      "previous_version_backup_option": "retained enabled",
+      "ha_device_or_automation_action": "none",
+      "source_provenance": "procedural repository update and Supervisor install; independent live image export/hash not performed"
+    },
+    "source_public_commit": "a76cdd916963cd832782e350eb97af74fc42d16c",
+    "source_local_commit": "88b088fc8a30d13f5704d2076c6eceaf4ce99fe8",
+    "tree": "384e08ae162bdcaab0ecaec0667d4249158781b6",
+    "all_50_source_files_identical": true,
+    "pull_request": "https://github.com/Patrick1610/vision-homeassistant/pull/1",
+    "main_ci": {
+      "url": "https://github.com/Patrick1610/vision-homeassistant/actions/runs/39320978798",
+      "status": "success",
+      "duration": "1m 24s"
+    },
+    "release": {
+      "url": "https://github.com/Patrick1610/vision-homeassistant/releases/tag/v0.1.1",
+      "tag_commit": "a76cdd916963cd832782e350eb97af74fc42d16c",
+      "anonymous_page_and_tag_readback": "passed"
+    }
   }
 }

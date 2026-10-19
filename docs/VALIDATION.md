@@ -1,7 +1,8 @@
 # Validation and release status — 2026-10-19
 
-**0.1.1 wordmark update:** prepared and locally verified; publication and live
-update verification pending. The following v0.1.0 evidence remains historical.
+**0.1.1 wordmark update:** [published](https://github.com/Patrick1610/vision-homeassistant/releases/tag/v0.1.1),
+CI verified and live Supervisor update verified. The v0.1.0 evidence below
+remains historical; the current patch results are in the final section.
 
 Status: **v0.1.0 qualified on the live Supervisor test installation**.
 Public [Vision v0.1.0 release](https://github.com/Patrick1610/vision-homeassistant/releases/tag/v0.1.0) is published and independently verified.
@@ -145,7 +146,7 @@ or change the tested runtime. Pre-publication status text in the immutable tag's
 execution record describes that earlier snapshot; the actual release page and
 this checkpoint establish completed publication.
 
-## Wordmark update — 0.1.1 preparation
+## Wordmark update — 0.1.1
 
 The owner approved a dark text wordmark with a small green decorative dot.
 Only brand HTML/CSS and coordinated app/package/runtime/image version literals
@@ -156,4 +157,18 @@ and 320 px: no document overflow or wordmark/badge overlap, expected dark/green
 colors, working brand navigation and visible keyboard focus. No console warnings
 or errors. External review `18dac065-b5be-4e2b-8329-3eb263ccfca4` ended GO with no
 findings. No new live provider call or full accessibility audit is claimed.
-Public CI and live Supervisor update checks are pending.
+[Main CI](https://github.com/Patrick1610/vision-homeassistant/actions/runs/39320978798) passed in 1m 24s, including both architecture container checks.
+PR #1 merged the complete update atomically. Anonymous source readback confirms
+all 50 files match local `88b088fc8a30d13f5704d2076c6eceaf4ce99fe8`, tree
+`384e08ae162bdcaab0ecaec0667d4249158781b6`.
+
+Supervisor offered and installed 0.1.1; its default previous-version backup option
+was retained. The dark wordmark/green dot and 0.1.1 badge rendered in Ingress.
+Monitoring reconnected and completed a fresh sync; all ten sampled incident
+title/first-seen pairs were retained. No HA device/automation actions or option
+edits were performed. Installed-source provenance remains procedural (repository
+update, Supervisor install, observed UI/version), without independent live-image
+export/hash comparison. The stable [v0.1.1 release](https://github.com/Patrick1610/vision-homeassistant/releases/tag/v0.1.1)
+is public and Latest, with tag `a76cdd916963cd832782e350eb97af74fc42d16c`
+confirmed by anonymous browser and Git readback. The earlier v0.1.0 tag is unchanged.
+This status checkpoint does not modify the released runtime.
