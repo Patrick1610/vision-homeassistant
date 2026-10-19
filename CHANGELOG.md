@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 — 2026-10-19 (qualified; publication pending)
+## 0.1.0 — 2026-10-19
 
 - Read-only Home Assistant device/entity, automation, Repairs and log observation.
 - Persistent incidents, availability intervals, execution summaries and exceptions.

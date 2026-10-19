@@ -27,14 +27,14 @@ custom roles. Permanent milestone state is recorded here.
 - [x] Retry/failover/recovery, reservations, budgets and usage history.
 - [x] Manual/daily/incident/automation analyses; tests and external review GO.
 
-## Milestone 4 — Release (live qualified; final publication step remains)
+## Milestone 4 — Release (published and independently verified)
 
 - [x] Complete dashboard, desktop/mobile browser verification, docs/security/privacy.
 - [x] Test suite, both architecture builds/start/persistence, four review streams GO and full-history secret scan.
 - [x] Live Supervisor/Ingress, inventories, capabilities, native trace comparison and restart-history verification.
 - [x] Public GitHub repository and anonymous source readback.
 - [x] GitHub CI green (run `39294357509`, public candidate `dc8603c`).
-- [ ] v0.1.0 tag/release after live installation verification.
+- [x] v0.1.0 tag/release published after live qualification; public page and tag readback verified.
 
 ## External access
 
@@ -52,7 +52,7 @@ pre-light-UI local images; byte-identical source binding is in docs/BUILD_EVIDEN
 passed inside the Linux image with development-only test dependencies. Browser exception save and
 mobile width verified with synthetic data. See docs/VALIDATION.md for precise limits.
 Live qualification is recorded below; no billable provider call is claimed. Public source is
-verified independently below; a final tag/release is not yet created.
+verified independently below; the final release is recorded in the completion checkpoint.
 
 ## Safe continuation at the access gate
 
@@ -160,3 +160,22 @@ See VALIDATION.md for the precise scope and remaining known limits.
 Final tag/release publication is now authorized by the original owner mandate.
 Latest public candidate `82ae1714a0ec57ec1645f81e270cd02437b08579` passed CI run
 `39298072551` in 2m 17s. This local checkpoint changes documentation only.
+
+## Completion checkpoint — 2026-10-19
+
+All four milestones are complete. The owner-selected GitHub browser workflow
+published the stable [Vision v0.1.0 release](https://github.com/Patrick1610/vision-homeassistant/releases/tag/v0.1.0). Anonymous browser readback confirms the release is public and Latest.
+Anonymous Git fetch confirms tag `v0.1.0` resolves to `321337f2307db19455917bcb9dd9018b469a88da`,
+with tree `7f02fccdd10ba1921cf78a30c386abaa8559e8bb`, identical to local
+`909df1a8c831c6aa4e7cd693ff8a60161ef8376e`. All 50 files were compared byte-for-byte.
+The [release CI run](https://github.com/Patrick1610/vision-homeassistant/actions/runs/39317640835) passed in 2m 16s, including tests and both container architectures.
+The local working tree was clean at publication. This subsequent completion
+checkpoint changes documentation only; the release tag is not moved.
+
+Live Supervisor/Ingress, read-only monitoring, native trace comparisons and
+restart persistence passed as detailed in VALIDATION.md. Optional AI remains
+implemented and simulation-tested; no live billable request is claimed. The
+read-only boundary, trace/observation limits, procedural installed-source binding
+and unverified provider billing/full accessibility audit remain documented.
+No personal HA data or credentials were uploaded. No future write capability
+or recovery executor was added.
