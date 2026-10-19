@@ -27,12 +27,14 @@ custom roles. Permanent milestone state is recorded here.
 - [x] Retry/failover/recovery, reservations, budgets and usage history.
 - [x] Manual/daily/incident/automation analyses; tests and external review GO.
 
-## Milestone 4 — Release (local candidate verified; browser publication in progress)
+## Milestone 4 — Release (public source verified; live installation pending)
 
 - [x] Complete dashboard, desktop/mobile browser verification, docs/security/privacy.
 - [x] Test suite, both architecture builds/start/persistence, four review streams GO and full-history secret scan.
 - [ ] Live HA install verification (needs test-environment access).
-- [ ] Public GitHub repo, CI green, remote readback, v0.1.0 tag/release.
+- [x] Public GitHub repository and anonymous source readback.
+- [x] GitHub CI green (run `39294357509`, public candidate `dc8603c`).
+- [ ] v0.1.0 tag/release after live installation verification.
 
 ## External access
 
@@ -49,7 +51,8 @@ ARM64 and emulated AMD64 container HTTP/start/restart persistence passed for fin
 images; byte-identical source binding is in docs/BUILD_EVIDENCE.json. 76 tests also
 passed inside the Linux image with development-only test dependencies. Browser exception save and
 mobile width verified with synthetic data. See docs/VALIDATION.md for precise limits.
-No live HA installation, billable provider call or GitHub publication claimed.
+No live HA installation or billable provider call claimed. Public source is
+verified independently below; a final tag/release is not yet created.
 
 ## Safe continuation at the access gate
 
@@ -67,14 +70,37 @@ The shared builder's cold-start socket failure was repaired by bootstrapping it;
 the completed images and source comparison, rather than that failed attempt,
 are the build evidence. Later evidence-only documentation does not alter runtime.
 No final v0.1.0 tag/release was created. The owner explicitly selected GitHub's
-browser interface for repository creation and source upload. The public empty
-repository `Patrick1610/vision-homeassistant` has been created in the owner's
-authenticated session; the separate CLI device flow was cancelled. Upload only
-the audited tracked tree, including hidden metadata and nested source folders,
-then independently read back and compare every public file, await CI, install
-the concrete candidate through HA OS/Supervisor, verify Ingress + capabilities +
-restart history, and only then publish the v0.1.0 tag/release. Do not infer live
+browser interface for repository creation and source upload. All 50 audited
+files, including hidden metadata and nested source folders, were uploaded to
+`Patrick1610/vision-homeassistant` in the owner's authenticated browser session.
+The separate CLI device flow was cancelled. Anonymous readback verified identical
+file hashes and Git trees: public `18eef515b85d1f195664aa46bfadf3be0c689b00`
+and local `889ac87505965d1cdc0518ab97a766189f205805` shared tree
+`46a30cd223178f04c1b0c6800560216585300d49`. Await CI, install the concrete
+candidate through HA OS/Supervisor, verify Ingress + capabilities + restart
+history, and only then publish the v0.1.0 tag/release. Do not infer live
 acceptance from local source-review GO. No real API keys have been supplied to
 Vision, so provider live/billing behavior remains unverified. A browser-created
 Git commit is a separate public commit from the local development history;
 record both and verify tree equality instead of claiming identical commit IDs.
+
+## Public CI portability correction
+
+The first actual GitHub run `39293493525` passed both container jobs, including
+startup/restart persistence on amd64 and arm64. Its test job returned 75 passed
+and one failed: the packaging test's local-artifact exclusion matched the host
+ancestor `/home/runner/work` and skipped the root app metadata. The exclusion now
+checks repository-relative path parts; the upstream hidden/rootfs filter remains
+unchanged. All 76 tests, Ruff, JavaScript syntax and publication scanning passed
+locally after this test-only correction. External review `b622fc2e-52e8-4e2f-8edb-bd58a1fa0b6f`
+returned GO, with no open critical/high/medium findings. The adjacent absolute
+hidden/rootfs filter is retained deliberately to mirror upstream discovery.
+Jev was retried but its key remains unavailable; no score is claimed.
+
+Browser publication `dc8603ce9eab412cdefd0530622f1d80cd590d1f` matches local
+`fd201aae00c31f255b96509a0ea5de7415ecdce8` at Git tree
+`bb71a410b82b4129081b51c95ec7de9451ec2149`. GitHub CI run `39294357509`
+completed successfully in 1m 57s: the test job and both architecture container
+build/start/restart-persistence jobs passed. Runner notices about Node 20 action
+migration to Node 24 and ubuntu-latest migration did not fail the run. The app
+runtime is unchanged by this test correction and later validation documentation.
