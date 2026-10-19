@@ -8,14 +8,14 @@ The agent-workflow skill was consulted; its custom-agent runtime is not activate
 because this execution uses the owner's direct development mandate, not delegated
 custom roles. Permanent milestone state is recorded here.
 
-## Milestone 1 — Foundation (implemented and locally verified)
+## Milestone 1 — Foundation (implemented and locally/live verified)
 
 - [x] Root / instruction / Git inspection; preserve existing `.git`.
 - [x] AGENTS, permanent specification, architecture and execution record.
 - [x] App packaging, persistent storage, peer and user-authorized Ingress, usable interface.
 - [x] Foundation tests and external review GO.
 
-## Milestone 2 — Monitoring (implemented and locally verified)
+## Milestone 2 — Monitoring (implemented and locally/live verified)
 
 - [x] Read-only HA transport, reconnect, inventories, traces, Repairs/logs.
 - [x] Persistent incidents, exceptions, availability and execution statistics.
@@ -27,11 +27,11 @@ custom roles. Permanent milestone state is recorded here.
 - [x] Retry/failover/recovery, reservations, budgets and usage history.
 - [x] Manual/daily/incident/automation analyses; tests and external review GO.
 
-## Milestone 4 — Release (public source verified; live installation pending)
+## Milestone 4 — Release (live qualified; final publication step remains)
 
 - [x] Complete dashboard, desktop/mobile browser verification, docs/security/privacy.
 - [x] Test suite, both architecture builds/start/persistence, four review streams GO and full-history secret scan.
-- [ ] Live HA install verification (needs test-environment access).
+- [x] Live Supervisor/Ingress, inventories, capabilities, native trace comparison and restart-history verification.
 - [x] Public GitHub repository and anonymous source readback.
 - [x] GitHub CI green (run `39294357509`, public candidate `dc8603c`).
 - [ ] v0.1.0 tag/release after live installation verification.
@@ -51,7 +51,7 @@ ARM64 and emulated AMD64 container HTTP/start/restart persistence passed for the
 pre-light-UI local images; byte-identical source binding is in docs/BUILD_EVIDENCE.json. 76 tests also
 passed inside the Linux image with development-only test dependencies. Browser exception save and
 mobile width verified with synthetic data. See docs/VALIDATION.md for precise limits.
-No live HA installation or billable provider call claimed. Public source is
+Live qualification is recorded below; no billable provider call is claimed. Public source is
 verified independently below; a final tag/release is not yet created.
 
 ## Safe continuation at the access gate
@@ -132,27 +132,31 @@ Browser publication `5ddf6fb12d64bf63dc4f97d323a20d4d5c89e5ba` matches local
 GitHub CI run `39297543930` completed successfully in 1m 53s: tests/lint/format/JS/
 publication scan and both amd64/arm64 build/start/restart-persistence jobs passed.
 Later evidence-only documentation changes do not alter the tested runtime.
-Full live Supervisor/Ingress validation remains pending; partial observations
-and the current access gate are recorded below.
+Live Supervisor/Ingress qualification has now passed as recorded below.
 
-## Live Supervisor access gate
+## Resolved live Supervisor access gate
 
-The owner's existing installation now reports Vision 0.1.0 in Supervisor and
-is running. Its Ingress route serves the expected locked access page. AI and
-daily audits were observed disabled. No options were saved, users authorized,
-app restarted or HA devices/configurations changed by this validation attempt.
+During the initial access-gate inspection, Supervisor reported Vision 0.1.0
+installed and running, and Ingress served the expected locked page. AI and daily
+audits were off. That initial inspection did not save options, authorize users,
+restart the app or change HA devices/configurations.
 
-The current HA user's access has not been authorized in `allowed_user_ids`.
-The locked state was rechecked in two successive goal continuations. The browser
-confirmation question remains unanswered: add only the current HA user, save
-Vision's options and restart only Vision for monitoring/history verification.
-Do not treat the general goal continuation as that security confirmation, repeat
-the question, or work around the gate through private APIs or database access.
+The owner subsequently configured `allowed_user_ids`, restarted Vision and
+reported completion. Live access was re-read and confirmed unlocked. No additional
+account was authorized by the agent; AI remained disabled.
 
-Once authorization arrives, re-read the active session identity, preserve all
-other options with AI off, and verify the installed source candidate, connection,
-capability coverage, inventories, retained trace outcomes and restart history.
-A displayed version alone does not bind the installed image to the current Git
-candidate. Only after those checks may the final v0.1.0 tag/release be published.
+Repository data were refreshed and only Vision rebuilt to load the current light
+frontend. Live inventories populated, all nine read capabilities were available
+and all observed automations had structural summaries. Successful and failed
+retained runs agreed with the native HA trace timeline. Every navigation page,
+an automation detail, history and the local minimized AI preview rendered.
+The audit button was disabled. No HA automation was triggered or configuration
+edited. A separate Vision restart reconnected and completed sync; all ten sampled
+incident title/first-seen pairs, including duplicate-pair counts, were retained.
+Installed-source provenance uses the refreshed-repository rebuild and observed
+new UI, with byte-identical backend/Dockerfile/dependency lineage across public
+source. No independent byte-level comparison of the live container is claimed.
+See VALIDATION.md for the precise scope and remaining known limits.
+Final tag/release publication is now authorized by the original owner mandate.
 Latest public candidate `82ae1714a0ec57ec1645f81e270cd02437b08579` passed CI run
 `39298072551` in 2m 17s. This local checkpoint changes documentation only.

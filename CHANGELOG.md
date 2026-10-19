@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 — release candidate
+## 0.1.0 — 2026-10-19 (qualified; publication pending)
 
 - Read-only Home Assistant device/entity, automation, Repairs and log observation.
 - Persistent incidents, availability intervals, execution summaries and exceptions.
@@ -12,5 +12,6 @@
 - Light white interface with Vision red/gold branding, green status accents,
   visible keyboard focus and responsive layouts.
 
-Live installation and publication status: see `docs/VALIDATION.md`. This entry
-does not assert a published tag or successful HA installation.
+Live Supervisor/Ingress, monitoring, native trace comparison and restart-history
+verification passed. Installation evidence, source provenance, publication status
+and known limits are recorded in `docs/VALIDATION.md`.

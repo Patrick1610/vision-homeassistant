@@ -4,7 +4,7 @@
 
 Read-only observability for Home Assistant OS, with optional Anthropic and OpenAI
 intelligence. Local monitoring works without AI, cloud accounts or API keys.
-MIT licensed. Version 0.1.0 release candidate; see [validation](docs/VALIDATION.md)
+MIT licensed. Version 0.1.0; see [validation](docs/VALIDATION.md)
 for what has actually been tested and release status.
 
 ## What it does
@@ -47,6 +47,8 @@ retention, component availability and admin permissions. A possibly unused
 automation is a hypothesis. Vision cannot reconstruct missed events during
 downtime. Availability segments are measured observations, not guaranteed physical
 outage counts. A disappearing log entry does not prove a repair.
+Incident and history tables show bounded recent subsets; the Overview inventory
+counts and per-automation statistics cover their underlying observed data.
 
 AI receives a bounded typed evidence bundle with anonymous evidence IDs, counts,
 availability and execution summaries. Source names, entity IDs, raw logs,
