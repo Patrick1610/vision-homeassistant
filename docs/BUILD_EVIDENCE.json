@@ -101,6 +101,24 @@
       "historical_incident_pairs_preserved": 10,
       "source_provenance": "procedural rebuild plus unchanged backend/Dockerfile/dependency lineage from first public backend commit",
       "independent_live_container_byte_comparison": "not performed"
+    },
+    "published_release": {
+      "version": "0.1.0",
+      "url": "https://github.com/Patrick1610/vision-homeassistant/releases/tag/v0.1.0",
+      "public_tag_commit": "321337f2307db19455917bcb9dd9018b469a88da",
+      "local_matching_source_commit": "909df1a8c831c6aa4e7cd693ff8a60161ef8376e",
+      "tree": "7f02fccdd10ba1921cf78a30c386abaa8559e8bb",
+      "all_50_files_identical": true,
+      "anonymous_release_page_and_git_tag_readback": "passed",
+      "release_ci": {
+        "url": "https://github.com/Patrick1610/vision-homeassistant/actions/runs/39317640835",
+        "status": "success",
+        "duration": "2m 16s",
+        "tests": "passed",
+        "amd64_build_start_restart_persistence": "passed",
+        "arm64_build_start_restart_persistence": "passed"
+      },
+      "note": "Subsequent completion-checkpoint documentation does not change runtime or move the release tag."
     }
   }
 }

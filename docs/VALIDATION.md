@@ -1,7 +1,7 @@
 # Validation and release status — 2026-10-19
 
 Status: **v0.1.0 qualified on the live Supervisor test installation**.
-Final public tag/release creation is pending; no completed publication is claimed here.
+Public [Vision v0.1.0 release](https://github.com/Patrick1610/vision-homeassistant/releases/tag/v0.1.0) is published and independently verified.
 Component, container and live results remain distinct evidence below.
 
 | Evidence | Result |
@@ -18,7 +18,7 @@ Component, container and live results remain distinct evidence below.
 | Live billable Anthropic/OpenAI request | Not performed: no provider credentials supplied. Both adapters tested through deterministic HTTP simulations. |
 | GitHub source publication | All 50 tracked files uploaded through GitHub's web interface. Anonymous readback confirms identical content and Git trees. No CLI authentication was used for publication. |
 | GitHub CI | [Run 39294357509](https://github.com/Patrick1610/vision-homeassistant/actions/runs/39294357509) passed in 1m 57s: tests/lint/format/JS/publication scan plus build/start/restart-persistence on amd64 and arm64. First run exposed a test-only absolute-path exclusion bug; a repository-relative exclusion fixes it. |
-| Final tag/release | Live qualification is complete. Final publication is the remaining operational step; publication has not yet occurred. |
+| Final tag/release | Published through the browser. Anonymous public release-page readback and Git fetch confirm v0.1.0 at `321337f2307db19455917bcb9dd9018b469a88da`. |
 
 ## Reproduction
 
@@ -127,3 +127,17 @@ the Overview up to ten recent prioritized incidents. These bounded views do not
 copy Recorder or imply an exhaustive historical table. Internal HA frontend reads
 can change or become unavailable; coverage then degrades visibly. Live billable
 provider behavior and a full accessibility audit remain unverified.
+
+## Published release
+
+The stable [v0.1.0 release](https://github.com/Patrick1610/vision-homeassistant/releases/tag/v0.1.0) is public and marked Latest. Its tag points to
+`321337f2307db19455917bcb9dd9018b469a88da`, tree
+`7f02fccdd10ba1921cf78a30c386abaa8559e8bb`; anonymous Git fetch and all 50
+file comparisons match local `909df1a8c831c6aa4e7cd693ff8a60161ef8376e`.
+[Release CI](https://github.com/Patrick1610/vision-homeassistant/actions/runs/39317640835) passed in 2m 16s: tests and both amd64/arm64 container jobs.
+The live-qualification documentation review `e9072db7-fc88-4108-9bd1-8035f6f957d6`
+ended GO with no open findings after pending-publication wording corrections.
+This post-publication checkpoint updates status only and does not move the tag
+or change the tested runtime. Pre-publication status text in the immutable tag's
+execution record describes that earlier snapshot; the actual release page and
+this checkpoint establish completed publication.
