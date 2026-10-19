@@ -14,6 +14,7 @@ installation, provider billing, GitHub CI or release approval.
 | Public CI: repository-relative local-artifact exclusion in packaging test | `b622fc2e-52e8-4e2f-8edb-bd58a1fa0b6f` | GO on correction `fd201aa` |
 | Light UI: palette, responsive layout, status contrast and keyboard focus | `50f1f5ef-998d-40fe-aad5-91f89a742eba` | GO after both low notes corrected |
 | Live qualification: release evidence, privacy and publication-status wording | `e9072db7-fc88-4108-9bd1-8035f6f957d6` | GO after pending-publication wording corrections |
+| Wordmark 0.1.1: dark wordmark, green accent, accessibility and version alignment | `18dac065-b5be-4e2b-8329-3eb263ccfca4` | GO; two documentation nits corrected |
 
 Corrections include explicit Ingress user authorization, safe options recovery,
 complete log-redaction sinks, cross-task transaction guards, source-backed trace

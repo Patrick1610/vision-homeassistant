@@ -45,8 +45,8 @@
 ## Local container verification
 
 ```sh
-docker build --build-arg BUILD_ARCH=amd64 -t vision:0.1.0 .
-docker run --rm -e VISION_DATA=/data -v vision-data:/data vision:0.1.0
+docker build --build-arg BUILD_ARCH=amd64 -t vision:0.1.1 .
+docker run --rm -e VISION_DATA=/data -v vision-data:/data vision:0.1.1
 ```
 
 Local mode binds loopback *inside* the container. A meaningful smoke check uses
