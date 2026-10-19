@@ -132,4 +132,27 @@ Browser publication `5ddf6fb12d64bf63dc4f97d323a20d4d5c89e5ba` matches local
 GitHub CI run `39297543930` completed successfully in 1m 53s: tests/lint/format/JS/
 publication scan and both amd64/arm64 build/start/restart-persistence jobs passed.
 Later evidence-only documentation changes do not alter the tested runtime.
-Live Supervisor/Ingress installation remains pending.
+Full live Supervisor/Ingress validation remains pending; partial observations
+and the current access gate are recorded below.
+
+## Live Supervisor access gate
+
+The owner's existing installation now reports Vision 0.1.0 in Supervisor and
+is running. Its Ingress route serves the expected locked access page. AI and
+daily audits were observed disabled. No options were saved, users authorized,
+app restarted or HA devices/configurations changed by this validation attempt.
+
+The current HA user's access has not been authorized in `allowed_user_ids`.
+The locked state was rechecked in two successive goal continuations. The browser
+confirmation question remains unanswered: add only the current HA user, save
+Vision's options and restart only Vision for monitoring/history verification.
+Do not treat the general goal continuation as that security confirmation, repeat
+the question, or work around the gate through private APIs or database access.
+
+Once authorization arrives, re-read the active session identity, preserve all
+other options with AI off, and verify the installed source candidate, connection,
+capability coverage, inventories, retained trace outcomes and restart history.
+A displayed version alone does not bind the installed image to the current Git
+candidate. Only after those checks may the final v0.1.0 tag/release be published.
+Latest public candidate `82ae1714a0ec57ec1645f81e270cd02437b08579` passed CI run
+`39298072551` in 2m 17s. This local checkpoint changes documentation only.
