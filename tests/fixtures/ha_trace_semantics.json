@@ -1,0 +1,153 @@
+{
+  "source_tag": "2026.10.2",
+  "sources": {
+    "ha-saved-traces.json": "47212af702f835f00730577dd3729e74c2f0866bd19d8b6fbfbfbf9c89195d6a",
+    "test-ha-script.py": "904a9a56739e9a2e74d488e6af52dd3314e76643fca49225264b488060df9340",
+    "test-trace-websocket.py": "debd68f2d8779a83f9262daa14b2880606fad7eca357b05154821ea38c8c7f6b",
+    "trace-models.py": "41ccc5fda5790f1ad6c2e473509903a0107bb0e6816018bd8f4449de9b5b807c"
+  },
+  "normalization": "Minimal semantic projection from upstream saved trace fixture; personal-looking variables and config discarded. Stop assertions extracted with ast.literal_eval from upstream tests/helpers/test_script.py. Source-backed fixtures, not a new live Vision HA test.",
+  "cases": [
+    {
+      "name": "upstream_saved_0",
+      "trace": {
+        "last_step": "action/0",
+        "state": "stopped",
+        "script_execution": "error",
+        "error": "HA fixture reports an execution error",
+        "trace": {
+          "trigger/0": [],
+          "action/0": [
+            {
+              "result": {}
+            }
+          ]
+        }
+      },
+      "outcome": "failed"
+    },
+    {
+      "name": "upstream_saved_1",
+      "trace": {
+        "last_step": "action/0",
+        "state": "stopped",
+        "script_execution": "finished",
+        "trace": {
+          "trigger/0": [],
+          "condition/0": [
+            {
+              "result": {
+                "result": true
+              }
+            }
+          ],
+          "action/0": [
+            {
+              "result": {}
+            }
+          ]
+        }
+      },
+      "outcome": "succeeded"
+    },
+    {
+      "name": "upstream_saved_2",
+      "trace": {
+        "last_step": "condition/0",
+        "state": "stopped",
+        "script_execution": "failed_conditions",
+        "trace": {
+          "trigger/1": [],
+          "condition/0": [
+            {
+              "result": {
+                "result": false
+              }
+            }
+          ]
+        }
+      },
+      "outcome": "condition_stopped"
+    },
+    {
+      "name": "upstream_saved_3",
+      "trace": {
+        "last_step": "action/0",
+        "state": "stopped",
+        "script_execution": "finished",
+        "trace": {
+          "trigger/0": [],
+          "condition/0": [
+            {
+              "result": {
+                "result": true
+              }
+            }
+          ],
+          "action/0": [
+            {
+              "result": {}
+            }
+          ]
+        }
+      },
+      "outcome": "succeeded"
+    },
+    {
+      "name": "test_stop_action",
+      "trace": {
+        "script_execution": "finished",
+        "state": "stopped",
+        "last_step": "1",
+        "trace": {
+          "0": [
+            {
+              "result": {
+                "event": "test_event",
+                "event_data": {}
+              }
+            }
+          ],
+          "1": [
+            {
+              "result": {
+                "stop": "In the name of love",
+                "error": false
+              }
+            }
+          ]
+        }
+      },
+      "outcome": "stopped"
+    },
+    {
+      "name": "test_stop_action_with_error",
+      "trace": {
+        "script_execution": "aborted",
+        "state": "stopped",
+        "last_step": "1",
+        "trace": {
+          "0": [
+            {
+              "result": {
+                "event": "test_event",
+                "event_data": {}
+              }
+            }
+          ],
+          "1": [
+            {
+              "error": "Epic one...",
+              "result": {
+                "stop": "Epic one...",
+                "error": true
+              }
+            }
+          ]
+        }
+      },
+      "outcome": "failed"
+    }
+  ],
+  "source_commit": "8d7fd8b68677c2585be36ec86043308f403875b8"
+}
