@@ -1,7 +1,8 @@
 # Validation and release status — 2026-10-19
 
-Status: **public v0.1.0 release candidate source; final tag/release pending**.
-Do not interpret component tests as live Home Assistant installation approval.
+Status: **v0.1.0 qualified on the live Supervisor test installation**.
+Final public tag/release creation is pending; no completed publication is claimed here.
+Component, container and live results remain distinct evidence below.
 
 | Evidence | Result |
 | --- | --- |
@@ -13,11 +14,11 @@ Do not interpret component tests as live Home Assistant installation approval.
 | Browser | Synthetic inventory/detail rendering and saving an exception verified through real browser interaction. 390 px and 1280 px viewports: document widths match, no page overflow or browser console errors. |
 | Upstream trace semantics | Six normalized cases from HA 2026.10.2 official fixtures/assertions, plus mode-block tests. Source downloaded and independently compared byte-for-byte with Git objects at `8d7fd8b68677c2585be36ec86043308f403875b8`. |
 | External review | The four milestone streams and subsequent stream-reader/restart correction ended GO with no open critical/high/medium findings. See REVIEWS.md. Jev unavailable because its API key is not configured; no score claimed. |
-| Live HA OS / Supervisor installation | Existing Vision 0.1.0 installation confirmed in Supervisor as running; its Ingress route serves the expected locked page. AI and daily audits were observed off. Current-user authorization, installed-source binding, monitoring/capability checks and restart-history verification remain pending. |
+| Live HA OS / Supervisor installation | Passed: owner authorized the current user; Ingress unlocked, repository refreshed and only Vision rebuilt. The light UI loaded, live inventories and all nine read capabilities worked, structural summaries completed, and native HA traces corroborated successful and failed outcomes. A separate Vision restart reconnected and retained all ten sampled incident records with their original first-seen timestamps. |
 | Live billable Anthropic/OpenAI request | Not performed: no provider credentials supplied. Both adapters tested through deterministic HTTP simulations. |
 | GitHub source publication | All 50 tracked files uploaded through GitHub's web interface. Anonymous readback confirms identical content and Git trees. No CLI authentication was used for publication. |
 | GitHub CI | [Run 39294357509](https://github.com/Patrick1610/vision-homeassistant/actions/runs/39294357509) passed in 1m 57s: tests/lint/format/JS/publication scan plus build/start/restart-persistence on amd64 and arm64. First run exposed a test-only absolute-path exclusion bug; a repository-relative exclusion fixes it. |
-| Final tag/release | Not created; live Supervisor/Ingress installation remains a release gate. |
+| Final tag/release | Live qualification is complete. Final publication is the remaining operational step; publication has not yet occurred. |
 
 ## Reproduction
 
@@ -47,7 +48,7 @@ and two container-readiness cases pass in the 76-test Mac and Linux suites.
 `BUILD_EVIDENCE.json` binds the rebuilt images to implementation commit
 `898ebb7cff1fbb9c1c134ed67979e6b8545cfd10`, superseding the earlier candidate.
 
-## Remaining release gate
+## Public source and publication
 
 The source, builds, tests, reviews and local Git-history secret scan are complete.
 The audited source is public at [Patrick1610/vision-homeassistant](https://github.com/Patrick1610/vision-homeassistant).
@@ -58,9 +59,9 @@ at `dc8603ce9eab412cdefd0530622f1d80cd590d1f`, matching local `fd201aa` at tree
 `bb71a410b82b4129081b51c95ec7de9451ec2149`. Its actual workflow is
 [CI run 39294357509](https://github.com/Patrick1610/vision-homeassistant/actions/runs/39294357509).
 CI reported non-failing runner notices for Node 20 actions forced to Node 24 and
-the ubuntu-latest image migration. Install the
-concrete candidate on HA OS/Supervisor and verify Ingress, capabilities and restart
-history. Only then create the final v0.1.0 tag/release and update this status.
+the ubuntu-latest image migration. The live installation checks described below
+have now passed. Final publication follows those checks; it must not be inferred
+from the earlier component/container results alone.
 
 ## Light UI verification
 
@@ -83,6 +84,46 @@ passed in 1m 53s, including the test/check job and both amd64/arm64 container
 build/start/restart-persistence jobs. BUILD_EVIDENCE.json records the current
 runtime manifest separately from the historical pre-theme local images. Later
 evidence-only documentation changes do not alter this tested runtime. Live
-Supervisor installation and the locked Ingress page have now been observed;
-full functional verification is still pending the access authorization recorded
-in PLANS.md. No HA identifiers, credentials or raw live observations are published.
+Supervisor/Ingress checks described below have also passed. No HA identifiers,
+credentials or raw live observations are published.
+
+## Live qualification
+
+The owner configured the current HA user's authorization and restarted Vision.
+The app connected and populated the device/entity and automation inventories.
+All nine displayed read capabilities were available: connection, state and
+automation-trigger subscriptions, both registries, Repairs, system logs and trace
+list/get. All observed automations received structural summaries.
+
+The installed app initially had the older dark frontend. After refreshing the
+Supervisor repository data and rebuilding only Vision, the light frontend loaded.
+All seven navigation pages and an automation detail rendered with live data.
+One successful retained run and one failed run were compared with the native HA
+trace timeline; timestamps and completion/error classification agreed. No
+automation was triggered, device controlled or HA configuration edited for this
+comparison. Unobserved historical trigger events remained explicitly unobserved.
+
+AI remained disabled and the audit button was disabled. The local evidence
+preview opened without source entity IDs or credential fields. No provider request
+was made. The history view contained availability and automation observations.
+
+The rebuild retained the sampled original incident first-seen timestamps. A
+separate Supervisor restart of only Vision then changed the monitoring session,
+reconnected and completed a fresh inventory sync. All ten sampled incident
+title/first-seen pairs survived that restart, including duplicate-pair counts.
+These original Vision observation times cannot be regenerated by a fresh HA log
+poll: new incident records use the current observation time.
+
+Installed-source provenance is procedural: a refreshed repository, observed
+Supervisor rebuild and the new frontend, plus a Git comparison proving Dockerfile,
+locked runtime dependencies and all backend Python files are unchanged from the
+first public backend commit to the tested candidate. The live container was not
+exported for an independent byte-level image comparison. BUILD_EVIDENCE.json
+separately binds the public source manifests and CI container checks.
+
+Known limits: retained HA traces and permissions limit retrospective coverage;
+history shows up to 300 recent observations per section, Issues up to 500 rows and
+the Overview up to ten recent prioritized incidents. These bounded views do not
+copy Recorder or imply an exhaustive historical table. Internal HA frontend reads
+can change or become unavailable; coverage then degrades visibly. Live billable
+provider behavior and a full accessibility audit remain unverified.

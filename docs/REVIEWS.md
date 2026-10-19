@@ -13,6 +13,7 @@ installation, provider billing, GitHub CI or release approval.
 | Follow-up: complete bounded HTTP reads and container restart readiness | `48325ab3-5893-4d3f-bc55-8187b45e4637` | GO on correction `898ebb7` |
 | Public CI: repository-relative local-artifact exclusion in packaging test | `b622fc2e-52e8-4e2f-8edb-bd58a1fa0b6f` | GO on correction `fd201aa` |
 | Light UI: palette, responsive layout, status contrast and keyboard focus | `50f1f5ef-998d-40fe-aad5-91f89a742eba` | GO after both low notes corrected |
+| Live qualification: release evidence, privacy and publication-status wording | `e9072db7-fc88-4108-9bd1-8035f6f957d6` | GO after pending-publication wording corrections |
 
 Corrections include explicit Ingress user authorization, safe options recovery,
 complete log-redaction sinks, cross-task transaction guards, source-backed trace
@@ -43,3 +44,9 @@ note about the adjacent hidden/rootfs filter is accepted: that filter deliberate
 uses absolute path parts to match the official Supervisor implementation. The
 review reported no open critical/high/medium findings. CI results and actual HA
 installation remain separately verified gates.
+
+The live-qualification review changes documentation only. A premature unreleased
+tag link was removed and the changelog explicitly marked publication pending.
+Both findings were verified resolved before final GO; actual tag/release creation
+is a separate browser operation with anonymous Git readback. Transient reviewer
+transport/response-schema errors were retried in the same review session.

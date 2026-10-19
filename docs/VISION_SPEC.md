@@ -13,7 +13,7 @@ Enphase, NUT or third-party integration is required.
 The initial reference environment is HA OS with Supervisor on an Odroid H3+ with
 16 GB RAM, integrations such as ZHA, FRITZ!, Enphase and NUT, and extensive
 heating/energy/appliance automations. The reference HA installation is called
-Jarvis. This profile is a test target, not a claim of completed live validation.
+Jarvis. The scope and results of live validation are recorded in VALIDATION.md.
 No real entity names, addresses or installation credentials belong in this repo.
 
 ## Foundation and delivery

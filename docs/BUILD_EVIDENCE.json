@@ -85,6 +85,22 @@
       "tests_and_checks": "passed",
       "amd64_build_start_restart_persistence": "passed",
       "arm64_build_start_restart_persistence": "passed"
+    },
+    "live_supervisor_validation": {
+      "status": "passed",
+      "owner_user_authorization": "configured by owner; unlocked access observed",
+      "repository_refresh_and_rebuild": "completed; current light interface observed",
+      "read_capabilities_available": 9,
+      "all_observed_automation_structures": "available",
+      "native_trace_comparison": "successful and failed retained runs agree",
+      "seven_navigation_pages_and_automation_detail": "rendered",
+      "local_minimized_ai_preview": "rendered; no source entity IDs or credential fields observed",
+      "ai_enabled": false,
+      "billable_provider_request": "not performed",
+      "separate_restart": "reconnected and fresh sync completed",
+      "historical_incident_pairs_preserved": 10,
+      "source_provenance": "procedural rebuild plus unchanged backend/Dockerfile/dependency lineage from first public backend commit",
+      "independent_live_container_byte_comparison": "not performed"
     }
   }
 }
