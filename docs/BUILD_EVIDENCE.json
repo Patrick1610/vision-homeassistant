@@ -1,0 +1,51 @@
+{
+  "runtime_manifest": {
+    "Dockerfile": "7e6dbaaaff34a537b0486f22783ccf15ddd09d3ce53fc8b79540bb8454131df3",
+    "requirements.txt": "38adb3a618e5ae7bfcb0e543d3e637c75e2161c00cbd4217a77c35e81fcae57e",
+    "vision/__init__.py": "2d70b10ca8777111d1b0cb910ea3bc10d488bb04945a9285e86768e00222d127",
+    "vision/__main__.py": "4e61df5336733a344bc62a1bb8560dfd994d36a8e89ae1098d13da4b394bc07e",
+    "vision/ai.py": "11b123c72723f3adb5b2adbccad08141c6078a9c5e58bf636762f0c7a414b73d",
+    "vision/app.py": "95d8b1fdbc8d1ad9935c0de1f72f7851f5a83728740135862ddee2eb1a020f5d",
+    "vision/config.py": "35a0e2effb77be06b2581ac19b696040e56983978fa6a85aeaa76f33c4fb66ed",
+    "vision/ha.py": "a598a116c2ac65e1b8e10008983808f1f1a0bfb26c62b65a75227239fae47da7",
+    "vision/monitor.py": "0261257659a8aa7ce9ae63fa4e67a982f987800865bebbe55025f337075cae61",
+    "vision/security.py": "82a929a903ebac854dc67039e78edeaef54875f2af14eb92131bdc971c4b3abd",
+    "vision/static/app.js": "7920a69fde674f7dcaf4a7a5fe44d14abf6728de1a216f4caa86ba0414e4024d",
+    "vision/static/index.html": "ab695c3ae91ae6020e18b6957697191230effc28baec4bd434a1b5a2175e711e",
+    "vision/static/style.css": "6e95152fc10bd3fc5a809aa29db1425ece16342cec4076765439c95b647d994a",
+    "vision/store.py": "cd52bb94754282f1df46b5e3cec9cd7ff404622662969b5298dc5c7d487ce3c7"
+  },
+  "runtime_sha256": "2c9d31d8b6649b006649ffc5334e7147e1f2582c2e28a8a00007d5d653a26fca",
+  "images": {
+    "amd64": {
+      "id": "sha256:d2fb9a0b2b37bc6f4809f4c68cd136a8b8aefd24637b18f51b0edf5f8efe111b",
+      "architecture": "amd64",
+      "source_files_identical": true,
+      "http_and_restart_persistence": "passed"
+    },
+    "arm64": {
+      "id": "sha256:d057cbe0703f93bee19220c5bafb02833f18433a9d8b41d6c8a7da33d7e5cf00",
+      "architecture": "arm64",
+      "source_files_identical": true,
+      "http_and_restart_persistence": "passed"
+    }
+  },
+  "version": "0.1.0",
+  "status": "local release candidate, not publicly released",
+  "validation": {
+    "macos_pytest_passed": 76,
+    "linux_arm64_pytest_passed": 76,
+    "pytest_warnings": 1,
+    "ruff": "passed",
+    "javascript_syntax": "passed",
+    "browser_widths_checked": [
+      390,
+      1280
+    ],
+    "browser_data": "synthetic",
+    "live_ha_install": "not run",
+    "live_provider_request": "not run",
+    "github_ci_push_tag_release": "not run"
+  },
+  "implementation_commit": "898ebb7cff1fbb9c1c134ed67979e6b8545cfd10"
+}
