@@ -13,7 +13,7 @@ Do not interpret component tests as live Home Assistant installation approval.
 | Browser | Synthetic inventory/detail rendering and saving an exception verified through real browser interaction. 390 px and 1280 px viewports: document widths match, no page overflow or browser console errors. |
 | Upstream trace semantics | Six normalized cases from HA 2026.10.2 official fixtures/assertions, plus mode-block tests. Source downloaded and independently compared byte-for-byte with Git objects at `8d7fd8b68677c2585be36ec86043308f403875b8`. |
 | External review | The four milestone streams and subsequent stream-reader/restart correction ended GO with no open critical/high/medium findings. See REVIEWS.md. Jev unavailable because its API key is not configured; no score claimed. |
-| Live HA OS / Supervisor installation | Not performed yet. Existing user browser sessions are not proof of an app installation. |
+| Live HA OS / Supervisor installation | Existing Vision 0.1.0 installation confirmed in Supervisor as running; its Ingress route serves the expected locked page. AI and daily audits were observed off. Current-user authorization, installed-source binding, monitoring/capability checks and restart-history verification remain pending. |
 | Live billable Anthropic/OpenAI request | Not performed: no provider credentials supplied. Both adapters tested through deterministic HTTP simulations. |
 | GitHub source publication | All 50 tracked files uploaded through GitHub's web interface. Anonymous readback confirms identical content and Git trees. No CLI authentication was used for publication. |
 | GitHub CI | [Run 39294357509](https://github.com/Patrick1610/vision-homeassistant/actions/runs/39294357509) passed in 1m 57s: tests/lint/format/JS/publication scan plus build/start/restart-persistence on amd64 and arm64. First run exposed a test-only absolute-path exclusion bug; a repository-relative exclusion fixes it. |
@@ -83,4 +83,6 @@ passed in 1m 53s, including the test/check job and both amd64/arm64 container
 build/start/restart-persistence jobs. BUILD_EVIDENCE.json records the current
 runtime manifest separately from the historical pre-theme local images. Later
 evidence-only documentation changes do not alter this tested runtime. Live
-Supervisor/Ingress installation is still not performed.
+Supervisor installation and the locked Ingress page have now been observed;
+full functional verification is still pending the access authorization recorded
+in PLANS.md. No HA identifiers, credentials or raw live observations are published.
