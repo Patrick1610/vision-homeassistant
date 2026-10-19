@@ -47,8 +47,8 @@ local Colima availability will be checked before container validation.
 76 pytest tests passed, including real local WebSocket/REST simulation and reconnect,
 private database concurrency/persistence, provider HTTP contracts, failover/consent,
 billing reservations and upstream trace golden cases. Ruff and JS syntax passed.
-ARM64 and emulated AMD64 container HTTP/start/restart persistence passed for final
-images; byte-identical source binding is in docs/BUILD_EVIDENCE.json. 76 tests also
+ARM64 and emulated AMD64 container HTTP/start/restart persistence passed for the
+pre-light-UI local images; byte-identical source binding is in docs/BUILD_EVIDENCE.json. 76 tests also
 passed inside the Linux image with development-only test dependencies. Browser exception save and
 mobile width verified with synthetic data. See docs/VALIDATION.md for precise limits.
 No live HA installation or billable provider call claimed. Public source is
@@ -124,6 +124,12 @@ audit or a live Home Assistant installation test.
 76 pytest tests, Ruff lint/format, JavaScript syntax, diff checking and the
 publication scanner pass. External review `50f1f5ef-998d-40fe-aad5-91f89a742eba`
 ended GO after two low notes were corrected; no findings remain. Jev was retried
-but remains unavailable without its API key. Current presentation changes require
-new container evidence; the previous local images are historical. Browser
-publication and the current GitHub container matrix are being verified next.
+but remains unavailable without its API key. The previous local images are
+historical. The new runtime manifest is `31328546147424341568a72288303056a8c3a1541b66f58ac7e28868d2fecb86`.
+Browser publication `5ddf6fb12d64bf63dc4f97d323a20d4d5c89e5ba` matches local
+`3e2ca610c9a11f5796026685d8dd1a7b511a761d` at tree
+`75b3c9c43ce61c91661a32241b41b9901faf5809` (all 50 files independently checked).
+GitHub CI run `39297543930` completed successfully in 1m 53s: tests/lint/format/JS/
+publication scan and both amd64/arm64 build/start/restart-persistence jobs passed.
+Later evidence-only documentation changes do not alter the tested runtime.
+Live Supervisor/Ingress installation remains pending.
