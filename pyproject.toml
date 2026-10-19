@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vision-homeassistant"
+version = "0.1.0"
+description = "Read-only local observability and optional AI for Home Assistant"
+requires-python = ">=3.13"
+license = "MIT"
+dependencies = ["fastapi", "uvicorn", "httpx", "aiohttp", "pydantic"]
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-asyncio", "ruff", "pyyaml"]
+
+[tool.setuptools.package-data]
+vision = ["static/*"]
+
+[tool.setuptools.packages.find]
+include = ["vision*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC"]

@@ -1,0 +1,7 @@
+*
+!Dockerfile
+!requirements.txt
+!pyproject.toml
+!vision/
+!vision/**
+vision/**/__pycache__

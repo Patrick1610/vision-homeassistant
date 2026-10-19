@@ -1,0 +1,59 @@
+name: Vision
+url: https://github.com/Patrick1610/vision-homeassistant
+version: 0.1.0
+slug: vision
+description: Read-only observability and optional AI intelligence for Home Assistant
+arch:
+- amd64
+- aarch64
+startup: application
+boot: auto
+init: true
+ingress: true
+ingress_port: 8099
+panel_icon: mdi:eye-outline
+panel_title: Vision
+panel_admin: true
+homeassistant_api: true
+hassio_api: false
+homeassistant: 2025.1.0
+backup: cold
+options:
+  poll_seconds: 60
+  retention_days: 90
+  ai_enabled: false
+  daily_audit: false
+  audit_hour_utc: 4
+  primary_provider: anthropic
+  allow_budget_failover: false
+  monthly_budget_usd: 5.0
+  max_output_tokens: 2048
+  anthropic_daily_budget_usd: 1.0
+  anthropic_input_usd_per_million: 0.0
+  anthropic_output_usd_per_million: 0.0
+  openai_daily_budget_usd: 1.0
+  openai_input_usd_per_million: 0.0
+  openai_output_usd_per_million: 0.0
+  allowed_user_ids: []
+schema:
+  poll_seconds: int(15,3600)
+  retention_days: int(7,730)
+  ai_enabled: bool
+  daily_audit: bool
+  audit_hour_utc: int(0,23)
+  primary_provider: list(anthropic|openai)
+  allow_budget_failover: bool
+  monthly_budget_usd: float(0,10000)
+  max_output_tokens: int(512,8192)
+  anthropic_api_key: password?
+  anthropic_model: str?
+  anthropic_daily_budget_usd: float(0,1000)
+  anthropic_input_usd_per_million: float(0,10000)
+  anthropic_output_usd_per_million: float(0,10000)
+  openai_api_key: password?
+  openai_model: str?
+  openai_daily_budget_usd: float(0,1000)
+  openai_input_usd_per_million: float(0,10000)
+  openai_output_usd_per_million: float(0,10000)
+  allowed_user_ids:
+  - str
