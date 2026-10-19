@@ -32,7 +32,7 @@ def test_supervisor_discovery_algorithm_includes_root():
         for p in ROOT.glob("**/config.*")
         if p.suffix in {".yaml", ".yml", ".json"}
         and not any(part.startswith(".") or part == "rootfs" for part in p.parts)
-        and "work" not in p.parts
+        and "work" not in p.relative_to(ROOT).parts
     ]
     assert configs == [ROOT / "config.yaml"]
 
