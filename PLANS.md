@@ -104,3 +104,26 @@ completed successfully in 1m 57s: the test job and both architecture container
 build/start/restart-persistence jobs passed. Runner notices about Node 20 action
 migration to Node 24 and ubuntu-latest migration did not fail the run. The app
 runtime is unchanged by this test correction and later validation documentation.
+
+## Light Vision interface
+
+The owner requested a white/light interface with Vision red/gold branding and
+green accents. The existing frontend now uses white cards and sidebar on a warm
+white canvas, deep red navigation/primary actions, gold details and green
+positive statuses. The original CSS-generated V/gem mark needs no external
+imagery or fonts. The palette decision is recorded in VISION_SPEC.md.
+
+All seven routes and automation detail were checked in a real local browser
+using synthetic data. At 1280, 801, 800, 390 and 320 px there was no page overflow.
+The exception form saved locally; keyboard focus and skip-to-content preserve
+the current route. Measured text contrasts pass 4.5:1 (muted canvas 4.98:1,
+red status 7.19:1); the input border passes 3:1 (3.17:1). No browser warnings or
+errors were observed. This is targeted verification, not a full accessibility
+audit or a live Home Assistant installation test.
+
+76 pytest tests, Ruff lint/format, JavaScript syntax, diff checking and the
+publication scanner pass. External review `50f1f5ef-998d-40fe-aad5-91f89a742eba`
+ended GO after two low notes were corrected; no findings remain. Jev was retried
+but remains unavailable without its API key. Current presentation changes require
+new container evidence; the previous local images are historical. Browser
+publication and the current GitHub container matrix are being verified next.

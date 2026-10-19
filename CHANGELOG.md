@@ -9,6 +9,8 @@
   diagnoses, technical failover, backoff and separately authorized budget failover.
 - Persistent token/cost estimates and uncertain-request reservations.
 - Explicit Ingress user authorization and credential redaction.
+- Light white interface with Vision red/gold branding, green status accents,
+  visible keyboard focus and responsive layouts.
 
 Live installation and publication status: see `docs/VALIDATION.md`. This entry
 does not assert a published tag or successful HA installation.
