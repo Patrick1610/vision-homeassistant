@@ -93,3 +93,46 @@ is covered. Two-startup and competing-writer tests include failure/retry, and th
 hardlink test restores a source whose bytes exactly match a fresh API snapshot.
 Nondeterministic valid copy bytes hit the retained cap rather than growing without
 bound. Same-channel critical follow-up is pending; no B GO is claimed.
+
+B's fourth critical follow-up accepted immutable `9a3dd713e1ff` with no open
+critical/high/medium findings. Independent 213-test, two-architecture container,
+schema-1 upgrade/restart/old-0.1.1 restore and startup-alias/concurrency probes
+passed. The subsequent dev.1 package was separately reviewed and published; its
+public/live evidence is recorded in VALIDATION.md.
+
+C's critical stream `928fc673-868b-41ab-bce6-de25f40584f5`, channel `vision020-c`,
+accepted immutable `3e533aac7ecf16f55118a869b03f9cb9502e4f43` in sequence 6 with
+zero open critical/high/medium findings. The three initial review chunks and
+consolidated follow-ups closed eight accepted mediums, five lows and the two
+later accounting/withdrawal mediums. Controller adjudication retained native
+structured-output GA, strict configuration failure, per-round reference scope
+and conservative uncertain billing. Independent tests/container/migration and
+real Safari checks qualify the named candidate separately from that source review.
+Three final lows remain nonblocking: D handles rejected-send status recovery;
+future source-table upserts and externally lost accounting triggers remain
+unsupported-path backlog work, with no store/schema expansion in D.
+
+D's action-oriented UI and 0.2.0-rc.1 packaging require their own frozen-source
+review, layout/navigation qualification and public/live gates. No D review or
+final stable-release GO is claimed here. Jev remains unavailable because its API
+key is not configured; no score is invented.
+
+The D critical review `474f6d39-7daa-4651-8d25-077d4cbf6f84`, channel
+`vision020-d`, rejected exact `b7764fdf33cc4e23eb31c583aa945591d1c1f6d7` with one
+high (completed audit links redirected away from the frozen sent body), two
+mediums (background failure discarded engaged content; secondary read failure
+hid primary priorities) and five lows. Independent testing also proved a mixed-
+error manual-plan path mismatch. Consolidated corrective D preserves audit views,
+scopes/consumes send-session auto-opening, degrades secondary reads with visible
+unknowns, retains last-loaded content after background failure and binds task/path
+from one matching typed observation. Five lows retain all references, source
+checks, actual gap dates, related-case links and server comparison copy. Same-
+channel follow-up is required; no corrective D GO is claimed.
+
+D sequence 2 closed all original high/two medium/five low findings and the mixed-
+step P2 on `9fadab4b6f972d02359ad065be657158c64ba390`. NO_GO remained solely for
+the independently reproduced 320 px affected-id overflow, also present on settled
+D1. The controller authorized D3's minimal width/wrap correction and four cheap
+lows covering replacement-history scope, attention-total wording, changes-only
+uncertainty and refresh-notice preservation. Scratch Safari layout preflight is
+separate from the required immutable D3 same-channel follow-up; no D3 GO is claimed.

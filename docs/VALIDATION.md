@@ -1,10 +1,10 @@
 # Validation and release status — 2026-10-20
 
-**Current development package: 0.2.0-dev.1.** The data/local-investigation
-foundation is accepted; targeted AI investigations remain in development. Public
-publication, both-architecture packaging and a live update of this preview are
-separate gates, pending at package preparation. The historical stable 0.1.1
-evidence below remains valid for that release.
+**Current source package: 0.2.0-rc.1.** A/B/C are accepted on their immutable
+candidates. D UI, RC publication/live native-provider checks and the final stable
+0.2.0 release remain separate gates. The published/live development preview is
+0.2.0-dev.1; its legacy provider calls do not qualify the new native C pipeline.
+Historical evidence below remains bound to the version named in each section.
 
 **0.1.1 wordmark update:** [published](https://github.com/Patrick1610/vision-homeassistant/releases/tag/v0.1.1),
 CI verified and live Supervisor update verified. The v0.1.0 evidence below
@@ -489,3 +489,418 @@ response. This corrects a packaging defect; prior local passes did not cover it.
 The focused packaging/HTTP run passed four tests in 0.24 s, with the existing
 Starlette warning; Ruff lint/format and diff checks passed. The corrected preview
 still requires exact-tree full/container/browser qualification before publication.
+
+## C implementation candidate — targeted AI, privacy and request consent
+
+C is implemented above the corrected development-preview base
+`4806463d33b020ecd48ccf0f127c4c034a534f38`, with version metadata deliberately
+retained until final D packaging. This section records synthetic implementation
+qualification; C external acceptance, final container/publication and live update
+remain separate pending gates.
+
+The complete local suite passed **278 tests in 35.48 s**, with the existing
+Starlette/httpx deprecation warning. The six AI test files passed **82 tests in
+1.11 s**, including 64 new tests beyond the corrected preview baseline. Ruff
+lint/format (37 Python files), Node syntax, pinned Prettier 3.6.2 and diff checks
+passed. The original closed HA gateway and image/module/project version literals
+have no C diff.
+
+Meaningful synthetic coverage includes:
+
+- One mixed trace selects distinct template, wait-timeout and communication
+  paths, retaining matching successful counterexamples. Physical siblings follow
+  the failed action's target; current missing references do not become old trace
+  references. A distant missing reference wins bounded node selection. Typed
+  template errors mentioning communication cannot qualify as device failures.
+- Exact frozen bodies for both configured providers survive local evidence
+  refresh unchanged. Native Anthropic/OpenAI strict-schema request shapes,
+  recursively closed/required objects, UTF-8 sent bytes, response usage, refusal,
+  incomplete output, malformed/oversized replies and categorical errors use
+  `httpx.MockTransport`; no external provider endpoint is contacted.
+- Diagnostic consent, model/rates/configuration changes, restart, local-only and
+  off→on invalidate old tokens. Intention revocation during both backoff and
+  technical failover prevents every subsequent reservation/call. Concurrent or
+  repeated sends claim one request once. Current-round support/counterevidence
+  and requested-section allowlists are validated after received usage is billed.
+- Follow-ups reject another target/task/profile/run/comparison, preserve the
+  original snapshot and open-segment duration, reject stale parent previews and
+  old round references, and allow at most one reviewed enum expansion/four rounds.
+  Context respects UTF-8/message limits with explicit omissions; compact never
+  replays free-form questions or provider prose.
+- Quoted JSON/Python/escaped assignments, HTML/Unicode text, invalid surrogates,
+  configured secrets and identifier categories in nested keys/error prose are
+  sanitized. Alias substring/collision and cross-round stability cases pass.
+  Redaction remains incomplete for arbitrary personal data; diagnostic consent
+  and exact request inspection remain essential.
+- Real local HTTP tests complete preview/send/revoke and scoped follow-up, reject
+  the old bypass endpoint body and retain searchable legacy analyses beyond 50.
+  A Node contract checks old diagnosis rendering, output escaping, task selection
+  and exact run/comparison links. Additive schema 5→6 retains old analyses/options/
+  ledger and private schema-5 backup. Restart preserves exact prepared payloads,
+  marks interrupted requests/usage uncertain and retains attempt links. Disposable
+  previews stay capped at 32 without reserving usage; daily compact once-per-day,
+  primary recovery, budgets/failover and cancellation regressions remain green.
+
+Independent early probes used mutable synthetic source and found no demonstrated
+canary leak in either provider body. A template/communication overlap they found
+was fixed and independently re-probed. A controller browser preflight completed
+compact device-communication preview with exact selected runs, primary HTTP-mock
+503, OpenAI mock response, scoped validation follow-up and recovered primary.
+All three actual adapter HTTP attempts matched their preceding preview bytes;
+the ledger retained one uncertain reservation and two received mock usage rows.
+Legacy findings/manual checks/validation/unknowns rendered without 1280 px overflow.
+These observations are preflight evidence, not final frozen-candidate acceptance.
+
+Official schema/response references and provider limitations are linked in
+[architecture](ARCHITECTURE.md#targeted-ai-investigations--c-implementation-candidate).
+No real model compatibility, paid billing result, Home Assistant write, live C
+installation or stable 0.2.0 release is claimed by these tests.
+The publication scanner passed for the tracked tree and all reachable Git history;
+ignored preparation, private fixtures and controller review artifacts are excluded.
+
+### Dev.1 publication/live evidence reported by the controller
+
+The corrected development-preview tree `40f8a42559dd5d389767c7f67278e3f38de878ef`
+(source `4806463d33b020ecd48ccf0f127c4c034a534f38`) was published through
+[PR 2](https://github.com/Patrick1610/vision-homeassistant/pull/2). The controller
+recorded push/remote readback, six successful PR checks and successful main tests
+plus both architecture containers, followed by a same-slug 0.1.1→0.2.0-dev.1 update
+with Supervisor's previous-version backup enabled. Live Ingress reported that
+version, running/fresh monitoring and read-only health. Twenty existing settings
+and bounded samples of 300 availability rows, 300 runs and 500 issues had zero
+missing records or changed stable fields. These are sampled API comparisons,
+not a full private database export or stable-release acceptance.
+
+One naturally retained failed HA trace was compared with the exact live Vision
+selection: run/outcome/last step/context, step/error/duration projection and
+run-bound configuration/digest matched. No execution was triggered. A separate
+latest-run backlog counterexample remained and led to the bounded scheduler
+correction below. User-authorized legacy-provider audits produced received
+analyses; this qualifies the legacy preview only, not C's new native
+structured-output protocol. No raw HA observations or provider credentials were
+included in public fixtures/reviews.
+
+### C consolidated corrective candidate
+
+The three-part critical review of frozen `5bce91b` retained eight medium issues;
+proposed unknown-cost refunds, configuration failover and stale-reference reuse
+were withdrawn. Official documentation confirmed generally available native
+Anthropic `output_config.format` with no beta header. The controller authorized
+this correction, with mandatory exact-commit independent follow-up still pending.
+
+New synthetic coverage exercises pre-reservation unsupported-task blocks, sanitized
+provider-origin compact history, typed extra sections, current-citation native
+enums, preserved in-flight revocation and unique redacted keys. Real local HTTP
+and native MockTransport tests return 202 while a provider gate stays closed,
+close the initiating client, inspect a body-free status response and then recover
+the completed analysis using another client. Duplicate sends are rejected before
+a second attempt. Deadline/shutdown/unexpected-error cases keep uncertain costs
+and safe status breadcrumbs; revocation during an in-flight attempt retains its
+promised result space and prevents failover.
+
+Storage regressions preserve exact completed bodies/history when byte/count
+admission rejects a new preview, reserve space for multiple pending results and
+store a maximum-field valid Unicode diagnosis within its explicit 1 MiB result
+bound. A separate smaller-bound test keeps billed usage when storage is rejected.
+A receipt failure rolls usage and attempt linkage back together. Schema 6→7
+backfills prior attempt identity without body changes; 120-day request pruning
+leaves receipt/usage identity across restart, and 410-day usage expiry cascades its
+receipt. Recent-50 API responses exclude result/evidence payloads, while a selected
+legacy analysis returns its exact original mapping and history search remains.
+
+The scheduler regression uses 165 automations × 22 retained runs each. Within
+15 cycles all newest successes are inspected and 15 historical failed runs are
+backfilled, at no more than 12 reads per cycle; the following cycle devotes all
+12 slots to remaining history and never refetches full/compacted evidence. The
+controller's independent frozen diagnostic-scale check used 5,200 entities,
+5,432 identifier values, a 200k structural projection, 4,000 runs and 100 cases:
+HTTP previews measured 24.3–40.1 ms on that one host, with no known test identifiers,
+three planted secret canaries or raw digest in either body, and zero external
+calls. This is bounded synthetic evidence, not universal privacy/performance proof.
+
+Corrected C still requires frozen external review, container upgrade/restart and
+real browser qualification. The original C browser mock proved byte identity and
+consent/revoke flows, but found two long-preview paragraphs clipping internally
+at 320 px; D must wrap these and verify actual readable content. D visual UX,
+release-candidate publication/live native-C provider qualification and the stable
+0.2.0 release remain open gates. Jev has no configured API key; no score is claimed.
+
+Corrective local commands: `.venv/bin/python -m pytest -q` → **330 PASS, 38.54 s**,
+with one existing Starlette/httpx deprecation warning; `.venv/bin/ruff check .`,
+`.venv/bin/ruff format --check .` → **PASS, 55 Python files**;
+`node --check vision/static/app.js`, pinned Prettier 3.6.2 and `git diff --check`
+→ **PASS**. These are canonical-source local results, not container/public/live-C
+acceptance. The prior ignored draft's 315 tests and subsequent focused checks are
+preparation evidence, superseded by this complete corrected-source run.
+
+The publication scanner passed for the staged tracked tree and all reachable Git
+history, including all new synthetic tests; no secrets/private paths were detected.
+
+### C3 accounting and withdrawal review follow-up
+
+The critical follow-up on `24a4953` closed all eight prior accepted medium issues
+and five lows without a reported privacy/billing regression. It found two new
+medium issues: repeated body-byte scans during admission, and automatic form-edit
+withdrawal of a displayed running request. This correction remains subject to
+independent exact-commit review and browser/container qualification.
+
+Schema 8 adds integer per-record byte accounting and six transactional triggers.
+The schema-7 upgrade test preserves old analysis/request columns and content,
+backfills exact multibyte UTF-8 lengths, and checks restart. Update/delete/rollback
+and ordinary pruning keep sizes synchronized. A SQLite authorizer forbids body
+reads while status-only writes and `ai_storage()` execute. The near-cap ASGI test
+populates 480 completed requests plus 480 analyses (about 60 MiB), prepares a real
+HTTP preview, verifies remaining headroom, then proves admission refusal preserves
+all old rows and charges nothing. Captured SELECTs contain no retained-body scan
+or `length(cast(...))` aggregation. The loose two-second local guard is a regression
+check on this host, not a production hardware latency guarantee.
+
+Five real-DOM tests run the shipped `index.html` and complete `app.js` in exactly
+locked, test-only jsdom with fully synthetic transport. They cover running-input
+edits with zero implicit revokes plus explicit withdrawal, unused-preview input
+revocation, visible withdrawal errors with Send disabled, a pending POST followed
+by a lost 202 response, and visible withdrawn received conversation rounds with
+continuation disabled. A transport error conservatively leaves a possibly started
+request in flight. No layout/native-browser claim follows from these DOM tests;
+the controller's delayed Safari reproduction must be repeated on the frozen fix.
+Node.js 22+ is required for this test path and CI pins Node 22; the Python runtime
+and container have no Node/jsdom dependency.
+
+Additional regressions prove independent schema-enum copies across fields,
+providers and rounds, a clear empty-evidence failure before storage/charge,
+withdrawn follow-up audit visibility and server-side continuation rejection, and
+atomic settings fields-set restoration after a failed cross-field assignment.
+The compatibility GET preview remains read-only, bounded and restricted to its
+three legacy task shapes; exact sendable previews continue to use POST.
+
+Local verification: `.venv/bin/python -m pytest -q` → **339 PASS in 44.46 s**,
+with the existing single Starlette/httpx deprecation warning; `npm test` → **5 PASS**;
+`.venv/bin/ruff check .`, `.venv/bin/ruff format --check .` → **PASS, 56 files**;
+`node --check vision/static/app.js`, pinned Prettier 3.6.2 and `git diff --check`
+→ **PASS**. No real HA/provider request, D acceptance, public change or final
+release was performed by this correction.
+
+The publication scanner passed for the complete staged tracked tree and all
+reachable Git history, including the locked test dependencies and synthetic tests.
+
+### Accepted C3 and historical dev.1 publication checkpoint
+
+The controller accepted exact `3e533aac7ecf16f55118a869b03f9cb9502e4f43` after
+critical sequence 6 GO (zero critical/high/medium), independent **339 Python tests
+in 51.14 s plus five DOM tests**, both actual architecture builds/HTTP/restart
+smokes and schema 1→8/restart/actual old-0.1.1 copy-restore. Independent AI checking
+passed 144 focused tests and twelve native-HTTP/ASGI groups. Schema 6/7→8 probes
+preserved all 20/21 old tables, ten receipt links, options and backup bytes;
+30 counter transitions and four injected atomic migration failures/retries passed.
+Near-cap accounting reads no full-body byte sums. Actual Safari verified unused
+input revocation without a call, running input without implicit withdrawal through
+technical failover, exact preview/send bytes, and explicit round-2 withdrawal with
+received result/usage/audit retained and continuation disabled. These are synthetic
+provider checks, not live native-C model qualification. Jev has no key or score.
+
+The earlier source `4806463d33b020ecd48ccf0f127c4c034a534f38` was published as
+0.2.0-dev.1 through [PR 2](https://github.com/Patrick1610/vision-homeassistant/pull/2).
+Its tree `40f8a42559dd5d389767c7f67278e3f38de878ef` was independently read back;
+[main CI 39404961604](https://github.com/Patrick1610/vision-homeassistant/actions/runs/39404961604)
+passed tests and both architecture containers. The controller verified the same
+installed slug upgraded 0.1.1→dev.1 with previous-version backup enabled, fresh
+read-only monitoring and Ingress. Twenty original options and bounded samples of
+300 availability rows, 300 runs and 500 issues retained their compared stable
+fields; this is not a full database export. One naturally retained failed run
+matched native HA steps/error/duration/context/structure without executing an HA
+action. Legacy dev.1 provider requests succeeded after owner configuration;
+those calls do not validate the new native C structured-output schema or reference
+enums. Its latest-run backlog counterexample was corrected and synthetically
+qualified in C; final live recency checks remain open.
+
+### D action-oriented release candidate — preparation
+
+Source packaging now consistently names **0.2.0-rc.1** in runtime, Supervisor,
+Python project, Docker label, smoke default, tests and current documentation.
+Visible version still comes from runtime metadata through the HTML placeholder.
+The repository URL, slug, architecture/access flags, default opt-ins, settings and
+schema 8 are preserved. A narrow comparison-copy correction calls digests retained
+structures; it makes no raw-configuration equality claim.
+
+Overview groups duplicate source observations of one run and availability before
+applying a three-card cap; one green primary CTA leads to the dossier or filtered
+availability queue. Counts support the investigation. Dossiers use aligned
+problem/evidence/manual-plan/validation steps, bounded observation and step-start
+timelines, visible gaps and disclosures for long facts, relations and local status.
+Success with continued step errors remains separate from failed execution.
+Intelligence initially shows three short proposals; full text, further proposals,
+previous rounds, usage and legacy mapping remain available behind details. Exact
+bodies, diagnostic consent, budgets and server-owned request behavior remain.
+
+Real-DOM regressions cover zero/one/many groups, availability-only count/link,
+duplicate run ID zero, escaping/long text, short versus full AI proposals, legacy
+mapping on demand, selected run/comparison links, unknown time and continued errors,
+headroom, and focus/open panels including engagement during an in-flight refresh.
+The delayed-browser preflight also exposed a real fast-completion race: a job could
+finish before the first retained-request GET and hide its result. One terminal
+handler now serves both initial load and polling, opening completed results and
+surfacing safe failed/uncertain/withdrawn states plus received-result links without
+another POST or needless terminal polling. A rejected send restores an unused
+preview only after one explicit lightweight server confirmation; unknown status
+stays conservative. Full-HTML/app DOM tests pin these paths.
+
+RC exact-source browser checks (all eight fixture variations and relevant widths),
+containers, independent review, public CI/tree readback and live Vision upgrade/
+native compact Anthropic/history checks remain open until the controller records
+their actual outcome. The stable 0.2.0 tag/release is not created by this preparation.
+The authorized output-option change is a controller live configuration gate;
+existing provider, model, key, budgets and other settings are retained. Product
+defaults and saved values are not silently changed here. Public-source research remains only
+the deferred 0.2.1 scope in VISION_SPEC.md.
+
+D local commands: `.venv/bin/python -m pytest -q` → **339 PASS, 38.35 s** with the
+existing one Starlette/httpx warning; `npm test` → **19 PASS**; focused workflow,
+insight and packaging command → **32 PASS**. Ruff lint/format (56 Python files),
+`node --check vision/static/app.js`, pinned Prettier 3.6.2 and `git diff --check`
+passed. Early mutable Safari snapshots corroborated overview/dossier navigation,
+320 px preview wrapping and revealed the now-tested fast-completion race; they do
+not replace browser qualification on the immutable D commit.
+
+D publication scanning passed for the complete staged tracked tree and all
+reachable Git history, including the new synthetic DOM fixtures.
+
+### D2 consolidated correction — audit access and resilient local dashboard
+
+Independent qualification of exact `b7764fdf33cc4e23eb31c583aa945591d1c1f6d7`
+passed root 339 Python tests in 41.04 s, 19 DOM tests, both architecture builds/
+HTTP/restart and schema-1→8/old-0.1.1 copy-restore. Its actual immutable Safari
+matrix comprised 32 overview checks (eight named variations × 320/390/768/1280)
+and twelve other navigation checks. Those initial readings reported no load/page-
+overflow errors, but a later settled recheck proved D1 long_names/320 was already
+552 px wide: that cell's early reading was not valid settled layout evidence.
+Frozen mock primary/backup sends matched their displayed bytes. The other named
+immutable checks remain bounded normal-path evidence; they did not cover every
+failure/audit branch. The critical review then rejected D1 for one high and two
+mediums, and independent mixed-error testing found a local wrong-step instruction.
+No D1 release/public/live GO follows from its passing normal-path checks.
+
+This authorized D2 correction keeps plain completed request links on the exact
+frozen body/digest/consent audit, with a prominent received-analysis link. Plain
+running audits may observe completion without leaving that audit. Only a send/
+watch session auto-opens a result; its one-shot entry is replaced via Location so
+browser Back cannot loop through the auto-redirect. Failed/uncertain/withdrawn
+states and received-result links remain visible, without a second send or restored
+continuation rights. DOM tests cover completed plain audits, fast-completed sends,
+Back, running-audit completion, explicit withdrawal and unknown transport state.
+
+Primary priorities survive failed availability-count or recent-change reads.
+Unknown counts/history are explicit; retained availability samples remain linked
+without inventing a total, and disagreeing snapshots are labelled. With incomplete
+supporting coverage an empty sample is not advertised as no issues. Initial
+primary failure is an error. Every background failure retains the last-loaded DOM,
+focus, open panels and selected text, with an explicit refresh-failed notice.
+Real ASGI tests pin the exact bounded availability and changed-history query strings.
+
+Task links and local manual instructions now use one relevant typed observation:
+mixed template/communication/timeout failures select their matching path, a timed-
+out wait flag works without error prose, and missing paths remain unknown. The
+five lows disclose/reveal references beyond four, deduplicate retained source
+checks behind details, retain the concrete last-gap time and sibling-case links,
+and use the server's comparison limitation. Repeated evidence links include
+accessible problem context. No backend/store/schema/provider, policy/default,
+version or retention change is part of D2; the same 0.2.0-rc.1 remains unpublished.
+
+A separate frozen-D1 warm/WAL fanout probe measured 16.625–18.555 ms across tested
+routes, including 18.285 ms with an external WAL write lock, with 17 read queries,
+zero writes and twelve HTTP 200s. This one-host result did not justify a query or
+threading architecture change. Relevant frozen-candidate browser/review checks,
+public RC CI/tree readback, live native-C/history qualification and stable release
+remain separate pending gates. Jev has no configured key and no score.
+
+D2 final local verification: **341 Python tests passed in 38.67 s**, with the
+existing single Starlette/httpx warning. **27 complete-app DOM tests passed**;
+the two new real ASGI dashboard-contract tests also passed independently. Ruff
+lint and format (57 Python files), Node syntax, pinned Prettier 3.6.2 and diff
+checks passed. The publication scanner passed over the staged tracked tree and
+all reachable history, detecting no secrets/private paths. These are local
+corrective-candidate checks; independent D2 review/browser acceptance and all
+public/live/stable gates remain pending.
+
+### D3 narrow-screen correction and small review follow-ups
+
+Critical D review sequence 2 closed the D1 high, two mediums, five lows and the
+independent mixed-step defect on D2 `9fadab4b6f972d02359ad065be657158c64ba390`.
+Its NO_GO was solely the reproducible settled long_names/320 overflow. Native
+Safari identified `small.affected-id` at width 515 px/right 552 px inside a 271 px
+card. D1 `b7764fdf` reproduced the same width after settling, so this is an older
+D defect, not a proven D2 regression. The previous early long-name meter pass is
+explicitly corrected here; original ignored proof files are retained unchanged.
+
+The controller independently confirmed D2 341 Python/27 DOM tests, nine additional
+DOM groups/six mixed-selector cases, both container checks and schema-8 checks.
+Actual D2 Safari request-audit, two mock-adapter exact bodies and Back paths passed.
+No actual native provider or final stable qualification follows from those mocks.
+
+A clearly labelled ignored D2+CSS scratch preflight bound base `9fadab4b6f972d02359ad065be657158c64ba390`
+and CSS-only patch SHA-256 `aa969c910f43484dcfd2d19e0bad1d3afe6f1df0b45243114a2ab8795b30de6f`.
+Native Safari then measured page width 303 px at viewport 320 px, both with the
+related-source disclosure closed and opened; its complete source key, exact
+link and focus remained accessible. This is scratch preflight, not immutable D3
+acceptance. D3 applies that affected-id width/wrap rule and includes small/span/
+strong/time in the existing non-clipping text-wrap contract for long trace paths.
+
+Four low follow-ups preserve the original history entry after a lost POST response
+resolves completed, label the primary total as attention cases as of that read,
+keep changes-only failure separate from priority coverage, and deduplicate refresh
+warnings without replacing unrelated user notices. Added complete-app DOM branches
+cover those paths plus exact-request links on new/legacy analyses, disagreeing
+availability totals and full long related keys/trace paths. An initial CSSOM test
+expectation omitted the existing observation suffix; the test was corrected and
+no product behavior was changed for that harness repair. No Python runtime, store,
+schema, provider, version, defaults or retention change occurs. Final D3 exact-source
+browser/review acceptance, public RC/live native checks and stable release remain
+pending with the controller; Jev still has no configured key and no score.
+
+D3 local verification: **341 Python tests passed in 37.47 s**, with the existing
+single Starlette/httpx warning; **34 complete-app DOM tests passed**. Ruff lint/
+format (57 Python files), Node syntax, pinned Prettier 3.6.2 and diff checks passed.
+The CSSOM contracts are styling/navigation guards, not a browser pixel-layout
+claim. Personal live model/limit/budget configuration values were removed from
+public documentation; the controller retains the authorized option change and
+preservation contract in private evidence. Freeze this unchanged RC for settled
+native-browser and same-channel critical-review acceptance.
+
+### RC CI operational repair — full Node fixture through stdin
+
+The first public RC PR CI test job reported **340 passed / 1 failed in 72.03 s**.
+The failed frontend availability contract passed its generated script as one
+Node `-e` argument; the complete 1,200-record fixture exceeded Linux's per-argument
+limit and raised `Argument list too long` before Node executed. The operational
+repair feeds the same complete script through stdin. All 1,200 records and all
+original assertions are retained; no downsize or new skip is introduced.
+
+The other Node `-e` test was inspected: its current helper slice is 5,965 bytes
+plus small literal cases, without the large inventory fixture, so it needs no edit.
+Only this test transport and this execution note change; all product/runtime/UI,
+version, options, storage, schema and provider bytes remain bound to accepted D3.
+The focused repaired test passed. Public CI rerun/readback and later live/stable
+gates remain the controller's separate evidence; no CI success is assumed here.
+
+Local repair verification: focused contract **1 PASS**, full Python suite
+**341 PASS in 36.84 s**, with the existing single Starlette/httpx warning.
+Ruff lint/format (57 Python files) and diff checks passed. This does not replace
+the pending Linux public-CI rerun.
+
+### RC CI operational repair — yield to JSDOM history timers
+
+The next Linux CI attempt passed 341 Python tests and both containers, but two
+of 34 DOM tests exhausted their `setImmediate` iteration wait during browser Back.
+With the exact CI Node **22.23.3**, ten unmodified targeted runs reproduced five
+failures. Scratch instrumentation observed one 100-check budget end after 1.67 ms;
+the same original predicate became true after yielding to the timer phase. JSDOM
+queues history traversal via timers, so this was a test-scheduler limit, not a
+changed application outcome.
+
+Only that test helper now checks a monotone one-second deadline and yields via
+`setTimeout(0)` until the original predicate succeeds. No fixed long sleep,
+assertion removal, fixture reduction or skipped test is introduced. All **34 DOM
+tests passed** on Node 22.23.3 (877 ms), followed by ten passing targeted repeats.
+Syntax/format/lint/diff checks passed. All runtime/config/package bytes remain
+identical to the prior accepted candidate; its green 341-test Python/container
+evidence is carried, not claimed as a new Python rerun. Public Linux CI rerun
+remains pending with the controller.

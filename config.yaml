@@ -1,6 +1,6 @@
 name: Vision
 url: https://github.com/Patrick1610/vision-homeassistant
-version: 0.2.0-dev.1
+version: 0.2.0-rc.1
 slug: vision
 description: Read-only observability and optional AI intelligence for Home Assistant
 arch:
@@ -22,6 +22,7 @@ options:
   poll_seconds: 60
   retention_days: 90
   ai_enabled: false
+  ai_privacy: compact
   daily_audit: false
   audit_hour_utc: 4
   primary_provider: anthropic
@@ -39,12 +40,13 @@ schema:
   poll_seconds: int(15,3600)
   retention_days: int(7,730)
   ai_enabled: bool
+  ai_privacy: list(local_only|compact|diagnostic)
   daily_audit: bool
   audit_hour_utc: int(0,23)
   primary_provider: list(anthropic|openai)
   allow_budget_failover: bool
   monthly_budget_usd: float(0,10000)
-  max_output_tokens: int(512,8192)
+  max_output_tokens: int(512,65536)
   anthropic_api_key: password?
   anthropic_model: str?
   anthropic_daily_budget_usd: float(0,1000)

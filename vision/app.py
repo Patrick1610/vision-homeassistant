@@ -15,6 +15,8 @@ from pydantic import BaseModel, Field
 
 from . import __version__
 from .ai import AIError, AnalysisInput, Intelligence, evidence_bundle
+from .ai_contract import TASKS, SendInput
+from .ai_provider import AIConflict
 from .config import Runtime, Settings
 from .monitor import Monitor
 from .security import Redactor, protect_logging
@@ -75,7 +77,6 @@ def create_app(runtime=None, settings=None, *, connect=True):
         app.state.monitor = Monitor(app.state.store, settings, runtime, redactor)
         app.state.insights = app.state.monitor.insights
         app.state.ai = Intelligence(app.state.store, settings, app.state.monitor, redactor)
-        app.state.ai_job = None
         app.state.tasks = []
         if connect:
             app.state.tasks.append(asyncio.create_task(app.state.monitor.run()))
@@ -86,7 +87,7 @@ def create_app(runtime=None, settings=None, *, connect=True):
             for task in app.state.tasks:
                 task.cancel()
             await asyncio.gather(*app.state.tasks, return_exceptions=True)
-            await app.state.ai.client.aclose()
+            await app.state.ai.close()
             app.state.store.close()
 
     app = FastAPI(
@@ -330,13 +331,31 @@ def create_app(runtime=None, settings=None, *, connect=True):
     @app.get("/api/intelligence")
     async def intelligence():
         db = app.state.store
-        job = app.state.ai_job
         return {
             "enabled": settings.ai_enabled,
-            "running": bool(job and not job.done()) or app.state.ai.lock.locked(),
+            "privacy": settings.ai_privacy,
+            "tasks": {
+                kind: {"title": task.title, "extra_sections": list(task.extra)}
+                for kind, task in TASKS.items()
+            },
+            "running": app.state.ai.lock.locked()
+            or bool(app.state.ai.job_task and not app.state.ai.job_task.done()),
             "last_error": db.get_meta("ai_error"),
             "daily": db.get_meta("daily_status"),
-            "analyses": db.rows("SELECT * FROM analyses ORDER BY id DESC LIMIT 50"),
+            "storage": db.ai_storage(),
+            "analyses": db.rows(
+                "SELECT id,created,kind,target,provider,model,"
+                "CASE WHEN json_valid(result) THEN json_extract(result,'$.summary') END summary,"
+                "CASE WHEN json_valid(evidence) THEN "
+                "json_extract(evidence,'$.conversation_id') END conversation_id,"
+                "CASE WHEN json_valid(evidence) THEN "
+                "json_extract(evidence,'$.request_id') END request_id,"
+                "EXISTS(SELECT 1 FROM ai_requests r WHERE r.analysis_id=analyses.id "
+                "AND r.status='completed' AND NOT EXISTS (SELECT 1 FROM ai_requests w "
+                "WHERE w.conversation_id=r.conversation_id AND w.status='revoked' "
+                "AND w.analysis_id IS NOT NULL)) can_continue FROM analyses "
+                "ORDER BY id DESC LIMIT 50"
+            ),
             "usage": db.rows(
                 "SELECT provider,model,status,sum(input_tokens) input_tokens,"
                 "sum(output_tokens) output_tokens,sum(cost_usd) cost_usd "
@@ -345,34 +364,113 @@ def create_app(runtime=None, settings=None, *, connect=True):
         }
 
     @app.get("/api/intelligence/preview")
-    async def preview(kind: str = "audit", target: str | None = None):
+    async def preview(
+        kind: str = Query(default="audit", max_length=32),
+        target: str | None = Query(default=None, max_length=500),
+    ):
         if kind not in {"audit", "incident", "automation"}:
             raise HTTPException(422, "Unknown analysis kind")
-        bundle, mapping = evidence_bundle(app.state.monitor, kind, target)
+        try:
+            bundle, mapping = evidence_bundle(app.state.monitor, kind, target)
+        except (ValueError, LookupError):
+            raise HTTPException(400, "Select an available retained target or run") from None
         return {"transmitted": bundle, "local_mapping": mapping}
 
+    @app.get("/api/intelligence/analyses/{analysis_id}")
+    async def retained_analysis(analysis_id: int):
+        rows = app.state.store.rows(
+            "SELECT a.*,EXISTS(SELECT 1 FROM ai_requests r WHERE r.analysis_id=a.id "
+            "AND r.status='completed' AND NOT EXISTS (SELECT 1 FROM ai_requests w "
+            "WHERE w.conversation_id=r.conversation_id AND w.status='revoked' "
+            "AND w.analysis_id IS NOT NULL)) can_continue FROM analyses a WHERE a.id=?",
+            (analysis_id,),
+        )
+        if not rows:
+            raise HTTPException(404, "Analysis not retained")
+        return rows[0]
+
+    @app.post("/api/intelligence/preview")
+    async def prepare_analysis(value: AnalysisInput):
+        try:
+            return app.state.ai.preview(value)
+        except AIError as error:
+            raise HTTPException(400, str(error)) from None
+
+    @app.post("/api/intelligence/requests/{request_id}/revoke")
+    async def revoke_analysis(request_id: str):
+        if len(request_id) != 32:
+            raise HTTPException(422, "Invalid prepared request identifier")
+        return app.state.ai.revoke(request_id)
+
+    @app.get("/api/intelligence/requests/{request_id}")
+    async def retained_request(request_id: str):
+        rows = app.state.store.rows("SELECT * FROM ai_requests WHERE id=?", (request_id,))
+        if not rows:
+            raise HTTPException(404, "Prepared request not retained")
+        row = rows[0]
+        local = json.loads(row["local_evidence"])
+        return {
+            "request_id": row["id"],
+            "digest": row["digest"],
+            "status": row["status"],
+            "in_flight": app.state.ai.active_request_id == request_id,
+            "created": row["created"],
+            "error": row["error"],
+            "analysis_id": row["analysis_id"],
+            "conversation_id": row["conversation_id"],
+            "preview": json.loads(row["payload"]),
+            "local_mapping": local["mapping"],
+            "local_aliases": local["aliases"],
+            "local_selection": {
+                key: local["snapshot"][key]
+                for key in ("entity", "run_id", "compare", "selection_basis")
+            },
+        }
+
+    @app.get("/api/intelligence/requests/{request_id}/status")
+    async def request_status(request_id: str):
+        if len(request_id) != 32 or any(char not in "0123456789abcdef" for char in request_id):
+            raise HTTPException(422, "Invalid prepared request identifier")
+        rows = app.state.store.rows(
+            "SELECT id request_id,status,created,error,analysis_id,conversation_id "
+            "FROM ai_requests WHERE id=?",
+            (request_id,),
+        )
+        if not rows:
+            raise HTTPException(404, "Prepared request not retained")
+        return {**rows[0], "in_flight": app.state.ai.active_request_id == request_id}
+
+    @app.get("/api/intelligence/conversations/{conversation_id}")
+    async def retained_conversation(conversation_id: str):
+        rows = app.state.store.rows(
+            "SELECT r.id request_id,r.round,r.kind,r.target,r.profile,r.run_id,r.compare_id,"
+            "r.digest,r.created,r.status,a.id analysis_id,a.result,a.provider,a.model "
+            "FROM ai_requests r LEFT JOIN analyses a ON a.id=r.analysis_id "
+            "WHERE r.conversation_id=? AND (r.status='completed' OR "
+            "(r.status='revoked' AND r.analysis_id IS NOT NULL)) "
+            "ORDER BY r.round,r.created LIMIT 4",
+            (conversation_id,),
+        )
+        if not rows:
+            raise HTTPException(404, "Completed investigation not retained")
+        return {"conversation_id": conversation_id, "rounds": rows}
+
     @app.post("/api/intelligence", status_code=202)
-    async def start_analysis(value: AnalysisInput):
-        if not settings.ai_enabled:
-            raise HTTPException(400, "Enable AI explicitly in app configuration first")
-        if app.state.ai.lock.locked() or (app.state.ai_job and not app.state.ai_job.done()):
-            raise HTTPException(409, "An analysis is already running")
-
-        async def run_analysis():
-            try:
-                app.state.store.set_meta("ai_error", None)
-                await app.state.ai.analyze(value)
-            except AIError as error:
-                app.state.store.set_meta("ai_error", redactor.text(str(error)))
-            except Exception:
-                app.state.store.set_meta(
-                    "ai_error", "Analysis failed; check provider configuration"
-                )
-
-        app.state.ai_job = asyncio.create_task(run_analysis())
-        app.state.tasks = [task for task in app.state.tasks if not task.done()]
-        app.state.tasks.append(app.state.ai_job)
-        return {"accepted": True}
+    async def start_analysis(value: SendInput):
+        try:
+            return app.state.ai.start(value)
+        except AIConflict as error:
+            raise HTTPException(409, str(error)) from None
+        except AIError as error:
+            app.state.store.set_meta("ai_error", redactor.text(str(error)))
+            raise HTTPException(400, str(error)) from None
+        except Exception:
+            app.state.store.set_meta(
+                "ai_error", "Analysis could not start; no provider request confirmed"
+            )
+            raise HTTPException(
+                500, "Analysis could not start; inspect retained request status"
+            ) from None
 
     @app.get("/")
     async def index():

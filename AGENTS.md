@@ -1,8 +1,9 @@
 # Vision
 
 Canonical repository root: this directory. Serious open-source software, MIT,
-development preview v0.2.0-dev.1. The accepted data/local-investigation foundation
-is included; targeted AI remains under development for the stable 0.2.0 release.
+release candidate v0.2.0-rc.1. Data, local investigations and targeted AI have
+passed their phase reviews. RC UI/public/live qualification and the final stable
+0.2.0 release remain separate gates; see docs/VALIDATION.md.
 Read `docs/VISION_SPEC.md`, `docs/ARCHITECTURE.md` and `PLANS.md` before changes.
 
 - Vision observes Home Assistant and MUST NEVER call services, change state,
@@ -22,6 +23,8 @@ Read `docs/VISION_SPEC.md`, `docs/ARCHITECTURE.md` and `PLANS.md` before changes
   development through all four milestones and public publication after checks.
   No custom agent workflow runtime or additional controller is activated.
 - `python -m pytest`, `ruff check .`, and `docker build .` are validation entries.
+  Run `npm ci --ignore-scripts` and `npm test` (Node.js 22+) for the real-DOM
+  interface regressions; Node/jsdom is test-only, outside the runtime container.
   Never claim live HA installation/provider billing validation without running it.
 - Publish no personal HA fixtures, host-specific paths, credentials or raw logs.
 

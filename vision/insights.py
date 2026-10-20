@@ -694,9 +694,12 @@ class Insights:
             "left": left,
             "right": right,
             "comparable": comparable,
-            "limitation": "Same retained configuration; retained differences do not prove a cause."
+            "limitation": "Same retained structure; observed differences do not prove a cause."
             if comparable
-            else "Configuration digest missing/changed; runs remain separate with unmatched paths.",
+            else (
+                "Retained structure digest missing/changed; "
+                "runs remain separate with unmatched paths."
+            ),
             "differences": differences[:100],
             "truncated": len(differences) > 100,
             "coverage_limited": any(
@@ -1021,7 +1024,14 @@ class Insights:
                 "r.kind",
             ),
             "usage": ("usage r", "r.*", "r.created", "r.id", "r.model", "r.status"),
-            "analyses": ("analyses r", "r.*", "r.created", "r.id", "r.kind", "r.provider"),
+            "analyses": (
+                "analyses r",
+                "r.*",
+                "r.created",
+                "r.id",
+                "r.kind||' '||coalesce(r.target,'')||' '||r.model||' '||r.result",
+                "r.provider",
+            ),
         }
         if (
             kind not in tables

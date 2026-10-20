@@ -221,9 +221,9 @@ The original release history above remains historical evidence.
    Atomic schema 1→3 upgrade and restart recovery, persistent structural snapshots
    and transitions, bounded safe automation control flow/operands/references,
    all-step trace projection with whole-run semantics, existing-read typed graph.
-2. **B — Local insight and investigation UI:** implemented; verification/review in progress.
-3. **C — Targeted AI tasks/privacy/scoped conversation:** authorized; follows B review.
-4. **D — Scale/security/UI/release qualification:** authorized; follows C review;
+2. **B — Local insight and investigation UI:** accepted at immutable `9a3dd713`.
+3. **C — Targeted AI tasks/privacy/scoped conversation:** accepted at immutable `3e533aac`.
+4. **D — Scale/security/UI/release qualification:** RC implementation under qualification;
    final public tree/CI/release and live Vision upgrade evidence are separate gates.
 
 Phase A checks: `python -m pytest -q`, `ruff check .`, `ruff format --check .` and
@@ -475,3 +475,317 @@ outside this preview correction commit. Public publication is still pending.
 Focused packaging/HTTP verification passed four tests in 0.24 s, with the
 existing Starlette warning; Ruff lint/format and diff checks passed. The
 controller will repeat full verification on the exact corrected preview tree.
+
+## C — targeted AI investigations, prepared requests and scoped follow-ups
+
+After B acceptance and isolated dev.1 packaging, the controller authorized C
+implementation canonically above `4806463d33b020ecd48ccf0f127c4c034a534f38`.
+The separate frozen dev.1 artifact remains the publication/live-preview candidate;
+C keeps its version metadata until final D packaging. The requested implementation
+configuration remains gpt-6.1-sol/ultra; effective runtime settings are not independently
+attested by repository code. The existing ignored C preparation was integrated
+without a second repository, worktree or custom controller.
+
+C implements distinct task instructions and actual path/evidence selection for
+audit, incident, automation logic, optimization, availability, template errors,
+missing targets, refused starts, condition stops, wait timeouts and communication.
+Specialized prerequisites are explicit; unsupported nonempty findings fail local
+validation. Current missing-reference structure stays separate from selected
+historical runs. Communication follows the failed action's physical targets and
+healthy siblings, and typed template errors cannot qualify as communication errors.
+Run/compare selection persists through the UI, preview binding and follow-up scope.
+
+Additive schema 6 retains exact prepared request envelopes, local provenance,
+conversation scope and attempt-to-usage links, preserving old analyses/ledger.
+Compact remains the existing-installation default; local-only never reserves or
+sends. Diagnostic needs configured richer opt-in and explicit per-preview consent.
+Quoted/escaped JSON/Python secrets, Unicode/HTML escapes, addresses/paths and typed
+identifier categories are sanitized before preview/outbound. Aliases are stable
+within a conversation; fresh round references cannot reinterpret an old E1.
+Redaction has explicit limits and never promises complete personal-data removal.
+
+Every exact primary/backup body, task/schema version, bounded prior context and
+budget policy is frozen and digest-bound. Sending atomically claims a preview once;
+private process/configuration/consent-generation binding blocks stale tokens after
+restart or off→on. Retry and failover recheck consent/revocation before every new
+reservation/network attempt. Received refusal/incomplete/invalid-citation results
+remain billed, while uncertain attempts preserve conservative reservations. Daily
+explicit opt-in remains once-daily compact, never diagnostic. Scoped conversations
+allow four rounds, eight messages/24 KiB context and one manually reviewed enum
+expansion over the initial local snapshot; no HA/SQL/shell/free evidence tools.
+Disposable unattempted previews are capped at 32; complete preview/local evidence
+is at most 512 KiB. Older attempted/analysis history follows ordinary retention.
+
+The UI provides dossier task preselection, exact request review/send/revoke,
+evidence/alias mapping, support/counterevidence/unknowns and concrete manual checks
+with validation. Legacy analyses keep rendering and are searchable beyond the
+recent-50 Intelligence list. Safe allowlisted startup codes also distinguish the
+existing bounded writer timeout and unavailable read-only snapshot source; backup
+hashing was not speculatively optimized. Official provider contracts and bounds
+are documented in ARCHITECTURE.md; no paid-model compatibility claim is made.
+
+C local qualification passed **278 tests in 35.48 s**, including **64 new**
+synthetic regressions above the 214-test corrected preview. The focused six-file
+AI suite passed **82 tests in 1.11 s**. Ruff lint/format (37 files), Node syntax,
+pinned Prettier 3.6.2 and diff checks passed. The only warning is the existing
+Starlette/httpx deprecation. HA gateway/version/image metadata are unchanged.
+
+Early independent mutable-source probes verified secret canaries, current-versus-
+historical structure and selected-run binding, and caught a template/communication
+classification overlap that now has two regressions. The controller's synthetic
+browser preflight completed focused preview/send, mocked primary HTTP failure,
+backup response, scoped validation follow-up and primary recovery. All three
+adapter HTTP attempts matched their previously displayed body bytes. Those are
+mock/mutable-source results, not final commit, real provider billing or live C
+qualification. Freeze C for independent exact-commit checks and mandatory critical
+external review; final D packaging/publication/live gates remain open.
+The tracked-tree/reachable-history publication scanner also passed before this
+commit; ignored preparation and private controller artifacts remain excluded.
+
+### C consolidated correction — server jobs, admission and billing receipts
+
+The critical three-part review of `5bce91b379f7fe4428cea8609cf6686a761a8f05`
+identified eight accepted medium issues and five proportionate lower-severity
+corrections. The controller authorized this consolidated correction. Current
+primary-provider documentation confirmed native structured output without a beta
+header; configuration/authentication failures remain fail-closed. Per-round
+namespaces and conservative unknown billing remain deliberate safeguards.
+
+Corrected unsupported tasks retain an explanatory local preview but cannot claim,
+reserve or call a provider. Compact follow-ups include re-sanitized provider-origin
+conclusions/uncertainty/unknowns and manual/validation text, while source free text
+and questions remain excluded. Historical citation fields are stripped; both
+native provider schemas enumerate only current references. Typed compact extra
+sections retain meaningful relation/change/sibling summaries. Redacted dictionary
+keys cannot silently overwrite another observation. In-flight withdrawal remains
+revoked even when its received result/usage is retained.
+
+Sending now returns HTTP 202 and a retained request ID, with a server-owned job,
+900-second deadline, bounded provider timeouts and body-free status polling. A
+client disconnect does not cancel the investigation. Admission reserves result
+space and refuses new previews at 512 retained request rows or 64 MiB of retained
+AI payloads; exact old requests and analyses are not evicted to satisfy the cap.
+Expired unused previews are cleaned. Schema 7 backfills minimal billing receipts
+and retains request/round/digest/attempt provenance with the 400-day usage ledger,
+after ordinary heavy-body pruning. Usage/attempt/receipt insertion is atomic.
+Recent analysis lists are thin, with full legacy mapping available on demand;
+result search is preserved and no second list fetch occurs during binding.
+Settings assignment validates atomically, including cross-field failures. Safe
+HTTP status/reason/help and schema/reference/section errors exclude remote prose.
+Context-window truncation is billed incomplete. Success/error envelope limits are
+4 MiB/8 KiB; output cap is 65,536 with the 2,048 default and saved 8,192 untouched.
+
+A separately demonstrated scheduler starvation defect is also corrected: newest
+listed runs get an independent round-robin lane (11 count slots), historical error
+backfill gets one, unused slots are shared and lane order alternates under the
+existing 12-read/5-second budget. Synthetic 165×22-run qualification inspects all
+165 newest successes within 15 cycles, with old backfill progressing and no full
+trace refetch after compaction. Source/transport gaps still extend live coverage.
+The controller independently measured frozen diagnostic previews on one host at
+24.3–40.1 ms for a 5,200-entity synthetic inventory, with zero external calls;
+this did not justify thread-offload complexity or a general performance guarantee.
+
+D remains closed until corrected-C review acceptance. The owner-directed concise
+visual presentation and the deferred 0.2.1 public-source research scope now have
+one canonical definition in [VISION_SPEC.md](docs/VISION_SPEC.md). No research
+executor, HA operation, paid request or final version/tag was added in this phase.
+
+Corrective local qualification: **330 tests passed in 38.54 s**, including all
+278 prior tests and 52 added regressions; the only warning is the existing
+Starlette/httpx deprecation. Ruff lint and format (55 Python files), Node syntax,
+pinned Prettier 3.6.2 and diff checks passed. Publication scanning passed for the staged tracked tree and all reachable
+Git history, including the new synthetic tests. Freeze this candidate for independent schema-6
+upgrade/receipt/lifecycle/browser checks and the same critical review stream.
+
+
+### C3 follow-up — small accounting reads and explicit withdrawal
+
+The same critical review accepted every prior medium/low correction on `24a4953`
+but found two new medium issues. This authorized follow-up replaces repeated
+retained-body byte scans in admission with additive schema-8 per-row accounting.
+One migration backfill preserves all old body content; transactional insert,
+body/id-update and delete triggers maintain UTF-8 sizes. Admission/headroom then
+read small integer rows and status/attempt metadata. No history is deleted to
+satisfy admission, and the UI exposes remaining slots/bytes without a deletion
+feature. A synthetic real-HTTP preview regression seeds 480 completed requests
+and analyses (about 60 MiB) and checks bounded admission with no retained-body
+SELECT scan or provider call. Trigger, rollback, prune and restart behavior is
+covered separately.
+
+Form input now auto-revokes only an unused, non-in-flight preview. Running
+withdrawal requires explicit Revoke. The client marks an attempted send in flight
+before awaiting 202, and preserves that uncertainty after a transport error.
+Automatic withdrawal errors stay visible and disable the old Send. Exactly locked
+test-only jsdom tests execute the complete shipped HTML/script, covering both
+branches, explicit withdrawal, failure and a pending POST/lost-response race.
+Node 22 CI runs these tests; no Node dependency enters the container/runtime.
+
+Proportionate lows are included: current-reference enums are added only after a
+recursive independent schema copy; empty projected evidence fails locally before
+charge; received withdrawn rounds remain labelled in conversation audit while
+continuations are blocked; failed settings assignment also restores fields-set
+metadata. The architecture documents the bounded read-only three-task compatibility
+GET. D remains paused; no HA/provider call, public change or release is claimed.
+
+
+C3 local qualification passed **339 Python tests in 44.46 s** and **5 complete-app
+DOM tests**. Ruff lint/format (56 Python files), Node syntax, pinned Prettier 3.6.2
+and diff checks passed. Only the existing Starlette/httpx warning remains. Freeze
+the correction for independent schema-7→8, near-cap accounting, delayed native
+browser and same-channel critical-review checks; D remains paused until C-GO.
+
+The publication scanner passed for the complete staged tracked tree and all
+reachable Git history, including the locked test dependencies and synthetic tests.
+
+### C accepted; D action-oriented RC qualification
+
+The controller accepted exact C3 `3e533aac7ecf16f55118a869b03f9cb9502e4f43`:
+critical review sequence 6 GO with zero critical/high/medium, root 339 tests plus
+five DOM tests, both architecture image/HTTP/restart checks and actual schema-1→8/
+old-binary restore. Independent 144 focused tests/twelve AI chains, preserving
+6/7→8 migrations, counter/failure/receipt probes and actual Safari request lifecycle
+checks passed. Public/live dev.1 and one native retained-run comparison are now
+recorded in VALIDATION.md; they do not qualify live native C.
+
+D applies only visual/helper changes above that C3 base, preserving the actual
+request/consent/budget/legacy/history contracts. It implements the single
+VISION_SPEC presentation definition: three grouped overview priorities/one primary
+CTA; problem→evidence→manual plan→validation; truthful visual step starts, gaps and
+retained-structure language; three concise AI proposals with full/additional content
+behind details; mobile wrapping and refresh focus preservation. RC metadata is
+0.2.0-rc.1, with the same repository URL/slug/private volume and unchanged defaults.
+
+The accepted rejected-send low uses one lightweight state read, restoring preview
+only on confirmed unused/not-in-flight status. Early Safari preflight additionally
+found a fast-completed initial-request race; the shared initial/poll terminal path
+now opens the received analysis or shows safe failed/uncertain/withdrawn state.
+DOM tests cover both races without new billing calls. The source-table upsert and
+external trigger-loss lows remain deferred/unsupported, documented in ARCHITECTURE;
+no store/migration change is added. Two earlier source-slice tests were adapted to
+the new helpers and grouped availability contract; all their original legacy/
+escaping/priority concerns remain covered, plus full real-DOM route tests.
+
+After local checks, freeze D for independent eight-variant browser/navigation,
+both architecture builds/upgrade/restart and new external D review. Only after
+acceptance does the controller publish RC through PR/CI, verify exact public tree,
+update the same installed Vision with previous-version backup, preserve original
+history/settings and qualify native compact Anthropic/trace recency. Apply the
+authorized output-option change while retaining the existing provider, model,
+key, budgets and other settings. Final stable metadata/tag/release and
+live final verification follow actual RC evidence. No public action or HA/provider
+request is performed by the builder at this checkpoint.
+
+D local verification: **339 Python tests passed in 38.35 s** with the existing
+single Starlette/httpx warning; **19 complete-app DOM tests passed**, covering
+initial and polled terminal outcomes plus safe send recovery. The 32 focused
+workflow/insight/packaging tests also passed. Ruff lint/format (56 Python files),
+Node syntax, pinned Prettier 3.6.2 and diff checks passed. The early mutable Safari
+snapshots are preflight only; immutable D acceptance remains pending.
+
+D publication scanning passed for the complete staged tracked tree and all
+reachable Git history, including the new synthetic DOM fixtures.
+
+### D2 consolidated corrective gate
+
+D1 `b7764fdf` passed independent 339/19 tests and both images. Its initial 44
+immutable Safari readings did not establish full D acceptance; the settled
+long_names/320 counterexample and correction are recorded in the D3 section.
+The first critical D review found one high/two mediums/five lows, and the AI helper
+proved a mixed-error step-binding defect. The controller authorized one scoped
+correction: keep plain request audits exact and accessible, auto-open only the
+consumed send/watch session, preserve engaged/last-loaded content on background
+failure, and degrade supporting reads without hiding known priorities or implying
+zero issues. One task/focus selector supplies both the manual plan and its actual
+matching path, with unknown paths explicit. All five lower-severity presentation
+issues are included behind compact disclosures; server copy remains authoritative.
+
+New full-app DOM tests pin completed-audit access, fast send/Back/no extra call,
+running-audit completion, background rejection during focus/open details/selection,
+partial supporting reads, availability disagreements, all mixed-error combinations,
+wait-only evidence, unknown path and retained low-level guidance/links. Real ASGI
+tests pin the two dashboard query strings and their bounded response shapes.
+No store/schema/provider/default/retention expansion or RC version change occurs.
+The independent frozen-D1 fanout/WAL probe is recorded as bounded evidence rather
+than prompting speculative performance work. Freeze D2 after local checks for
+same-channel review and relevant independent browser regression checks. Public/live
+RC and final stable steps remain with the controller after actual GO.
+
+D2 final local verification: **341 Python tests passed in 38.67 s**, with the
+existing single Starlette/httpx warning. **27 complete-app DOM tests passed**;
+the two new real ASGI dashboard-contract tests also passed independently. Ruff
+lint and format (57 Python files), Node syntax, pinned Prettier 3.6.2 and diff
+checks passed. The publication scanner passed over the staged tracked tree and
+all reachable history, detecting no secrets/private paths. These are local
+corrective-candidate checks; independent D2 review/browser acceptance and all
+public/live/stable gates remain pending.
+
+### D3 consolidated layout and low-severity follow-up gate
+
+D2's same-channel review closed the original high/two mediums/five lows and mixed-
+step defect; only the known 320 px overflow blocked acceptance. Native metrics
+identified a 515 px affected-id flex child and 552 px page on both settled D1 and
+D2. Correct the earlier premature long-name meter result rather than treating it
+as proof. The labelled ignored D2+CSS preflight measured 303 px at 320 px and kept
+the full opened related source link/focus; immutable D3 must still be requalified.
+
+Apply only targeted non-clipping text wrapping/bounded affected-id width and four
+small lows: consume actual watch=1 history entries only, preserve original entries
+on lost-POST completed recovery, label primary totals by their read, distinguish
+history-only failure from unknown priorities, and preserve unrelated notices during
+refresh failures. Add the requested complete-app navigation/CSSOM/read-failure
+contracts. Keep runtime Python, schema/storage/providers, defaults/retention and
+0.2.0-rc.1 metadata unchanged. D2's independent 341/27 tests, nine extra DOM groups/
+six mixed cases, both container/schema-8 checks and actual Safari audit/mock-byte/
+Back checks remain bounded evidence. Future unsupported database upsert/trigger
+lows remain deferred. Freeze D3 after proportional local checks for root's same-
+channel critical review and settled exact-source browser qualification; no public,
+live or stable release action belongs to this writer checkpoint.
+
+D3 local verification: **341 Python tests passed in 37.47 s**, with the existing
+single Starlette/httpx warning; **34 complete-app DOM tests passed**. Ruff lint/
+format (57 Python files), Node syntax, pinned Prettier 3.6.2 and diff checks passed.
+The CSSOM contracts are styling/navigation guards, not a browser pixel-layout
+claim. Personal live model/limit/budget configuration values were removed from
+public documentation; the controller retains the authorized option change and
+preservation contract in private evidence. Freeze this unchanged RC for settled
+native-browser and same-channel critical-review acceptance.
+
+### RC CI operational repair — full Node fixture through stdin
+
+The first public RC PR CI test job reported **340 passed / 1 failed in 72.03 s**.
+The failed frontend availability contract passed its generated script as one
+Node `-e` argument; the complete 1,200-record fixture exceeded Linux's per-argument
+limit and raised `Argument list too long` before Node executed. The operational
+repair feeds the same complete script through stdin. All 1,200 records and all
+original assertions are retained; no downsize or new skip is introduced.
+
+The other Node `-e` test was inspected: its current helper slice is 5,965 bytes
+plus small literal cases, without the large inventory fixture, so it needs no edit.
+Only this test transport and this execution note change; all product/runtime/UI,
+version, options, storage, schema and provider bytes remain bound to accepted D3.
+The focused repaired test passed. Public CI rerun/readback and later live/stable
+gates remain the controller's separate evidence; no CI success is assumed here.
+
+Local repair verification: focused contract **1 PASS**, full Python suite
+**341 PASS in 36.84 s**, with the existing single Starlette/httpx warning.
+Ruff lint/format (57 Python files) and diff checks passed. This does not replace
+the pending Linux public-CI rerun.
+
+### RC CI operational repair — yield to JSDOM history timers
+
+The next Linux CI attempt passed 341 Python tests and both containers, but two
+of 34 DOM tests exhausted their `setImmediate` iteration wait during browser Back.
+With the exact CI Node **22.23.3**, ten unmodified targeted runs reproduced five
+failures. Scratch instrumentation observed one 100-check budget end after 1.67 ms;
+the same original predicate became true after yielding to the timer phase. JSDOM
+queues history traversal via timers, so this was a test-scheduler limit, not a
+changed application outcome.
+
+Only that test helper now checks a monotone one-second deadline and yields via
+`setTimeout(0)` until the original predicate succeeds. No fixed long sleep,
+assertion removal, fixture reduction or skipped test is introduced. All **34 DOM
+tests passed** on Node 22.23.3 (877 ms), followed by ten passing targeted repeats.
+Syntax/format/lint/diff checks passed. All runtime/config/package bytes remain
+identical to the prior accepted candidate; its green 341-test Python/container
+evidence is carried, not claimed as a new Python rerun. Public Linux CI rerun
+remains pending with the controller.
