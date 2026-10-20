@@ -15,11 +15,14 @@ const frozenBody = '{"synthetic":"exact-reviewed-body"}';
 const response = (data, ok = true) => ({ ok, json: async () => data });
 const tick = () => new Promise((resolve) => setImmediate(resolve));
 async function until(predicate) {
-  for (let i = 0; i < 100; i++) {
-    if (predicate()) return;
-    await tick();
+  const deadline = performance.now() + 1000;
+  while (!predicate()) {
+    if (performance.now() >= deadline)
+      assert.fail("Actual application did not reach the expected DOM state");
+    // JSDOM queues history traversal through timers; a fast setImmediate loop
+    // can exhaust a fixed iteration budget before those timer tasks execute.
+    await new Promise((resolve) => setTimeout(resolve, 0));
   }
-  assert.fail("Actual application did not reach the expected DOM state");
 }
 async function load({
   running = false,

@@ -885,3 +885,22 @@ Local repair verification: focused contract **1 PASS**, full Python suite
 **341 PASS in 36.84 s**, with the existing single Starlette/httpx warning.
 Ruff lint/format (57 Python files) and diff checks passed. This does not replace
 the pending Linux public-CI rerun.
+
+### RC CI operational repair — yield to JSDOM history timers
+
+The next Linux CI attempt passed 341 Python tests and both containers, but two
+of 34 DOM tests exhausted their `setImmediate` iteration wait during browser Back.
+With the exact CI Node **22.23.3**, ten unmodified targeted runs reproduced five
+failures. Scratch instrumentation observed one 100-check budget end after 1.67 ms;
+the same original predicate became true after yielding to the timer phase. JSDOM
+queues history traversal via timers, so this was a test-scheduler limit, not a
+changed application outcome.
+
+Only that test helper now checks a monotone one-second deadline and yields via
+`setTimeout(0)` until the original predicate succeeds. No fixed long sleep,
+assertion removal, fixture reduction or skipped test is introduced. All **34 DOM
+tests passed** on Node 22.23.3 (877 ms), followed by ten passing targeted repeats.
+Syntax/format/lint/diff checks passed. All runtime/config/package bytes remain
+identical to the prior accepted candidate; its green 341-test Python/container
+evidence is carried, not claimed as a new Python rerun. Public Linux CI rerun
+remains pending with the controller.
