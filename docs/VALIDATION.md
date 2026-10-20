@@ -864,3 +864,24 @@ claim. Personal live model/limit/budget configuration values were removed from
 public documentation; the controller retains the authorized option change and
 preservation contract in private evidence. Freeze this unchanged RC for settled
 native-browser and same-channel critical-review acceptance.
+
+### RC CI operational repair — full Node fixture through stdin
+
+The first public RC PR CI test job reported **340 passed / 1 failed in 72.03 s**.
+The failed frontend availability contract passed its generated script as one
+Node `-e` argument; the complete 1,200-record fixture exceeded Linux's per-argument
+limit and raised `Argument list too long` before Node executed. The operational
+repair feeds the same complete script through stdin. All 1,200 records and all
+original assertions are retained; no downsize or new skip is introduced.
+
+The other Node `-e` test was inspected: its current helper slice is 5,965 bytes
+plus small literal cases, without the large inventory fixture, so it needs no edit.
+Only this test transport and this execution note change; all product/runtime/UI,
+version, options, storage, schema and provider bytes remain bound to accepted D3.
+The focused repaired test passed. Public CI rerun/readback and later live/stable
+gates remain the controller's separate evidence; no CI success is assumed here.
+
+Local repair verification: focused contract **1 PASS**, full Python suite
+**341 PASS in 36.84 s**, with the existing single Starlette/httpx warning.
+Ruff lint/format (57 Python files) and diff checks passed. This does not replace
+the pending Linux public-CI rerun.

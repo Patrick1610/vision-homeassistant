@@ -467,7 +467,8 @@ def test_availability_only_overview_keeps_concrete_case_links():
             "overviewCases([fault,...a],{total:a.length,items:a})]))"
         )
     )
-    result = json.loads(subprocess.check_output([node, "-e", script]))
+    # Keep the full fixture while avoiding Linux's per-argument size ceiling.
+    result = json.loads(subprocess.check_output([node], input=script.encode()))
     assert len(result[0]) == 1 and result[0][0]["group_count"] == 1200
     assert result[0][0]["href"] == "#issues/?source=availability&status=attention"
     assert [row["key"] for row in result[1]] == ["availability-group", "static"]
