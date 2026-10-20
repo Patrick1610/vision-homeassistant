@@ -3,6 +3,7 @@
 import asyncio
 import json
 import re
+import time
 from contextlib import suppress
 
 import aiohttp
@@ -20,6 +21,11 @@ READS = {
 }
 EVENTS = {"state_changed", "automation_triggered"}
 IDENTIFIER = re.compile(r"^[A-Za-z0-9_.:-]{1,200}$")
+VERSION = re.compile(r"20[0-9]{2}\.(?:[1-9]|1[0-2])\.(?:0|[1-9][0-9]{0,3})(?:b[1-9][0-9]{0,2})?")
+
+
+def core_version(value):
+    return value if isinstance(value, str) and VERSION.fullmatch(value) else None
 
 
 class HAError(Exception):
@@ -50,6 +56,7 @@ class HAClient:
         self.pending = {}
         self.counter = 0
         self.reader = None
+        self.server_version, self.version_observed_at = None, None
 
     async def __aenter__(self):
         self.session = aiohttp.ClientSession(
@@ -70,6 +77,8 @@ class HAClient:
                 auth = await self.ws.receive_json()
                 if auth.get("type") != "auth_ok":
                     raise HAError("authentication_failed")
+                self.server_version = core_version(auth.get("ha_version"))
+                self.version_observed_at = time.time() if self.server_version else None
             self.reader = asyncio.create_task(self._read())
             return self
         except BaseException:

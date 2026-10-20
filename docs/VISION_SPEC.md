@@ -203,11 +203,45 @@ stays behind the separate later phase; no new HA read or write is required here.
   interval/coverage/cohort oracles, migrations/restart and DOM workflows, preserve
   the 341 Python / 34 DOM baseline, freeze and critically review the working phase.
 
-## Deferred 0.2.1 public-source research
+## Authorized 0.2.1 phase B — public-source research
 
-Separate tested feature, not part of 0.2.0: research a grouped problem using official
-HA/integration documentation and relevant GitHub sources first, with Reddit only
-as supplementary evidence. Bind proposals to versions and cited sources, list
-prerequisites, manual steps and validation, cache results and use a separate research
-budget. Minimize public queries; HA credentials never enter research tools. No web
-research executor, scheduled work or new HA capability is authorized by this backlog.
+After phase-A critical GO on `83355b6`, the owner/controller authorized a working
+0.2.1-dev.2. One manually selected problem uses a visible, closed generic query
+plan, a bounded public-research job, then a NEW exact AI preview over the SAME
+frozen local snapshot plus actual sanitized public excerpts. Sending to a model
+remains a separate reviewed action. No research during daily audits, provider
+retries/failover or scoped follow-ups. Existing compact privacy, options, billing,
+received history and exact v2 request bodies/digests remain preserved.
+
+Public inputs are only a bundled known integration catalog, closed problem class
+and strictly validated current authenticated HA version. Never send household
+names/IDs, questions, errors, URLs or custom platform names as queries. Current
+server version is not a historical run version. Public transport is GET-only,
+fixed HTTPS hosts/paths/headers, no redirects, credentials, cookies, Referer or
+environment proxy. Official HA documentation and fixed GitHub core/upstream
+catalog repositories are supported; Reddit is explicitly unavailable without
+OAuth and has no workaround.
+
+Each manual job is bounded to 6 GET attempts, 2 issue searches, 5 sources, 30 s,
+512 KiB decoded per response and 12 KiB normalized public context. Durable atomic
+quota is claimed before dispatch: 20 GETs/hour, 60/day and 2 searches/minute;
+failed dispatch claims perform no network and possible attempts are not refunded.
+Cache/plans/jobs are bounded; upstream backoff and quota survive restart. At most
+one comment page (`per_page=3`) from one already-found catalog issue uses its
+public integer comment count to derive the last page, with at most two cited
+comments. Missing/invalid count causes a gap, never a guessed first page/crawl.
+
+Research v3 validates separate current-round local and public-source refs and an
+optional source-bound manual plan with prerequisites and 2–4 steps, followed by
+validation and explicit uncertainty. Public text remains untrusted; no issue,
+closed status or comment establishes local cause/fix/version compatibility.
+Source hashes bind exact final sanitized excerpts before either native body is
+frozen. Analyses retain cited sources after request expiry. Ordinary v2 results
+and provider contracts remain supported.
+
+Availability also accepts an explicitly typed exact registered-device target,
+without run/comparison or representative entity: bounded own members, healthy
+counterevidence, roles, expected/disabled evidence and coverage; separate bounded
+same-integration correlation. Follow-ups reuse that frozen group. The UI centers
+the selected/latest solution and keeps older investigations compact. No new HA
+operation, action executor, paid credential or richer privacy opt-in is added.

@@ -135,6 +135,10 @@ def communication_context(monitor, sections):
 
 def capture(monitor, request):
     """Frozen enum-section snapshot: only bounded projections already retained locally."""
+    if request.target_type == "device":
+        from .ai_devices import capture_device
+
+        return capture_device(monitor, request)
     entity, case = resolve(monitor, request)
     insights, store = monitor.insights, monitor.store
     sections = {
@@ -581,6 +585,17 @@ def compact(section, value, captured_at):
                 "entity_registry_available",
                 "dependency_relations_omitted",
                 "start_source",
+                "reliable_now",
+                "cache_pending",
+                "device_members_observed",
+                "device_members_omitted",
+                "device_history_omitted",
+                "device_coverage_gaps",
+                "device_coverage_gaps_limited",
+                "correlated_devices_observed",
+                "correlated_devices_omitted",
+                "measurement_started",
+                "coverage_available",
             }
         }
         if "coverage" in value:
@@ -601,9 +616,32 @@ def compact(section, value, captured_at):
         return {
             "status": value["state"],
             "gap": bool(value.get("uncertain")),
-            "observed_seconds": round(max(0, (value["ended"] or captured_at) - value["started"])),
+            "observed_seconds": value.get("observed_seconds")
+            if value.get("observation_scope") == "registered_device"
+            else round(max(0, (value["ended"] or captured_at) - value["started"])),
         }
     if section == "target":
+        if value.get("type") in {"registered_device", "device_member"}:
+            return {
+                key: value[key]
+                for key in (
+                    "type",
+                    "availability",
+                    "attention",
+                    "power_expectation",
+                    "meaningful",
+                    "unknown",
+                    "unavailable",
+                    "member_count",
+                    "reliable_now",
+                    "role",
+                    "disabled",
+                    "expected_offline",
+                    "unassessed_members",
+                    "registry_complete",
+                )
+                if key in value
+            }
         return {
             k: value.get(k) for k in ("availability", "expected_offline", "outcome", "disabled")
         }
@@ -658,11 +696,15 @@ def compact(section, value, captured_at):
         }
     if section == "siblings":
         availability = value.get("availability")
-        return {
+        safe = {
             "availability": availability
-            if availability in {"available", "unavailable", "unknown"}
+            if availability
+            in {"available", "unavailable", "unknown", "online", "offline", "partial", "excluded"}
             else "unknown"
         }
+        if value.get("type") == "correlated_device":
+            safe.update(type="correlated_device", relation="same_integration_only")
+        return safe
     raise ValueError("Unknown compact evidence section")
 
 

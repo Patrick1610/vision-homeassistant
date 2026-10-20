@@ -357,6 +357,10 @@ def test_health_and_run_queue_respects_episode_bound_attention(observed, monkeyp
     # Exact expiry resumes review; a stale episode must never suppress a new generation.
     store.execute("UPDATE case_annotations SET expires=?", (now,))
     assert {"health", "recent_failure"} <= {r["kind"] for r in service.priorities()}
+    monitor.entities["automation.test"] = {"name": "Synthetic friendly automation"}
+    action = next(r for r in service.priorities() if r["kind"] == "recent_failure")
+    assert action["title"] == "Synthetic friendly automation"
+    assert action["href"] == "#automations/automation.test?run_id=r1"
     store.execute("UPDATE case_annotations SET expires=NULL,case_first_seen=0")
     assert {"health", "recent_failure"} <= {r["kind"] for r in service.priorities()}
 

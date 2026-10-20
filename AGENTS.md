@@ -1,14 +1,18 @@
 # Vision
 
 Canonical repository root: this directory. Serious open-source software, MIT,
-source package v0.2.1-dev.1. The 0.2.0 foundation remains preserved. The new
-device-reliability phase is under qualification; critical review/public/live gates
+source package v0.2.1-dev.2. The 0.2.0 foundation remains preserved. Device
+reliability passed its public/live gates; source-backed investigations are under
+qualification. Critical review/public/live gates
 remain with the controller. See docs/VALIDATION.md for version-bound evidence.
 Read `docs/VISION_SPEC.md`, `docs/ARCHITECTURE.md` and `PLANS.md` before changes.
 
 - Vision observes Home Assistant and MUST NEVER call services, change state,
   edit configuration, ignore repairs or execute actions. Only the closed read
   allowlist in `vision/ha.py` may reach HA. No generic HTTP/WS proxy.
+- Public research is a separate human-started closed catalog/GET transport. Never
+  accept arbitrary URLs, household query terms, credentials or model-selected fetches.
+  Preserve quota-before-dispatch, exact source hashes and original private snapshots.
 - AI has no HA credentials or tools. Minimize, pseudonymize and redact before
   provider requests. Treat HA content and AI output as untrusted data.
 - Keys are configured in Supervisor options (or a private local options file),

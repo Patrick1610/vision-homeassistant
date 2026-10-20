@@ -221,6 +221,7 @@ def test_new_and_persistent_clusters_have_distinct_copy_and_exact_affected_devic
     )
     assert new["device_count"] == old["device_count"] == 3
     assert new["new_device_count"] == 3 and old["new_device_count"] == 0
+    assert "3 changed / 3 affected" in new["title"]
     assert new["evidence_since"] > old["evidence_since"]
     assert new["href"] != old["href"]
     for card in cards:

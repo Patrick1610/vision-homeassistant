@@ -61,3 +61,30 @@ billed usage. Missing usage, cancellation and interrupted attempts retain uncert
 reservations. Model protocol compatibility is verified with synthetic HTTP mocks;
 Vision does not claim a live paid-provider/model qualification. See
 [privacy](PRIVACY.md) and [architecture](docs/ARCHITECTURE.md) for bounds and gaps.
+
+
+## Optional public-source investigation
+
+Open a concrete dossier/device, prepare its local exact preview, then choose
+**Preview public query plan**. Inspect the generic catalog/problem/version plan
+before choosing **Fetch this public source plan**. A bounded background job can
+be reopened without another fetch. Review retained sources, content hashes,
+version limits and gaps, then choose **Prepare new exact AI preview with these
+sources**. Inspect both complete provider bodies and costs before sending.
+Diagnostic attachment requires its own unchecked consent. Research/follow-up
+never grants Home Assistant actions or automatic repairs.
+
+Device scope is availability-only and names the exact registered device. Own
+healthy/unavailable/unknown members and omissions remain visible; same-integration
+peers are correlation, not a cause. There is no representative entity or run
+selection for that scope. Public research is unavailable for system audits and
+unsupported local prerequisites. Unknown/custom integrations use generic official
+docs without sending their names to a lookup. Reddit is unavailable without
+OAuth. Rate limits, incomplete sampled comments or absent sources are disclosed;
+none is replaced with invented evidence.
+
+Public research has no separate installation option in this version. To remove
+its outbound capability, disable AI (`ai_enabled: false`) or set the privacy
+ceiling to `ai_privacy: local_only`. Retained local evidence and received history
+remain inspectable. Active upstream backoff shows its host/expiry and never exceeds
+24 hours per response; there is no automatic research retry or reset action.

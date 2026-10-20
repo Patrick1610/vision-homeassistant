@@ -372,6 +372,10 @@ class Store:
                 raise RuntimeError("Database belongs to a newer Vision version")
             self.validate_device_schema(self.db)
             os.chmod(path, 0o600)
+            for suffix in ("-wal", "-shm", "-journal"):
+                sidecar = path.with_name(path.name + suffix)
+                if sidecar.is_file() and not sidecar.is_symlink():
+                    os.chmod(sidecar, 0o600)
             if (
                 version < SCHEMA_VERSION
                 and self.db.execute(

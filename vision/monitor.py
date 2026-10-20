@@ -120,6 +120,7 @@ class Monitor:
         self.config_attempts = {}
         self.connected = False
         self.last_sync = None
+        self.ha_version, self.ha_version_observed_at = None, None
         self.capabilities = {}
         self.started = time.time()
         self.store.set_meta("monitor_started", self.started)
@@ -816,6 +817,8 @@ class Monitor:
                     self.event,
                     websocket_url=getattr(self.runtime, "websocket_url", None),
                 ) as ha:
+                    self.ha_version = ha.server_version
+                    self.ha_version_observed_at = ha.version_observed_at
                     self.connected = True
                     self.capabilities["connection"] = "available"
                     for event_type in ("state_changed", "automation_triggered"):
