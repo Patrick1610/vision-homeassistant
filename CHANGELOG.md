@@ -29,7 +29,7 @@ Version-bound qualification and dated release checkpoints: [validation](docs/VAL
 - Preserve legacy analyses/search, compact daily audits, conservative attempt budgets,
   provider failover/recovery and billed refusal/incomplete/invalid-response accounting.
 - Add native provider structured output with strict local validation and quoted-secret/
-  identifier sanitization; no paid model/provider qualification is claimed.
+  identifier sanitization; no broad model/provider qualification is claimed.
 
 - Run approved requests as bounded server jobs with light status polling, preserve
   exact bodies under fail-closed storage admission and retain billing receipts for
