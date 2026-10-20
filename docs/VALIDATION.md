@@ -1,10 +1,18 @@
 # Validation and release status — 2026-10-20
 
-**Current source package: 0.2.0-rc.1.** A/B/C are accepted on their immutable
-candidates. D UI, RC publication/live native-provider checks and the final stable
-0.2.0 release remain separate gates. The published/live development preview is
-0.2.0-dev.1; its legacy provider calls do not qualify the new native C pipeline.
-Historical evidence below remains bound to the version named in each section.
+**Current source package: 0.2.0.** A/B/C/D are accepted on their immutable
+candidates. The published 0.2.0-rc.1 was qualified on the live Supervisor install,
+including one native compact Anthropic investigation and bounded history checks.
+
+**Metadata-freeze checkpoint — 2026-10-20:** stable package review/public CI,
+the final stable Vision update/history comparison and the immutable v0.2.0 tag/
+release had not yet occurred at this checkpoint. The controller performs those
+gates in that order; the [public release page](https://github.com/Patrick1610/vision-homeassistant/releases)
+records final publication evidence. No stable-publication or installed-stable claim
+is made by this metadata checkpoint. Historical evidence below remains bound to
+the version named in each section.
+
+## Historical 0.1.x evidence
 
 **0.1.1 wordmark update:** [published](https://github.com/Patrick1610/vision-homeassistant/releases/tag/v0.1.1),
 CI verified and live Supervisor update verified. The v0.1.0 evidence below
@@ -904,3 +912,46 @@ Syntax/format/lint/diff checks passed. All runtime/config/package bytes remain
 identical to the prior accepted candidate; its green 341-test Python/container
 evidence is carried, not claimed as a new Python rerun. Public Linux CI rerun
 remains pending with the controller.
+
+### Qualified RC and stable metadata checkpoint — 2026-10-20
+
+[RC PR #3](https://github.com/Patrick1610/vision-homeassistant/pull/3) merged as
+`9e44c9b2079c42ada8eafca01977d18692bf1d7e`, tree
+`4ffd54df7066c9ee2efb22cb86ecde80e1bcd709`: all 78 anonymous source files matched,
+six branch/PR checks and three main CI checks passed. The accepted runtime is D3;
+the two reviewed CI repairs changed test transport/scheduling only.
+
+Supervisor upgraded the same installed Vision dev.1→rc.1 with previous-version
+backup enabled. Ingress was running, connected/read-only and freshly synchronized
+(165 automations, 5,686 entities at observation). Twenty existing settings were
+retained except the authorized output-option change; the new privacy setting was
+compact. No personal model, credential, budget or output-option value is published.
+All sampled 300 availability rows, 300 runs and 548 issues were found with their
+stable fields retained; seven event placeholders bound to the same native context.
+Twenty-four open intervals closed with gap markers and 243 had closed normally
+before the update. Four old analyses and five usage rows matched in all fields.
+These are bounded saved API samples, not a complete live database export.
+
+A fresh native download of one historical retained HA run matched all 16 available
+comparison checks; no execution was triggered. One actual native Anthropic compact
+`device_communication` job completed with strict schema validation, two diagnoses,
+five unknowns and only current-snapshot references. Its 13,387-byte request matched
+the displayed digest; a bounded scan found none of 852 known local identifiers.
+Two short proposals/manual checks opened automatically. Reopening its exact audit
+kept the same digest, completed state, disabled Send and received-analysis link.
+Usage was retained. This is one qualified task/provider/profile, not a privacy
+guarantee, a proven root cause, a real OpenAI test or diagnostic-consent evidence.
+
+The monitor sample read one latest trace and eleven backfills; 2,156 historical
+details were still pending. Backfill is not complete. A live image digest was not
+independently exported: Supervisor version and observed behavior were verified.
+No automatic HA action was performed. The 0.2.0 metadata checkpoint changes only
+coordinated version/test fields and documentation; stable public CI, final installed-
+stable history checks and the immutable tag/release remain later recorded gates.
+
+Stable metadata checkpoint local checks: **341 Python tests passed in 38.08 s**
+with the existing single Starlette/httpx warning; exact Node 22.23.3 passed all
+**34 DOM tests**. Ruff lint/format (57 files), JS syntax and diff checks passed.
+All 18 Vision source/assets match the qualified RC except `__version__`; the five
+linked packaging/test files contain version substitutions only. No feature,
+provider/model, option/default, schema/store or 0.2.1-backlog change is included.

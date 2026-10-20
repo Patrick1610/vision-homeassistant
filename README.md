@@ -4,14 +4,14 @@
 
 Read-only observability for Home Assistant OS, with optional Anthropic and OpenAI
 intelligence. Local monitoring works without AI, cloud accounts or API keys.
-MIT licensed. Release candidate **0.2.0-rc.1**; see [validation](docs/VALIDATION.md)
-for exact tested versions and the remaining public/live release gates.
+MIT licensed. **0.2.0**; see [validation](docs/VALIDATION.md) for version-bound
+qualification evidence and [releases](https://github.com/Patrick1610/vision-homeassistant/releases)
+for publication status.
 
 Start with up to three grouped priorities, then follow the retained evidence,
 a concrete manual plan and a way to validate it. Focused AI proposals are optional:
 review each frozen request before sending. AI stays off by default; existing
 installations retain their settings and compact privacy unless explicitly changed.
-This candidate is not the final stable 0.2.0 release.
 
 ## What it does
 
@@ -81,7 +81,7 @@ npm test
 .venv/bin/ruff check .
 .venv/bin/ruff format --check vision tests
 node --check vision/static/app.js
-docker build --build-arg BUILD_ARCH=amd64 -t vision:0.2.0-rc.1 .
+docker build --build-arg BUILD_ARCH=amd64 -t vision:0.2.0 .
 ```
 
 Run locally (loopback only): `VISION_DATA=./data .venv/bin/python -m vision`.
