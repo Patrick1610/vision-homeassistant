@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.2.1
+
+- Lead with 24 h / 7 d / 30 d registered-device observations, coverage-aware
+  device-hours and a comparable-subset burden trend, with up to three manual checks.
+- Keep persistent local expectations, observed worsening and performed-check
+  markers without treating unknown evidence or removed devices as recovery.
+- Preview bounded official HA/GitHub research before fetching, then review a new
+  exact AI request over the same local snapshot and retained, hashed source passages.
+- Offer source-bound manual plans with prerequisites, 2–4 steps and validation,
+  including exact-device availability scope and healthy counterevidence.
+- Preserve the read-only HA boundary, settings, history, original v2 request bytes
+  and conservative per-attempt billing. See [validation](docs/VALIDATION.md) for
+  actual qualification, limitations and the dated stable packaging checkpoint.
+
 ## 0.2.1-dev.2
 
 Development preview of optional public-source investigations; phase-specific

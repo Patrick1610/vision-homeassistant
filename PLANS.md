@@ -1133,3 +1133,35 @@ Local final-delta checks: 519 Python PASS / 39.68 s with the existing warning,
 65 Node 22.23.3 DOM PASS / 2.59 s, Ruff72/format/JS/diff passed. Tests remain
 fully enabled. Freeze one bounded delta for the same critical channel; builder
 performs no HA/provider/publication operation and metadata remains dev.2.
+
+### 0.2.1 — accepted B and stable metadata-only packaging
+
+The controller accepted exact `f146ec01ac2f9145bcce0ca501f737599527a4bc` after
+critical sequence 3 GO (zero critical/high/medium), clean 519-Python/65-DOM CI,
+both real architecture images, populated v8/schema9 preservation and independent
+source/privacy/native-body/quota/legacy-v2/device gates. Public PR #6 merged as
+`adb9f4ea52fe708a4ab0ee3fbf46d6232e26759d`; all nine public CI checks and anonymous
+97-file source readback passed. The existing Supervisor updated to dev.2 with
+backup enabled; connected/read-only/source/WAL checks, bounded retained-data and
+all-settings comparisons, and the unchanged device measurement start passed.
+
+One real generic public-source job and one authorized compact Anthropic v3
+investigation completed. The controller checked exact sent/retained body/digest,
+source-bound manual steps, counterevidence, unknowns and validation. No proposed HA
+action was executed. Detailed scope and limits belong in VALIDATION; no household
+content, options or exports are published. OpenAI remains mock-qualified, Reddit
+authentication is unavailable and invoice costs remain unverified.
+
+The authorized final delta coordinates six version fields and existing current
+documentation at 0.2.1. Functional source, options/defaults, schema/migrations,
+permissions and billing stay bound to f146ec01. The three nonblocking critical-
+review lows are accepted within this scope, not new implementation work. Requested
+writer configuration stays gpt-6.1-sol / ultra with no independent effective-
+runtime proof. At the 2026-10-20 metadata-freeze checkpoint, stable review/public
+CI/readback/final live update/tag remain controller-owned gates. Earlier phase
+checkpoints and their original test counts remain unchanged.
+
+Local metadata-freeze checks passed: 519 Python tests / 39.86 s (existing warning),
+65 Node 22.23.3 DOM tests / 2.85 s, lint/format/JS/diff/publication scans and exact
+source invariants. Six metadata replacements and six documentation files are the
+entire delta; all other tracked bytes match f146ec01. Freeze for controller review.

@@ -1,10 +1,9 @@
 # Validation and release status — 2026-10-20
 
-**Current source package: 0.2.1-dev.2.** Phase A is accepted, public and live on
-its source-bound dev.1 candidate. The optional public-source phase B is implemented;
-its targeted review corrections await independent critical/container/public/live
-acceptance. Version-bound completed and pending gates are distinguished below.
-No new HA/provider/public-research call or publication is claimed by the writer.
+**Current source package: 0.2.1.** Both phases are accepted, public and live on
+their source-bound dev.1/dev.2 candidates. Stable packaging preserves the accepted
+functional source; its dated metadata-freeze checkpoint appears below. Live checks
+were performed by the controller. Completed and pending gates remain separate.
 
 ## Previous 0.2.0 qualification checkpoint
 
@@ -1264,3 +1263,67 @@ warning), **65 Node 22.23.3 DOM PASS in 2.59 s**. Ruff lint/format (72 Python
 files), JS syntax and diff checks passed. Source invariants/private-v2 metadata
 and publication scans accompany the frozen checkpoint; no real HA, provider,
 public research, publication or stable-release claim is added.
+
+### 0.2.1 phase B — accepted/public/live qualification
+
+Critical sequence 3 accepted `f146ec01ac2f9145bcce0ca501f737599527a4bc` with
+zero critical/high/medium findings. The controller's clean requirements-only CI
+passed all 519 Python and 65 Node DOM tests. Both actual architecture images
+passed fresh HTTP/restart and RO-WAL worker checks. Earlier two-architecture
+hot-journal recovery proof is carried forward by unchanged recovery code, Docker
+base and dependency lineage. Populated v8 and dev.1 schema9 fixtures preserved
+all 22 and 28 tables respectively, measurement
+start, options and backups. Independent source-fidelity/native-body/hash/retention,
+quota/restart, device projection and literal legacy-v2 checks passed.
+
+[PR #6](https://github.com/Patrick1610/vision-homeassistant/pull/6) merged as
+`adb9f4ea52fe708a4ab0ee3fbf46d6232e26759d`. All nine push/PR/main CI checks
+passed, including [main CI](https://github.com/Patrick1610/vision-homeassistant/actions/runs/39480035738).
+Anonymous readback matched all 97 source files. The existing Supervisor install
+updated to dev.2 with its backup enabled and ran connected/read-only. Served JS
+matched the public source and SQLite/WAL was ready. Bounded before/after samples
+of retained history, incidents, analyses and usage, together with all existing
+settings and the device measurement start, were preserved. This live sample check
+is distinct from the full synthetic table-preservation tests above.
+
+One manually started public-research job completed six GETs and retained five
+sources: official documentation, a current-version manifest, a GitHub issue and
+two comments. Its generic queries contained no household query terms. One
+authorized compact Anthropic v3 request then completed and retained its analysis.
+The native body was reviewed before Send; the retained server body/digest matched.
+Semantic inspection found three manual steps grounded in retained passages, an
+explicitly unverified issue rather than a local-cause claim, healthy counterevidence,
+disabled-member/coverage/power/peer limitations and a validation method. No proposed
+HA action was executed. Provider/model/keys/rates/budgets/privacy remained unchanged.
+
+This qualifies one actual Anthropic workflow, not broad model/provider support.
+OpenAI has native MockTransport coverage only; Reddit remains unavailable without
+authentication. Invoice costs are unverified. Public passages and valid references
+do not establish local cause or prove a repair; manual review remains necessary.
+Three accepted nonblocking review lows remain scope-limited: an internal public
+byte-limit stop can use a withdrawal label, an unpublished old far-future backoff
+can be hidden until its first claim, and a known identifier glued to a preceding
+token can escape the public-only alias boundary. Stable packaging does not change
+these paths; redaction is not a guarantee of complete personal-data removal.
+
+### 0.2.1 stable metadata-freeze checkpoint — 2026-10-20
+
+Version metadata is coordinated at 0.2.1 over the accepted functional source
+`f146ec01ac2f9145bcce0ca501f737599527a4bc`. Only six package/test version fields
+and current release documentation change. Options/defaults, schema/migrations,
+permissions, provider requests, UI behavior and billing remain source-identical.
+The requested implementation configuration remains gpt-6.1-sol / ultra; effective
+model/effort is not independently observable through the workspace.
+
+At this dated checkpoint, stable metadata review, public CI/anonymous readback,
+the final stable Supervisor update/history check and immutable tag/release remain
+controller-owned gates. The [release page](https://github.com/Patrick1610/vision-homeassistant/releases)
+provides the subsequent final publication readback. Jev has no configured key;
+no score is claimed. Earlier checkpoints retain their historical status and counts.
+
+Local stable-metadata verification: `.venv/bin/python -m pytest -q` passed all
+**519 tests in 39.86 s**, with the existing Starlette/httpx warning; Node 22.23.3
+`npm test` passed all **65 DOM tests in 2.85 s**. Ruff lint and formatting
+(59 Python files), JavaScript syntax, diff and tracked/reachable-history publication
+scans passed. A SHA-256 manifest verifies every other tracked file against f146ec01;
+each of the six metadata files has only the exact dev.2-to-stable version replacement.
