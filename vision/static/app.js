@@ -96,8 +96,28 @@ function unknownView(items, heading = "What remains unknown") {
     rows.some((item) => Array.from(plain(item)).length > 180);
   return `<aside class="coverage-note"><strong>${esc(heading)}</strong>${list(rows.slice(0, 2).map((item) => short(item, 180)))}${expanded ? `<details><summary>All limitations</summary>${list(rows)}</details>` : ""}</aside>`;
 }
-function findingCard(item, index) {
-  return `<article class="finding-card"><div class="card-topline"><span class="step-number">Proposal ${index + 1}</span>${badge(item.severity || "info", item.severity || "info")}</div><h3>${esc(short(item.finding, 120))}</h3><div class="plan-block"><span class="overline">MANUAL SOLUTION / CHECK</span><p>${esc(short(item.next_step, 140))}</p></div><div class="validation-block"><span class="overline">VALIDATION</span><p>${esc(short(item.validation, 110))}</p></div><p class="uncertainty"><strong>Uncertainty:</strong> ${esc(short(item.uncertainty, 100))}</p>${item.unknowns?.length ? `<p class="muted">Missing evidence: ${esc(short(item.unknowns[0], 90))}</p>` : ""}<details class="finding-detail"><summary>Full proposal, evidence & alternatives</summary><dl><dt>Proposed explanation</dt><dd>${esc(item.finding)}</dd><dt>Manual solution / check</dt><dd>${esc(item.next_step)}</dd><dt>Validation method</dt><dd>${esc(item.validation)}</dd><dt>Supporting references</dt><dd>${esc((item.evidence || []).join(", "))}</dd><dt>Counterevidence</dt><dd>${esc((item.counter_evidence || []).join(", ") || "None retained")}</dd><dt>Confidence</dt><dd>${esc(item.confidence || "Unknown")}</dd><dt>Uncertainty</dt><dd>${esc(item.uncertainty)}</dd></dl>${list(item.unknowns || [])}</details></article>`;
+function externalSource(source) {
+  try {
+    const url = new URL(source.url);
+    if (url.protocol !== "https:" || url.username || url.password || !["github.com", "www.home-assistant.io", "contributors.home-assistant.io"].includes(url.hostname)) return esc(source.title || "Source");
+    return `<a href="${esc(source.url)}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">${esc(source.title || "Source")}</a>`;
+  } catch { return esc(source.title || "Unknown source"); }
+}
+function sourceLinks(refs, research) {
+  return (refs || []).map(ref => {
+    const source = (research?.sources || []).find(s => (s.excerpts || []).some(e => e.ref === ref));
+    if (!source) return esc(ref);
+    return externalSource(source);
+  }).join(" · ");
+}
+function researchView(research) {
+  if (!research) return "";
+  return `<details class="research-sources"><summary>Public sources & version limits (${(research.sources || []).length})</summary><p>Current authenticated Core: ${esc(research.technical_context?.core_version || "Unknown")}. Historical run version remains unknown. Public reports and closed issues do not establish a local cause or installed fix.</p>${(research.sources || []).map(s => `<article><strong>${esc(s.kind)}</strong> · ${externalSource(s)}<small>Retrieved ${esc(date(s.retrieved_at))} · ${esc(s.applicability)}${s.thread_complete === false ? " · incomplete comment thread" : ""}</small><details><summary>Retained passages, content hash & provenance</summary><pre>${esc(JSON.stringify(s,null,2))}</pre></details></article>`).join("")}${list((research.gaps || []).map(g => `${g.adapter}: ${g.reason.replaceAll("_", " ")}${g.host ? ` · ${g.host} until ${date(g.until)}` : ""}`))}<details><summary>Exact public query plan & coverage limits</summary><pre>${esc(JSON.stringify({plan:research.query_plan,coverage:research.coverage},null,2))}</pre></details></details>`;
+}
+function findingCard(item, index, research) {
+  const plan = item.manual_plan;
+  const manual = plan ? `${plan.prerequisites?.length ? `<details><summary>Before starting</summary>${list(plan.prerequisites)}</details>` : ""}<ol class="manual-steps">${plan.steps.map(step => `<li>${prose(step.instruction,160,"Full manual step")}<small>${sourceLinks(step.source_refs,research)}</small></li>`).join("")}</ol>` : `<p>${esc(short(item.next_step,140))}</p>`;
+  return `<article class="finding-card"><div class="card-topline"><span class="step-number">Proposal ${index + 1}</span>${badge(item.severity || "info", item.severity || "info")}</div><h3>${esc(short(item.finding, 120))}</h3><div class="plan-block"><span class="overline">MANUAL SOLUTION / CHECK</span>${manual}</div><div class="validation-block"><span class="overline">VALIDATION</span><p>${esc(short(item.validation, 110))}</p></div><p class="uncertainty"><strong>Uncertainty:</strong> ${esc(short(item.uncertainty, 100))}</p>${item.unknowns?.length ? `<p class="muted">Missing evidence: ${esc(short(item.unknowns[0], 90))}</p>` : ""}<details class="finding-detail"><summary>Full proposal, evidence & alternatives</summary><dl><dt>Proposed explanation</dt><dd>${esc(item.finding)}</dd><dt>Manual solution / check</dt><dd>${esc(item.next_step)}</dd><dt>Validation method</dt><dd>${esc(item.validation)}</dd><dt>Supporting references</dt><dd>${esc((item.evidence || []).join(", "))}</dd><dt>Counterevidence</dt><dd>${esc((item.counter_evidence || []).join(", ") || "None retained")}</dd><dt>Confidence</dt><dd>${esc(item.confidence || "Unknown")}</dd><dt>Uncertainty</dt><dd>${esc(item.uncertainty)}</dd></dl>${list(item.unknowns || [])}</details></article>`;
 }
 function findings(analysis) {
   if (!analysis)
@@ -105,9 +125,10 @@ function findings(analysis) {
       "No retained AI investigation. Local evidence is available without AI.",
     );
   const result = parse(analysis.result) || {},
-    entries = Array.isArray(result.diagnoses) ? result.diagnoses : [];
+    entries = Array.isArray(result.diagnoses) ? result.diagnoses : [],
+    research = parse(analysis.evidence)?.research;
   const cards = (rows, offset = 0) =>
-    `<div class="finding-grid">${rows.map((item, index) => findingCard(item, index + offset)).join("")}</div>`;
+    `<div class="finding-grid">${rows.map((item, index) => findingCard(item, index + offset, research)).join("")}</div>`;
   return (
     `<div class="analysis-intro"><span class="overline">AI PROPOSALS · MANUAL VALIDATION NEEDED</span>${prose(result.summary, 180, "Full investigation summary")}<small>${esc(analysis.provider)} · ${esc(analysis.model)} · ${esc(date(analysis.created))}</small></div>` +
     (entries.length
@@ -118,6 +139,7 @@ function findings(analysis) {
       : empty(
           "No supported finding returned. Review the unknowns before drawing a conclusion.",
         )) +
+    researchView(research) +
     unknownView(result.unknowns) +
     (result.requested_sections?.length
       ? `<details><summary>Suggested local evidence for a reviewed follow-up</summary><p>${esc(result.requested_sections.join(", "))}. Nothing is fetched automatically.</p></details>`
@@ -131,9 +153,11 @@ const investigationLink = (
   run = null,
   compare = null,
   text = "Preview focused AI investigation",
+  targetType = "entity",
 ) => {
   const params = new URLSearchParams({ task: kind });
   if (target) params.set("target", target);
+  if (targetType === "device") params.set("target_type", "device");
   if (run) params.set("run_id", run);
   if (compare) params.set("compare", compare);
   return `<a class="button" href="#intelligence/?${params}">${esc(text)}</a>`;
@@ -576,9 +600,12 @@ function heatmapDescription(point) {
     return `Unavailable-device count unknown. ${coverage}.${subset}`;
   return `${point.offline} unavailable devices; ${point.unknown ?? "Unknown"} unassessed, ${point.partial ?? "Unknown"} partial; ${point.observed} observed devices. ${coverage}.${point.coverage < 1 ? " Uncovered time remains unknown." : ""}${subset}`;
 }
+function integrationLabel(platform) {
+  return {zha:"Zigbee (ZHA)",zwave_js:"Z-Wave JS",mqtt:"MQTT",esphome:"ESPHome",music_assistant:"Music Assistant"}[platform] || platform;
+}
 function integrationMap(data) {
   const groups = data.integrations || { items: [] };
-  return `<details class="integration-heatmap"><summary>Integration observations (${esc(groups.total || 0)})</summary><p class="muted">Each cell is an observed device count at a bucket end. Grey is unknown, gold is partial evidence, burgundy marks device-wide unavailable. Shared membership is correlation, not a network diagnosis; group totals can overlap for devices with multiple integrations.</p>${(groups.items || []).map((item) => `<div class="heatmap-row"><a href="#devices/reliability?platform=${encodeURIComponent(item.platform)}">${esc(item.platform)}</a><svg viewBox="0 0 360 22" role="img" aria-label="${esc(item.platform)} unavailable-device history">${(item.points || []).map((point, i, points) => `<rect x="${(i * 360) / points.length}" y="1" width="${Math.max(1, 360 / points.length - 2)}" height="20" class="${heatmapUnknown(point) || (point.offline === 0 && point.unknown > 0) ? "chart-gap" : point.offline > 0 ? "heatmap-bad" : point.partial > 0 ? "series-new" : "heatmap-observed"}"><title>${esc(date(point.end))}: ${esc(heatmapDescription(point))}</title></rect>`).join("")}</svg><small>${esc(item.devices)} devices · ${item.offline == null ? "Unknown current state" : esc(item.offline) + " unavailable"}</small></div>`).join("")}${groups.limited ? "<p>Only 12 integration groups are shown; other observed groups remain available in the device list.</p>" : ""}</details>`;
+  return `<details class="integration-heatmap"><summary>Integration observations (${esc(groups.total || 0)})</summary><p class="muted">Each cell is an observed device count at a bucket end. Grey is unknown, gold is partial evidence, burgundy marks device-wide unavailable. Shared membership is correlation, not a network diagnosis; group totals can overlap for devices with multiple integrations.</p>${(groups.items || []).map((item) => `<div class="heatmap-row"><a href="#devices/reliability?platform=${encodeURIComponent(item.platform)}">${esc(integrationLabel(item.platform))}</a><svg viewBox="0 0 360 22" role="img" aria-label="${esc(item.platform)} unavailable-device history">${(item.points || []).map((point, i, points) => `<rect x="${(i * 360) / points.length}" y="1" width="${Math.max(1, 360 / points.length - 2)}" height="20" class="${heatmapUnknown(point) || (point.offline === 0 && point.unknown > 0) ? "chart-gap" : point.offline > 0 ? "heatmap-bad" : point.partial > 0 ? "series-new" : "heatmap-observed"}"><title>${esc(date(point.end))}: ${esc(heatmapDescription(point))}</title></rect>`).join("")}</svg><small>${esc(item.devices)} devices · ${item.offline == null ? "Unknown current state" : esc(item.offline) + " unavailable"}</small></div>`).join("")}${groups.limited ? "<p>Only 12 integration groups are shown; other observed groups remain available in the device list.</p>" : ""}</details>`;
 }
 function reliabilityOverview(data) {
   const counts = data.counts || {},
@@ -632,7 +659,7 @@ async function reliabilityDevices(route = "reliability") {
   const id = params.get("device");
   if (id) {
     const item = await api("reliability/devices/" + encodeURIComponent(id));
-    return `<p><a href="#devices/reliability">← Observed devices</a></p><section class="problem-hero"><span class="overline">DEVICE OBSERVATIONS</span><h2>${esc(item.name)}</h2>${badge(item.reliable_now ? item.state : "unknown")}${badge(item.attention)}<p>${esc(item.evidence.rule)}</p><p>Locally declared power expectation: ${esc(item.power)} · ${esc(item.evidence.meaningful)} meaningful signals · ${esc(item.evidence.unavailable)} unavailable · ${esc(item.evidence.unknown)} unknown · ${esc(item.evidence.unassessed_members ?? item.evidence.unknown)} unassessed members. <span class="evidence-recorded-at" title="When retained member details changed; not a monitoring-sync timestamp">Evidence details last recorded: ${Number.isFinite(item.evidence_at) ? esc(new Date(item.evidence_at * 1000).toLocaleString()) : "Unknown (no retained timestamp)"}.</span></p></section>${!item.reliable_now || item.reason === "removed_from_registry" ? '<p class="coverage-note">Current membership/coverage is uncertain. Removal or silence is not recovery.</p>' : ""}${card("Manual check and follow-through", `<p>Perform a check yourself, then record it locally. Vision does not ping, repair or control the device.</p><form id="device-check-form" data-device="${esc(id)}"><label>Check performed<select name="kind"><option value="power">Power / expected sleep</option><option value="integration">Integration status</option><option value="connection">Connection evidence</option><option value="other">Other manual check</option></select></label><label>Local note<input name="note" maxlength="400"></label><button type="submit">Record performed check</button></form>${(item.checks || []).map((check) => `<article class="row"><strong>${esc(date(check.created))} · ${esc(check.kind)}</strong><p>${esc(check.note)}</p>${badge(check.validation)}<small>${esc(check.meaning)}</small></article>`).join("") || empty("No performed checks recorded yet.")}`)}${card("Observed device timeline", `${deviceTimeline(item)}<p>Latest 30 state/coverage transitions and 20 local check markers. Intervals are observations, not physical outage start/repair proof.</p>`)}<details class="coverage-panel"><summary>Durable local attention and power expectations</summary><p>Known/expected does not erase observed outage evidence. These settings stay until you change them; no weekly acknowledgment is required.</p><form id="device-policy-form" data-device="${esc(id)}"><label>Attention<select name="attention">${["review", "known", "expected"].map((value) => `<option ${value === item.attention ? "selected" : ""}>${value}</option>`).join("")}</select></label><label>Declared power expectation<select name="power">${["unknown", "battery", "mains"].map((value) => `<option ${value === item.power ? "selected" : ""}>${value}</option>`).join("")}</select></label><label>Local note<input name="note" maxlength="300" value="${esc(item.policy?.note || "")}"></label><button type="submit">Save in Vision</button>${item.policy?.worsened_at ? '<button type="submit" name="acknowledge_worsening" value="true">Acknowledge this worsening in Vision</button><small>A note or power edit keeps the prior baseline. This explicit action accepts the current observed state as the new local baseline.</small>' : ""}</form></details>${card(
+    return `<p><a href="#devices/reliability">← Observed devices</a></p><section class="problem-hero"><span class="overline">DEVICE OBSERVATIONS</span><h2>${esc(item.name)}</h2>${badge(item.reliable_now ? item.state : "unknown")}${badge(item.attention)}<p>${esc(item.evidence.rule)}</p><p>Locally declared power expectation: ${esc(item.power)} · ${esc(item.evidence.meaningful)} meaningful signals · ${esc(item.evidence.unavailable)} unavailable · ${esc(item.evidence.unknown)} unknown · ${esc(item.evidence.unassessed_members ?? item.evidence.unknown)} unassessed members. <span class="evidence-recorded-at" title="When retained member details changed; not a monitoring-sync timestamp">Evidence details last recorded: ${Number.isFinite(item.evidence_at) ? esc(new Date(item.evidence_at * 1000).toLocaleString()) : "Unknown (no retained timestamp)"}.</span></p></section>${!item.reliable_now || item.reason === "removed_from_registry" ? '<p class="coverage-note">Current membership/coverage is uncertain. Removal or silence is not recovery.</p>' : ""}${investigationLink("availability",id,null,null,"Investigate this device with optional AI","device")}${card("Manual check and follow-through", `<p>Perform a check yourself, then record it locally. Vision does not ping, repair or control the device.</p><form id="device-check-form" data-device="${esc(id)}"><label>Check performed<select name="kind"><option value="power">Power / expected sleep</option><option value="integration">Integration status</option><option value="connection">Connection evidence</option><option value="other">Other manual check</option></select></label><label>Local note<input name="note" maxlength="400"></label><button type="submit">Record performed check</button></form>${(item.checks || []).map((check) => `<article class="row"><strong>${esc(date(check.created))} · ${esc(check.kind)}</strong><p>${esc(check.note)}</p>${badge(check.validation)}<small>${esc(check.meaning)}</small></article>`).join("") || empty("No performed checks recorded yet.")}`)}${card("Observed device timeline", `${deviceTimeline(item)}<p>Latest 30 state/coverage transitions and 20 local check markers. Intervals are observations, not physical outage start/repair proof.</p>`)}<details class="coverage-panel"><summary>Durable local attention and power expectations</summary><p>Known/expected does not erase observed outage evidence. These settings stay until you change them; no weekly acknowledgment is required.</p><form id="device-policy-form" data-device="${esc(id)}"><label>Attention<select name="attention">${["review", "known", "expected"].map((value) => `<option ${value === item.attention ? "selected" : ""}>${value}</option>`).join("")}</select></label><label>Declared power expectation<select name="power">${["unknown", "battery", "mains"].map((value) => `<option ${value === item.power ? "selected" : ""}>${value}</option>`).join("")}</select></label><label>Local note<input name="note" maxlength="300" value="${esc(item.policy?.note || "")}"></label><button type="submit">Save in Vision</button>${item.policy?.worsened_at ? '<button type="submit" name="acknowledge_worsening" value="true">Acknowledge this worsening in Vision</button><small>A note or power edit keeps the prior baseline. This explicit action accepts the current observed state as the new local baseline.</small>' : ""}</form></details>${card(
       "Retained primary and ancillary evidence",
       table(
         ["Entity", "Role", "Availability"],
@@ -1156,7 +1183,7 @@ async function issues(route) {
 function requestView(data, enabled) {
   const value = data.preview,
     selection = data.local_selection;
-  return `<h3>Frozen request · round ${esc(value.round)}</h3><p class="request-state">${badge(data.status || "preview")} ${data.in_flight ? "· response pending" : ""}</p>${value.readiness?.supported === false ? `<p class="warning">${esc(value.readiness.reason)} This local preview cannot be sent.</p>` : ""}<p>Task ${esc(value.task)} · Profile ${esc(value.profile)} · Captured ${esc(date(value.bundle.captured_at))}</p><p class="evidence-text">Local target ${esc(selection.target || selection.entity || "System")} · Run ${esc(selection.run_id || "None")} · Compare ${esc(selection.compare || "None")} · Selection ${esc(selection.basis || selection.selection_basis)}</p><p class="muted">${esc(value.privacy_notice)} This preview covers this round only; follow-ups require their own preview and send.</p><p class="evidence-text">SHA-256 <code>${esc(data.digest)}</code></p><details><summary>Coverage, provenance & selected evidence</summary><pre>${esc(JSON.stringify(value.bundle, null, 2))}</pre></details>${Object.entries(
+  return `<h3>Frozen request · round ${esc(value.round)}</h3><p class="request-state">${badge(data.status || "preview")} ${data.in_flight ? "· response pending" : ""}</p>${value.readiness?.supported === false ? `<p class="warning">${esc(value.readiness.reason)} This local preview cannot be sent.</p>` : ""}<p>Task ${esc(value.task)} · Profile ${esc(value.profile)} · Captured ${esc(date(value.bundle.captured_at))}</p><p class="evidence-text">Local target ${esc(selection.target || selection.entity || selection.device || "System")} · Run ${esc(selection.run_id || "None")} · Compare ${esc(selection.compare || "None")} · Selection ${esc(selection.basis || selection.selection_basis)}</p><p class="muted">${esc(value.privacy_notice)} This preview covers this round only; follow-ups require their own preview and send.</p><p class="evidence-text">SHA-256 <code>${esc(data.digest)}</code></p><details><summary>Coverage, provenance & selected evidence</summary><pre>${esc(JSON.stringify(value.bundle, null, 2))}</pre></details>${Object.entries(
     value.requests,
   )
     .map(
@@ -1165,18 +1192,15 @@ function requestView(data, enabled) {
     )
     .join(
       "",
-    )}<details><summary>Exact preview envelope, policy & bounded prior context</summary><pre>${esc(JSON.stringify(value, null, 2))}</pre></details><details><summary>Local evidence and identifier mapping · stays in Vision</summary><pre>${esc(JSON.stringify({ evidence: data.local_mapping, identifiers: data.local_aliases }, null, 2))}</pre></details><div class="toolbar"><button id="send-ai" class="primary" ${!enabled || data.in_flight || value.readiness?.supported === false || value.profile === "local_only" || !Object.keys(value.requests).length || (data.status && data.status !== "preview") ? "disabled" : ""}>Send this exact reviewed request</button><button id="revoke-ai">Revoke this request</button></div><p class="muted">Every attempt has its own conservative cost reservation. Technical failover can use only the exact configured alternative shown above, at these rates and limits. Budget failover requires separate configured consent. Local-only never sends.</p>`;
+    )}${researchView(value.research)}${data.status === "preview" && value.round === 1 && value.task !== "audit" && value.profile !== "local_only" && !value.research && value.readiness?.supported !== false ? `<section class="research-prepare"><h4>Optional public-source research</h4><p>Preview generic public queries before fetching. No household identifiers or questions enter public searches. AI sending stays separate.</p><button type="button" id="plan-research">Preview public query plan</button><div id="public-research" aria-live="polite"></div></section>` : ""}<details><summary>Exact preview envelope, policy & bounded prior context</summary><pre>${esc(JSON.stringify(value, null, 2))}</pre></details><details><summary>Local evidence and identifier mapping · stays in Vision</summary><pre>${esc(JSON.stringify({ evidence: data.local_mapping, identifiers: data.local_aliases }, null, 2))}</pre></details><div class="toolbar"><button id="send-ai" class="primary" ${!enabled || data.in_flight || value.readiness?.supported === false || value.profile === "local_only" || !Object.keys(value.requests).length || (data.status && data.status !== "preview") ? "disabled" : ""}>Send this exact reviewed request</button><button id="revoke-ai">Revoke this request</button></div><p class="muted">Every attempt has its own conservative cost reservation. Technical failover can use only the exact configured alternative shown above, at these rates and limits. Budget failover requires separate configured consent. Local-only never sends.</p>`;
 }
 async function intelligence(route) {
   const params = new URLSearchParams((route || "").replace(/^\?/, ""));
   const data = await api("intelligence");
   let rounds = [],
     initial = null;
-  const selectedAnalysis = params.get("analysis")
-    ? await api(
-        "intelligence/analyses/" + encodeURIComponent(params.get("analysis")),
-      )
-    : null;
+  const selectedId = params.get("analysis") || (!params.get("request") && !params.get("conversation") && !params.get("task") && !params.get("target") ? data.analyses[0]?.id : null);
+  const selectedAnalysis = selectedId ? await api("intelligence/analyses/" + encodeURIComponent(selectedId)) : null;
   if (params.get("conversation")) {
     const conversation = await api(
       "intelligence/conversations/" +
@@ -1187,6 +1211,7 @@ async function intelligence(route) {
   }
   const kind = initial?.kind || params.get("task") || "audit";
   const target = initial?.target || params.get("target") || "";
+  const targetType = initial?.target_type || params.get("target_type") || "entity";
   const profile =
     initial?.profile ||
     (data.privacy === "local_only" ? "local_only" : "compact");
@@ -1226,7 +1251,7 @@ async function intelligence(route) {
         )
         .join(
           "",
-        )}</select></label><label>Local dossier key or entity<input name="target" maxlength="500" value="${esc(target)}" ${initial ? "readonly" : ""} placeholder="System audit uses no target"></label><label>Exact selected run<input name="run_id" maxlength="200" value="${esc(initial?.run_id || params.get("run_id") || "")}" ${initial ? "readonly" : ""}></label><label>Exact comparison run<input name="compare" maxlength="200" value="${esc(initial?.compare_id || params.get("compare") || "")}" ${initial ? "readonly" : ""}></label><label>Privacy profile<select name="profile" ${initial ? "disabled" : ""}>${[...new Set(["local_only", "compact", ...(data.privacy === "diagnostic" ? ["diagnostic"] : []), ...(initial ? [profile] : [])])].map((value) => `<option ${value === profile ? "selected" : ""}>${value}</option>`).join("")}</select></label><label>Follow-up focus<select name="followup_focus">${["clarify", "manual_solution", "counterevidence", "validation"].map((value) => `<option>${value}</option>`).join("")}</select></label><label class="wide">Optional question · diagnostic only<textarea name="question" maxlength="800" rows="3" placeholder="Compact investigations use the focus selector. No raw templates, credentials or personal details."></textarea></label><label class="check wide"><input type="checkbox" name="diagnostic_consent">I explicitly allow sanitized diagnostic identifiers, errors and safe structural operands for this preview. Redaction cannot guarantee removal of all personal data; I will inspect every body before sending.</label>${initial ? `<fieldset class="wide"><legend>One reviewed local evidence expansion</legend><p>Only initially frozen sections of this dossier can be added. No HA refetch, tools or free-form evidence requests.</p>${(data.tasks[kind]?.extra_sections || []).map((section) => `<label class="check"><input type="checkbox" name="sections" value="${esc(section)}">${esc(section)}</label>`).join("")}</fieldset>` : ""}<button type="submit" ${rounds.some((row) => row.status === "revoked") ? "disabled" : ""}>Prepare exact local preview</button>${rounds.some((row) => row.status === "revoked") ? '<p class="warning">This conversation includes a withdrawn round. Inspect its retained result below; start a new reviewed investigation to continue.</p>' : ""}</form><div id="ai-preview" aria-live="polite"></div>`,
+        )}</select></label><label>Target scope<select name="target_type" ${initial ? "disabled" : ""}><option value="entity" ${targetType === "entity" ? "selected" : ""}>Entity or retained dossier</option><option value="device" ${targetType === "device" ? "selected" : ""}>Exact registered device · availability only</option></select></label><label>Local target<input name="target" maxlength="500" value="${esc(target)}" ${initial ? "readonly" : ""} placeholder="System audit uses no target"></label><label>Exact selected run<input name="run_id" maxlength="200" value="${esc(initial?.run_id || params.get("run_id") || "")}" ${initial ? "readonly" : ""} ${targetType === "device" ? "disabled" : ""}></label><label>Exact comparison run<input name="compare" maxlength="200" value="${esc(initial?.compare_id || params.get("compare") || "")}" ${initial ? "readonly" : ""} ${targetType === "device" ? "disabled" : ""}></label><label>Privacy profile<select name="profile" ${initial ? "disabled" : ""}>${[...new Set(["local_only", "compact", ...(data.privacy === "diagnostic" ? ["diagnostic"] : []), ...(initial ? [profile] : [])])].map((value) => `<option ${value === profile ? "selected" : ""}>${value}</option>`).join("")}</select></label><label>Follow-up focus<select name="followup_focus">${["clarify", "manual_solution", "counterevidence", "validation"].map((value) => `<option>${value}</option>`).join("")}</select></label><label class="wide">Optional question · diagnostic only<textarea name="question" maxlength="800" rows="3" placeholder="Compact investigations use the focus selector. No raw templates, credentials or personal details."></textarea></label><label class="check wide"><input type="checkbox" name="diagnostic_consent">I explicitly allow sanitized diagnostic identifiers, errors and safe structural operands for this preview. Redaction cannot guarantee removal of all personal data; I will inspect every body before sending.</label>${initial ? `<fieldset class="wide"><legend>One reviewed local evidence expansion</legend><p>Only initially frozen sections of this dossier can be added. No HA refetch, tools or free-form evidence requests.</p>${(data.tasks[kind]?.extra_sections || []).map((section) => `<label class="check"><input type="checkbox" name="sections" value="${esc(section)}">${esc(section)}</label>`).join("")}</fieldset>` : ""}<button type="submit" ${rounds.some((row) => row.status === "revoked") ? "disabled" : ""}>Prepare exact local preview</button>${rounds.some((row) => row.status === "revoked") ? '<p class="warning">This conversation includes a withdrawn round. Inspect its retained result below; start a new reviewed investigation to continue.</p>' : ""}</form><div id="ai-preview" aria-live="polite"></div>`,
     )}</details>` +
     `<details class="history-disclosure"><summary>Provider usage & estimated costs</summary>${card(
       "Provider usage & estimated costs",
@@ -1338,6 +1363,54 @@ async function bindIntelligence(route) {
           " Reopen the retained request to check server status.";
     }
   };
+  const bindPublic = (value) => {
+    const button = $("#plan-research"), panel = $("#public-research");
+    if (!button || !panel) return;
+    const watchPublic = async id => {
+      $("#send-ai").disabled = true;
+      panel.innerHTML = `<p>Public research is running independently in Vision. AI has not been sent.</p><button type="button" id="revoke-research">Revoke public research</button>`;
+      $("#revoke-research").onclick = async () => {
+        try { await api("intelligence/research/"+id+"/revoke",{method:"POST"}); notice.textContent="Public research withdrawn. No further public GET is authorized."; }
+        catch(error) { notice.textContent=error.message; }
+      };
+      try {
+        while (viewGeneration === generation && panel.isConnected) {
+          const status = await api("intelligence/research/"+id+"/status");
+          if (viewGeneration !== generation || !panel.isConnected) return;
+          if (status.status !== "running") {
+            const detail = await api("intelligence/research/"+id);
+            if (viewGeneration !== generation || !panel.isConnected) return;
+            panel.innerHTML = `<p>Public research: ${esc(detail.status)} · ${esc(detail.attempts)} GET attempts. ${esc(detail.error || "")}</p>${researchView(detail.snapshot)}${detail.status === "completed" ? `${value.preview.profile === "diagnostic" ? '<label class="check"><input type="checkbox" id="research-consent">I explicitly allow the diagnostic profile for this new source-bound preview; I will inspect its complete exact bodies before sending.</label>' : ''}<button type="button" id="attach-research">Prepare new exact AI preview with these sources</button><p>No provider call occurs until you inspect and send that new preview.</p>` : '<p>Return to the local selection to prepare a new reviewed investigation.</p>'}`;
+            $("#attach-research")?.addEventListener("click",async event => {
+              event.target.disabled=true;
+              try {
+                const prepared = await api("intelligence/research/"+id+"/preview",{method:"POST",body:JSON.stringify({research_digest:detail.research_digest,diagnostic_consent:!!panel.querySelector("#research-consent")?.checked})});
+                display(prepared);
+                notice.textContent="New frozen preview prepared over the original local snapshot. Inspect source passages, versions, both exact provider bodies and costs before sending.";
+              } catch(error) {notice.textContent=error.message;event.target.disabled=false;}
+            });
+            return;
+          }
+          await new Promise(resolve=>setTimeout(resolve,1000));
+        }
+      } catch(error) {if(viewGeneration===generation) notice.textContent=error.message+". Reopen this request to inspect public research status.";}
+    };
+    button.onclick = async () => {
+      button.disabled=true;
+      try {
+        const plan = await api("intelligence/research/plan",{method:"POST",body:JSON.stringify({request_id:value.request_id,digest:value.digest})});
+        panel.innerHTML=`<h4>Review public queries before fetching</h4><p>Only this generic catalog/problem/version plan leaves Vision. It is bounded to 6 GETs, 5 sources and 30 seconds; incomplete sources remain unknown. Reddit is unavailable without authentication.</p><pre>${esc(JSON.stringify(plan.plan,null,2))}</pre><p class="evidence-text">Plan SHA-256 <code>${esc(plan.plan_digest)}</code></p><button type="button" id="start-research">Fetch this public source plan</button>`;
+        $("#start-research").onclick=async event=>{
+          event.target.disabled=true;
+          try {
+            const job=await api("intelligence/research",{method:"POST",body:JSON.stringify({plan_id:plan.plan_id,plan_digest:plan.plan_digest})});
+            navigate("#intelligence/?request="+encodeURIComponent(value.request_id)+"&research="+encodeURIComponent(job.research_id));
+          } catch(error) {notice.textContent=error.message;event.target.disabled=false;}
+        };
+      } catch(error) {notice.textContent=error.message;button.disabled=false;}
+    };
+    if(params.get("research")) watchPublic(params.get("research"));
+  };
   const display = (value) => {
     prepared = value;
     $("#ai-preview").innerHTML = requestView(
@@ -1396,6 +1469,7 @@ async function bindIntelligence(route) {
         }
       }
     });
+    bindPublic(value);
     if (value.status === "sending" || value.in_flight) watch(value.request_id);
     else if (value.status && value.status !== "preview") terminal(value);
     $("#revoke-ai").addEventListener("click", async () => {
@@ -1422,6 +1496,11 @@ async function bindIntelligence(route) {
         "intelligence/requests/" + encodeURIComponent(params.get("request")),
       ),
     );
+  form.elements.target_type.addEventListener("change", () => {
+    const device = form.elements.target_type.value === "device";
+    form.elements.run_id.disabled = device;
+    form.elements.compare.disabled = device;
+  });
   form.addEventListener("input", async () => {
     if (!prepared) return;
     if (prepared.status !== "preview" || prepared.in_flight) {
@@ -1470,6 +1549,7 @@ async function bindIntelligence(route) {
         conversation_id: form.dataset.conversation || null,
         sections: fields.getAll("sections"),
       };
+      if (form.elements.target_type.value === "device") value.target_type = "device";
       display(
         await api("intelligence/preview", {
           method: "POST",

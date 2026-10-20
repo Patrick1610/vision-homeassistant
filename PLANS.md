@@ -1010,3 +1010,126 @@ and network-isolated RO-WAL capture, plus native 320/390/1280 px workflows.
 These are completed, version-bound checks; acceptance of this startup delta,
 critical follow-up, public/live gates and phase B remain pending. Local commands
 and results for the new freeze are recorded in VALIDATION.
+
+### 0.2.1 phase B — accepted implementation start
+
+Phase A received critical GO on exact `83355b6`; the controller qualified the
+actual images, journal recovery/history, native workflows and independent gates.
+The explicit next mandate is a tested 0.2.1-dev.2 public-source investigation,
+within the accepted scope in VISION_SPEC. The existing single writer owns tracked
+implementation; the controller owns independent review/public/live acceptance.
+
+Reuse the existing frozen preview, provider send/CAS/reservation/receipt chain.
+Add one small separate public research service: plan → 202 job → new frozen
+preview over the same local evidence. Keep quota/backoff in existing Store meta,
+temporary plans/cache/jobs bounded and process-local, and no new framework.
+Typed device availability capture and v3 source/manual-plan validation extend
+only their explicit paths; old v2 request bytes/digests are never recomputed.
+First implement closed catalog/transport/quota/hash contracts and meaningful
+synthetic HTTP/API tests, then source-bound providers/device scope and complete
+UI/DOM workflows. Preserve all A metrics, history, options and privacy ceilings.
+Coordinate dev.2 package metadata only with the coherent working candidate.
+No builder HA/provider/publication calls; freeze for mandatory critical review.
+
+### 0.2.1 phase B — coherent implementation checkpoint
+
+The controller accepted A3 `83355b6`: critical sequence 4 GO, then PR #5,
+all nine push/PR/main CI checks, exact anonymous tree readback and the existing
+Supervisor installation's dev.1 update with backup enabled. Native read-only
+connection/cache, first device-measurement boundary, role examples and bounded
+history/settings preservation passed. This is completed A evidence, not B
+acceptance; private household samples/configuration remain outside the repository.
+
+B now implements plan → bounded 202 public job → new exact provider preview over
+the original local snapshot, with the closed catalog/transport, persistent atomic
+quota/backoff and finalized source hashes described in ARCHITECTURE. Exact-device
+availability keeps own healthy counterevidence and unknown coverage. Device
+observed duration intersects real coverage rather than a gap-spanning interval.
+Source-bound v3 manual plans and round references are validated locally; analyses
+retain sources after request expiry. Original v2 native bodies have accepted-base
+golden hash guards and stored request audit bytes are not recomputed.
+
+The complete shipped DOM covers query-plan review before fetching, resume without
+a second start, separate fresh diagnostic attachment consent, failed/withdrawn
+research, new preview before paid send, current source/manual/validation cards and
+one central latest solution with compact older history. Existing paid lifecycle,
+withdrawal/Back/audit/legacy and reliability DOM checks stay enabled. Small accepted
+polish changes only display names/count wording/integration labels; exact targets
+and queue/metric semantics stay preserved. Actual own SQLite sidecars are tightened
+after authoritative schema validation, with unsupported-schema preservation tests
+unchanged. There is no new migration, option/default or HA read operation.
+
+Local checks: 487 Python PASS in 39.05 s, one existing Starlette/httpx warning;
+64 Node 22.23.3 DOM PASS. The first full run found a new target-type JSON extraction
+against a retained non-JSON audit fixture; a guarded extraction preserves its
+legacy entity meaning without altering stored bytes. The final full run passes.
+New native adapter mocks prove exact primary/backup bytes, technical uncertain
+billing, valid v3/manual retention, billed invalid-reference rejection and frozen
+follow-up reuse. No builder HA, real provider or app-public-research call occurred.
+Coordinated package version is 0.2.1-dev.2. Mandatory independent critical review,
+container/public/live B qualification and stable release remain controller gates.
+
+The implementation retains the requested gpt-6.1-sol / ultra single-writer
+configuration. Effective model/effort is not independently observable through
+this workspace; no separate runtime proof is claimed.
+
+
+### 0.2.1 phase B — targeted review corrections
+
+The controller independently qualified exact `5bb9947`: full Python/Node checks,
+both actual architecture images/HTTP/restart/RO-WAL/hot-journal recovery, populated
+v8 (22 old tables) and dev.1 schema9 (28 tables) preservation including device data,
+measurement start, options/backups and sidecar permissions. Source/private-reference
+scans passed. Independent device/version/gap, native provider/quota/privacy,
+v2 byte/audit-load and source-hash/retention gates passed except one retained-device
+UI label. Critical review reported one further MEDIUM: legitimate public terms were
+over-aliased. These are completed version-bound checks, not B acceptance.
+
+The correction uses a research-only known-private-reference projector: no discovery
+from public prose, with closed public technical tokens preserved even if seeded
+by prior diagnostic aliases. Private/v2 alias defaults stay unchanged. Retained GET
+now displays its exact device scope; a real POST/GET fixture feeds the complete
+shipped DOM and verifies device/entity/system scopes, digest and actual native
+bodies without sending. Public-fidelity tests cover all four catalog integrations,
+both profiles, canaries, native previews, retained sources and scoped follow-ups.
+
+Small accepted lows: full HTML void tags (genuine excessive nesting remains an
+explicit gap); 24-hour backoff with visible host/expiry; one unclaimed plan per
+base; 32 balanced own members preserving all bounded history/healthy peers in both
+final native bundles; fixed 400 reconstruction/hash refusals; one evidence parse
+per findings render; accurate final comment-retention counts and documented global
+AI/local-only capability controls. No new option/migration, permission/DNS/reset
+framework, sync policy, HA operation or version change. The candidate remains dev.2.
+New independent same-session critical acceptance/public/live gates remain pending.
+
+Corrective local checks: 501 Python PASS / 38.88 s with the existing warning,
+65 Node 22.23.3 DOM PASS / 2.27 s, Ruff lint/format (71 files), JS syntax and diff
+checks passed. Requested implementation runtime remains gpt-6.1-sol / ultra;
+effective runtime identity is not independently observable. Freeze for the same
+critical review channel and independent acceptance; no builder external operation.
+
+### 0.2.1 phase B — bounded pre-publication guards
+
+Critical sequence 2 accepted exact `981fad1` with zero critical/high/medium; the
+independent source-fidelity/native/retention/v2/device projection checks passed.
+The controller then authorized only four nonblocking lows and the demonstrated
+CI-fixture repair before publication. No phase/feature/version expansion follows.
+
+The ASGI DOM fixture now explicitly imports its own checkout root and reports
+missing Python setup separately, with a 30-second deadline. Dependency-only
+isolated execution (without editable .pth/CWD import support) emits all three
+actual fixtures from the bound source. Public-only alias boundaries remove known
+IDs before terminal punctuation, while longer entity/domain tokens and public
+technical terms remain intact; private/v2 aliases are unchanged. Unclaimed plans
+are replaced when authenticated version/time or active backoff changes, retaining
+one identifier map per base. Valid numeric old unpublished backoffs normalize
+once to 24 hours inside the claim transaction; refusal follows commit, preserving
+request/search and billing ledgers. Malformed quota still fails closed. A final
+12 KiB snapshot guard and full five-source/two-backoff test pin the budget in both
+native previews. Clean-CI/independent final delta/public/live acceptance remains
+with the controller; metadata stays dev.2 and no external builder call occurs.
+
+Local final-delta checks: 519 Python PASS / 39.68 s with the existing warning,
+65 Node 22.23.3 DOM PASS / 2.59 s, Ruff72/format/JS/diff passed. Tests remain
+fully enabled. Freeze one bounded delta for the same critical channel; builder
+performs no HA/provider/publication operation and metadata remains dev.2.

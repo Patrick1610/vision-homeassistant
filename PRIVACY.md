@@ -15,7 +15,7 @@ AI is separately opt-in and defaults off. The `ai_privacy` setting is a ceiling:
 
 - **local_only:** local evidence inspection; no provider request or usage reservation.
 - **compact (default):** bounded typed counts, coverage, availability/run summaries
-  and structural counts. Source names/identifiers, error prose, configuration
+  and structural counts. Local HA source names/identifiers, error prose, configuration
   operands and user questions stay out of outbound requests. Follow-ups use an
   enum focus and may include bounded re-sanitized earlier provider conclusions,
   uncertainty, unknowns and manual/validation proposals; every round has its own
@@ -60,5 +60,26 @@ analyses or completed exact bodies merely to admit another request. These bounds
 do not cap the complete SQLite/WAL/backups on disk. Consistent migration snapshots also contain full private database history. Keep
 those backups local and allow storage for retained generations. Uninstalling or
 deleting app data removes the local database; old HA backups may retain copies.
-Vision does not send data to GitHub. Share only synthetic or carefully reviewed,
+Public research is a separate explicit action: only a shown closed technical
+category, bundled integration slug and current authenticated Core version can
+enter public HA/GitHub queries. Household identifiers, questions, errors, keys
+and custom integration names are excluded. A public host still receives the
+connection IP and generic technical query. No Reddit credential/workaround is
+used. Fetching sources does not send an AI request. Public excerpts are normalized,
+redacted and household-alias checked before their content hashes and the new
+provider bodies are frozen. Those excerpts are untrusted public claims, not
+additional private HA free text. Compact local-evidence limits remain unchanged.
+
+Plans/jobs/cache are bounded and process-local; restart discards them, while
+quota/backoff persists. Exact source excerpts/provenance are retained with the
+received analysis through ordinary analysis retention even after request expiry.
+Following a scoped conversation never refetches sources. New diagnostic previews
+require fresh explicit consent; public research does not increase the privacy
+ceiling. Share only synthetic or carefully reviewed,
 redacted diagnostics when filing a public issue.
+
+Public research has no separate installation option in this version. To remove
+its outbound capability, disable AI (`ai_enabled: false`) or set the privacy
+ceiling to `ai_privacy: local_only`. Retained local evidence and received history
+remain inspectable. Active upstream backoff shows its host/expiry and never exceeds
+24 hours per response; there is no automatic research retry or reset action.

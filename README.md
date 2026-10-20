@@ -4,7 +4,7 @@
 
 Read-only observability for Home Assistant OS, with optional Anthropic and OpenAI
 intelligence. Local monitoring works without AI, cloud accounts or API keys.
-MIT licensed. **0.2.1-dev.1 — device-reliability development preview**; see [validation](docs/VALIDATION.md) for version-bound
+MIT licensed. **0.2.1-dev.2 — source-backed investigation development preview**; see [validation](docs/VALIDATION.md) for version-bound
 qualification evidence and [releases](https://github.com/Patrick1610/vision-homeassistant/releases)
 for publication status.
 
@@ -16,9 +16,9 @@ installations retain their settings and compact privacy unless explicitly change
 
 This preview adds timestamped registry-device observations and local check markers.
 Device measurement begins after upgrade: earlier entity history remains available,
-but cannot establish historical device membership. The separate public-source
-research feature is not implemented in this phase. Phase-specific qualification
-and pending review/public/live gates are recorded in validation.
+but cannot establish historical device membership. Optional public-source research previews generic technical queries before fetching, then
+prepares a new exact AI request over the original local snapshot and real sources.
+Phase-specific qualification and pending review/public/live gates are recorded in validation.
 
 ## What it does
 
@@ -41,6 +41,12 @@ and pending review/public/live gates are recorded in validation.
 - Optional focused audits, incident/automation investigations and problem-specific
   template, availability, reference, mode, condition, wait and communication tasks,
   with concrete manual checks, validation, counterevidence and unknowns.
+- Exact registered-device availability investigations include own healthy members,
+  missing coverage and separately labeled integration correlation. No representative
+  entity, device-control command or invented network cause.
+- Human-started public research from official HA docs and a closed GitHub catalog,
+  with source/version limits, referenced manual steps and observational validation.
+  Reddit is unavailable without authentication; research never runs automatically.
 - Primary/backup AI providers, rate-limit backoff, technical failover, primary
   recovery and separately authorized budget failover. Token/cost history persists.
 - Responsive Ingress interface: Overview, Devices, Automations, Issues,
@@ -75,7 +81,7 @@ outage counts. A disappearing log entry does not prove a repair.
 Incident and history tables show bounded recent subsets; the Overview inventory
 counts and per-automation statistics cover their underlying observed data.
 
-AI defaults to compact typed summaries without source identifiers or source free text.
+AI defaults to compact typed summaries without local HA source identifiers or source free text.
 Scoped follow-ups can include sanitized earlier provider conclusions in their preview.
 Local-only never sends; diagnostic requires explicit richer consent and uses
 bounded redacted/pseudonymous evidence. Inspect each exact provider request before

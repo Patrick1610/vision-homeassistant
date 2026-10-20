@@ -63,9 +63,10 @@ absent class. Source basis: [sensor properties](https://contributors.home-assist
 [mower states](https://contributors.home-assistant.io/core/entities/lawn-mower/#states),
 [tracker states](https://contributors.home-assistant.io/core/entities/device-tracker/#states).
 These roles describe HA availability evidence, not physical reachability guarantees.
-Their actual retained role/state distribution remains a controller live gate.
+The controller sampled actual role/state semantics on accepted dev.1; missing
+coverage still limits each installation and later observation.
 
-Unpublished schema 9 stores lean device-state/cohort/policy intervals, separate
+Schema 9, first published with dev.1, stores lean device-state/cohort/policy intervals, separate
 bounded current evidence with its observation timestamp, coverage watermarks,
 persistent local policies and performed-check markers. Member examples/counts,
 name and declared power changes alone do not append an interval. The historical
@@ -673,3 +674,76 @@ span 512–65,536; default 2,048 and saved older limits remain unchanged. A larg
 limit reserves its full configured output cost at the original USD/million rates.
 Recent analysis lists contain metadata/summary only; full findings and legacy
 mapping are loaded by one explicit detail route. History result search remains.
+
+
+## 0.2.1 public-source investigation preview
+
+`research_sources.py` owns the bundled integration/repository catalog, closed
+problem terms, URL validation and bounded plain-text extraction. `research.py`
+owns one process-local plan/job/cache service; it is independent of both HA and
+provider transports. An unused frozen local request authorizes only its reviewed
+public plan. POST plan is local; POST start returns 202; status polling is light.
+The server reconstructs attachment scope from the original request, verifies the
+research digest and creates a NEW ordinary AI preview. It never recaptures private
+evidence for attachment. Every paid send still uses the existing CAS, consent,
+per-attempt reservation, deadline, failover and receipt chain.
+
+Public GETs allow only fixed HA documentation and catalog GitHub API requests.
+At most one unclaimed plan per unused base request reuses its identifier snapshot.
+Current supported catalog: ZHA, Z-Wave JS, ESPHome and MQTT (official docs/Core;
+no guessed MQTT upstream). Unknown/custom names stay local. Core version comes
+only from the current authenticated WebSocket `auth_ok.ha_version`, with a strict
+supported release-token grammar; disconnected/malformed versions produce gaps.
+There is no historical-run-version, latest-release or trace-config fallback.
+The official [authentication contract](https://contributors.home-assistant.io/core/internals/websocket-api/)
+is the source basis; this adds no HA read operation.
+
+Each job has 6 GET attempts, 2 issue searches, 5 sources, 30 s total, a 512 KiB
+streamed decoded-body bound and a 12 KiB normalized public-context bound. Only
+identity content encoding is accepted, avoiding decompression expansion. Fixed
+application headers are User-Agent, Accept, GitHub API version and a validated
+public ETag; Host/identity encoding/close are transport headers. No credentials,
+Cookie, Referer, redirect following or environment proxies. Jobs/plans each cap
+at 32 with 30-minute TTL; one job runs at a time. The 64-entry/8 MiB response cache
+uses 24-hour doc/manifest and 30-minute issue TTL, with five-minute ordinary-error
+caching. It stores only process-local public responses, never complete HTML in
+SQLite. Restart drops that cache and unsent plans/jobs.
+
+Store meta `public_research_quota_v1` atomically records dispatch timestamps and
+host backoff before any cache-miss/conditional GET: 20/hour, 60/day, 2 searches/minute.
+Cache hits do not dispatch; a 304 consumes quota. Host backoff is capped at 24 hours;
+active host/expiry are visible in the frozen plan and resulting source gaps. No refund after possible dispatch,
+crash or cancellation. At most one found issue is read, preferentially the explicit
+catalog upstream, then Core. Its integer public comment count selects at most one
+last page (`per_page=3`); invalid/missing count never guesses page one. Retain at
+most two comments without authors/profiles/embedded fetches, and label the thread
+incomplete. Source basis: [GitHub issue comments](https://docs.github.com/en/rest/issues/comments?apiVersion=2026-03-10).
+Reddit is unavailable without OAuth; no extra key or scraping workaround is added.
+
+The exact source `content_sha256` covers canonical UTF-8 JSON of ordered excerpts,
+each exactly excerpt_key/heading/text, AFTER normalization, redaction and local
+identifier aliasing. The public-only pass substitutes only already-known private
+references, discovers no identifiers in public prose and preserves closed catalog
+slugs and standard configuration.yaml/mqtt.publish terms even through prior alias
+seeds. Private diagnostic/v2 projection defaults remain unchanged.
+`response_sha256` separately binds the fully received public
+body. Round-specific source refs never change the content hash. The outer frozen
+request binds metadata, URLs, plan, schemas, original local evidence and both
+native provider bodies. Source URLs are server-constructed, never model choices.
+V3 finding/source/manual-step references are current-round enums and locally
+validated; each 2–4-step manual plan cites its declared support and remains a
+proposal requiring manual validation. Gaps-only research uses ordinary v2 output,
+without fake sources/empty reference enums. Public reports/closed issues establish
+neither local cause nor installed fix/version applicability.
+
+`ai_devices.py` explicitly captures one current registered device for the existing
+availability task. No run/compare or representative entity is admitted. Own
+members cap at 32 while keeping primary healthy/unavailable examples; separately
+labeled same-integration peers cap at 16, history at 20, gaps at 30. Counts and
+omissions survive compact projection. Device observed duration intersects the
+retained coverage union/cache watermark; limited coverage yields unknown duration.
+Old v2 entity payloads omit target_type and retain literal native bytes/digests.
+New public/manual-plan fields appear only on source-bound v3 requests. Follow-ups
+reuse frozen passages with fresh refs, stripping old refs from conversation text;
+no new fetch occurs. Cited passages/provenance stay in analysis evidence after
+ordinary request expiry. No migration, options/default/key/privacy/budget change.

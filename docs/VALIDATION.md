@@ -1,8 +1,9 @@
 # Validation and release status — 2026-10-20
 
-**Current source package: 0.2.1-dev.1.** Device-reliability phase A is implemented
-for local qualification. Independent critical review, both-container qualification,
-public CI/readback and live-upgrade acceptance are pending at this phase checkpoint.
+**Current source package: 0.2.1-dev.2.** Phase A is accepted, public and live on
+its source-bound dev.1 candidate. The optional public-source phase B is implemented;
+its targeted review corrections await independent critical/container/public/live
+acceptance. Version-bound completed and pending gates are distinguished below.
 No new HA/provider/public-research call or publication is claimed by the writer.
 
 ## Previous 0.2.0 qualification checkpoint
@@ -1124,3 +1125,142 @@ publication checks passed. Migrations 1–9 retain identical AST/SQL definitions
 reliability kernel, app/AI/configuration and package metadata remain byte-identical
 to `c5064453`. The candidate's new critical follow-up and controller acceptance
 are still pending; phase B remains closed.
+
+### 0.2.1 phase A — accepted/public/live checkpoint
+
+The controller accepted exact `83355b6aaa458a7bafedbcbc01660a4a03c3fd0f` after
+critical sequence 4 GO (zero critical/high/medium), actual architecture-image
+journal recovery/HTTP/restart/RO-WAL checks and independent source-bound startup/
+DOM-ASGI gates. Public PR #5 merged as `a9af35439fdef11a34bb2aea8ad4951639848d87`;
+all nine push/PR/main CI checks passed and anonymous source readback matched.
+The existing Supervisor installation updated to dev.1 with its backup enabled.
+Native connection/read-only/cache, exact served interface, first device-history
+boundary, sampled role/state semantics and bounded old history/settings checks
+passed. No household identifiers/counts, options, provider keys or private exports
+are included here. This completed A evidence is distinct from the B gates below.
+
+### 0.2.1 phase B — local dev.2 candidate
+
+- `.venv/bin/python -m pytest -q`: **487 PASS in 39.05 s**, one pre-existing
+  Starlette/httpx deprecation warning. All historical tests remain enabled.
+- Node **22.23.3** `--test tests/dom/*.test.cjs`: **64 PASS**. Whole shipped HTML/JS
+  tests exercise the new public-plan/job/new-preview/send workflow, fresh diagnostic
+  consent, research resume/error/withdrawal and compact latest/older solution views.
+- New real ASGI lifecycle returns 202 while a synthetic public HTTP request is
+  gated; light status, concurrent claim rejection and server-reconstructed attachment
+  scope work. The original exact request/digest/API audit is unchanged.
+- Actual HTTP adapters under synthetic MockTransport perform six public GETs,
+  project five sources including two sampled comments, then send exactly the two
+  previously previewed native provider bodies. Technical failover retains uncertain
+  cost; a valid received response validates/retains its source-bound manual plan.
+  Invalid public/local references or step bounds remain billed and yield no analysis.
+- Secret/identifier canaries are supplied in real synthetic source bodies, removed
+  before final content hashing, and absent from exact native previews. Current source
+  enums are isolated; follow-ups keep source content hashes/private snapshot while
+  changing round refs and stripping stale refs from context, without public refetch.
+- Streaming byte/encoding/redirect limits, quota-before-network/atomic failure,
+  in-flight revocation/off→on, conditional 304 accounting, cache immutability,
+  restart quota/backoff and whole-job deadline guards pass. A malformed manifest
+  yields a bounded gap while usable sources remain. Missing/invalid comment counts
+  never guess page one. Device target/member/peer/coverage and current auth-only
+  HA-version guards use local synthetic facts/WebSocket servers exclusively.
+- Both ordinary v2 native request serializers match fixed SHA-256 guards generated
+  from accepted A3; new defaults do not modify historical JSON. The existing
+  withdrawn-analysis fixture caught an unguarded JSON extraction in the first full
+  run (485 PASS/1 failure); `json_valid` now preserves its legacy audit and the
+  final complete suite passes. A missing test request-header and ledger-label
+  assertions were harness corrections; no security/billing guard was weakened.
+
+The read allowlist, schema/migrations 1–9, options/defaults, historical data and
+per-attempt billing policy remain unchanged. Only actual existing own SQLite
+sidecars get 0600 after authoritative schema validation; real WAL files and the
+unsupported-schema negative paths are tested. Metadata is coordinated at dev.2.
+Official technical docs were checked for current WebSocket auth/version and
+GitHub issue-comment pagination. These checks are not real app-provider/public
+research/live B qualification. Independent review, both container architectures,
+public CI/readback and the live dev.2 upgrade remain pending at this checkpoint.
+
+Final Ruff lint/format (69 Python files), JS syntax, staged diff and full tracked/
+reachable-history publication scan passed. Source guards prove migrations 1–9,
+HA read/event allowlists and all configuration/defaults except the coordinated
+version unchanged. Five-minute ordinary-error caching also has a no-second-
+dispatch/quota regression. No new public or live B acceptance is implied.
+
+
+### 0.2.1 phase B — source fidelity and retained-scope correction
+
+The controller qualified exact `5bb9947` with 487 Python tests (39.52 s), 64 Node
+DOM tests, lint/source/privacy scans, both actual architecture images/HTTP/restart/
+RO-WAL workers and immutable hot-journal recovery. Populated v8 retained all 22
+old tables; populated dev.1 schema9 retained all 28 tables, device measurement
+start, options/backups and actual private sidecars across restart. Independent
+native-provider/quota/privacy/legacy-v2/source-hash and device/version/gap gates
+passed except a retained-device target label. Those are completed checks of
+`5bb9947`, not acceptance of this correction or real public/live B operation.
+
+Critical review found one MEDIUM over-aliasing legitimate public technical terms;
+the independent real API→DOM check found the target label MEDIUM. A public-only
+known-private-reference pass now preserves all closed catalog slugs and standard
+configuration.yaml/mqtt.publish terms, including prior diagnostic alias seeds,
+while supplied private IDs/custom-platform/quoted secrets are removed
+before content hashing. It discovers no new IDs in public prose. DiagnosticAliases
+and private/v2 projection defaults are unchanged. Both profiles/four integrations,
+exact native preview passages, retained analysis sources and scoped follow-up
+hashes are checked, including a private ID containing a catalog substring.
+
+The complete shipped DOM now consumes actual synthetic ASGI POST and retained GET
+responses for device, entity and system scopes, preserving exact target, digest
+and actual provider bodies while performing no send/revoke/research action. The
+Python fixture runs only inside the npm test phase (after dependencies install),
+so the earlier Python-only CI phase has no jsdom requirement.
+
+All bounded history and counterevidence survive the final member-heavy previews
+in compact and diagnostic: own members cap at 32, history remains 20 and peers 16;
+primary healthy/unavailable and peer online/offline examples and exact omissions
+are checked in both native prompt bodies. The full HTML void set no longer counts
+as nesting; real depth >128 produces a visible gap. Backoff is capped at 24 hours
+with host/expiry in plan/gaps, and repeated unused-base plans reuse one map.
+Reconstruction/content-integrity errors return fixed 400 refusals before payment;
+source-pruning recomputes retained-comment counts. Rendering parses evidence once.
+The documented installation controls remain AI disabled or local-only; no separate
+option/reset action, migration, provider/default or HA operation is introduced.
+
+Local full verification: **501 Python PASS in 38.88 s** (one existing warning),
+**65 Node 22.23.3 DOM PASS in 2.27 s**, Ruff lint/format (71 Python files), JS syntax
+and diff checks. Test fixture corrections kept a healthy final member after the
+synthetic transitions and restored a released temporary identifier map only for
+the isolated final-pruning oracle; no product guard or prior assertion was weakened.
+Independent same-session critical review, corrected-image/public/live gates and
+stable release remain pending for this new immutable source.
+
+### 0.2.1 phase B — final bounded pre-publication delta
+
+Critical sequence 2 gave GO on `981fad1195a83b221a2978abe345a3416bc24175`, with
+zero critical/high/medium. Independent public fidelity through earlier aliases,
+actual native bodies, retention/DOM and literal old v2 history passed; independent
+member-heavy compact/diagnostic projection retained all 20 bounded rows and
+healthy/unavailable primary/peer examples. Public/live B acceptance remains open.
+
+The controller reproduced the new DOM fixture's missing root import in a clean
+requirements-only CI environment. The one-line explicit source-root import now
+passes dependency-only isolated Python execution without editable .pth/CWD support,
+producing all three real ASGI fixtures from the bound checkout. Node reports a
+setup error explicitly, uses 30 seconds and preserves all assertions; Python test
+dependencies must precede npm tests, matching the existing CI order. This local
+isolation proof does not substitute for the controller's actual clean-CI gate.
+
+Eighteen targeted guards cover terminal '.', ',' and ')' (also final hyphens),
+longer-token prefix/suffix exclusions, stale-plan replacement for backoff/auth
+version/time, and a committed old numeric backoff clamp. An independent RO SQLite
+connection sees the normalized deadline before/after repeated/restarted refusal;
+attempt/search arrays and nonempty billing/request/receipt tables remain exact.
+Malformed booleans/negative/nonfinite/text deadlines still refuse without mutation.
+A real full five-source job appends two late backoff gaps and remains <=12 KiB
+both before attachment and inside each exact native provider body, with matching
+final excerpt hashes. No private/v2 default or new schema/option/reset path changes.
+
+Final local suite: **519 Python PASS in 39.68 s** (one existing Starlette/httpx
+warning), **65 Node 22.23.3 DOM PASS in 2.59 s**. Ruff lint/format (72 Python
+files), JS syntax and diff checks passed. Source invariants/private-v2 metadata
+and publication scans accompany the frozen checkpoint; no real HA, provider,
+public research, publication or stable-release claim is added.

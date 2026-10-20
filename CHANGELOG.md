@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.2.1-dev.2
+
+Development preview of optional public-source investigations; phase-specific
+independent/public/live qualification remains in [validation](docs/VALIDATION.md).
+
+- Review a generic catalog/problem/version query plan before a bounded public
+  research job, then inspect a new exact AI preview over the same local evidence.
+- Retain actual official HA/GitHub excerpts, source hashes, current-version limits,
+  gaps and separate local/public references. One bounded issue-comment page is
+  explicitly incomplete; Reddit remains unavailable without authentication.
+- Validate source-bound manual plans with prerequisites, 2–4 manual steps and a
+  later-observation validation method; sources do not prove local cause or a fix.
+- Investigate one explicitly selected registered device with own members, healthy
+  counterevidence, measured coverage and bounded integration correlation.
+- Keep the latest/selected AI solution central and older analyses in compact history.
+- Preserve original v2 request bodies/digests, settings, retained data and per-attempt
+  billing; tighten actual own SQLite sidecar permissions after schema validation.
+
 ## 0.2.1-dev.1
 
 Development preview of device reliability and local manual follow-through;

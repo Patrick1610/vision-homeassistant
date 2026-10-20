@@ -19,6 +19,7 @@ from .ai_contract import TASKS, SendInput
 from .ai_provider import AIConflict
 from .config import Runtime, Settings
 from .monitor import Monitor
+from .research import ResearchAttach, ResearchError, ResearchStart
 from .security import Redactor, protect_logging
 from .store import STORAGE_FAILURES, StorageStartupError, Store
 
@@ -469,6 +470,49 @@ def create_app(runtime=None, settings=None, *, connect=True):
         except AIError as error:
             raise HTTPException(400, str(error)) from None
 
+    @app.post("/api/intelligence/research/plan")
+    async def research_plan(value: SendInput):
+        try:
+            return app.state.ai.research.plan(value)
+        except ResearchError as error:
+            raise HTTPException(400, str(error)) from None
+
+    @app.post("/api/intelligence/research", status_code=202)
+    async def research_start(value: ResearchStart):
+        try:
+            return app.state.ai.research.start(value)
+        except ResearchError as error:
+            raise HTTPException(400, str(error)) from None
+
+    @app.get("/api/intelligence/research/{research_id}/status")
+    async def research_status(research_id: str):
+        try:
+            return app.state.ai.research.status(research_id)
+        except ResearchError as error:
+            raise HTTPException(404, str(error)) from None
+
+    @app.get("/api/intelligence/research/{research_id}")
+    async def research_detail(research_id: str):
+        try:
+            return app.state.ai.research.status(research_id, detail=True)
+        except ResearchError as error:
+            raise HTTPException(404, str(error)) from None
+
+    @app.post("/api/intelligence/research/{research_id}/revoke")
+    async def research_revoke(research_id: str):
+        try:
+            return app.state.ai.research.revoke(research_id)
+        except ResearchError as error:
+            raise HTTPException(404, str(error)) from None
+
+    @app.post("/api/intelligence/research/{research_id}/preview")
+    async def research_preview(research_id: str, value: ResearchAttach):
+        try:
+            request = app.state.ai.research.preview_input(research_id, value)
+            return app.state.ai.preview(request)
+        except AIError as error:
+            raise HTTPException(400, str(error)) from None
+
     @app.post("/api/intelligence/requests/{request_id}/revoke")
     async def revoke_analysis(request_id: str):
         if len(request_id) != 32:
@@ -496,7 +540,15 @@ def create_app(runtime=None, settings=None, *, connect=True):
             "local_aliases": local["aliases"],
             "local_selection": {
                 key: local["snapshot"][key]
-                for key in ("entity", "run_id", "compare", "selection_basis")
+                for key in (
+                    "entity",
+                    "run_id",
+                    "compare",
+                    "selection_basis",
+                    "device",
+                    "target_type",
+                )
+                if key in local["snapshot"]
             },
         }
 
@@ -517,7 +569,11 @@ def create_app(runtime=None, settings=None, *, connect=True):
     async def retained_conversation(conversation_id: str):
         rows = app.state.store.rows(
             "SELECT r.id request_id,r.round,r.kind,r.target,r.profile,r.run_id,r.compare_id,"
-            "r.digest,r.created,r.status,a.id analysis_id,a.result,a.provider,a.model "
+            "r.digest,r.created,r.status,"
+            "CASE WHEN json_valid(r.payload) THEN "
+            "COALESCE(json_extract(r.payload,'$.target_type'),'entity') "
+            "ELSE 'entity' END target_type,"
+            "a.id analysis_id,a.result,a.provider,a.model "
             "FROM ai_requests r LEFT JOIN analyses a ON a.id=r.analysis_id "
             "WHERE r.conversation_id=? AND (r.status='completed' OR "
             "(r.status='revoked' AND r.analysis_id IS NOT NULL)) "

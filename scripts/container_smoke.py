@@ -39,7 +39,7 @@ def wait_ready(name):
 
 
 def main():
-    image = sys.argv[1] if len(sys.argv) > 1 else "vision:0.2.1-dev.1"
+    image = sys.argv[1] if len(sys.argv) > 1 else "vision:0.2.1-dev.2"
     name = "vision-smoke-" + uuid.uuid4().hex[:10]
     volume = name + "-data"
     docker("volume", "create", volume)

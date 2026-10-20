@@ -1498,7 +1498,10 @@ class DeviceReliability:
                             else "Persistent backlog"
                         )
                         + (
-                            f" · {len(cluster)} devices on {platform}"
+                            f" · {sum(item[1] for item in cluster)} changed / "
+                            f"{len(cluster)} affected on {platform}"
+                            if multiple and new
+                            else f" · {len(cluster)} devices on {platform}"
                             if multiple
                             else " · " + row["name"]
                         ),
@@ -1551,7 +1554,8 @@ class DeviceReliability:
             result.append(
                 {
                     "key": "run:" + row["run_id"],
-                    "title": row["entity_id"],
+                    "title": self.monitor.entities.get(row["entity_id"], {}).get("name")
+                    or row["entity_id"],
                     "kind": "recent_failure",
                     "impact": "A recent native trace reports failure.",
                     "manual_step": "Inspect the actual failing step and compare a covered run.",

@@ -18,3 +18,10 @@ For the interface regressions, use Node.js 22 or newer and run
 The exactly locked jsdom dependency executes the real HTML and complete app script
 against synthetic transport. It is test-only, excluded from the Python runtime
 and container. DOM behavior tests complement actual browser/layout qualification.
+
+Install the locked Python test requirements before running the DOM suite, as in
+README/CI: `python -m pip install --require-hashes -r requirements-test.txt`.
+One DOM regression replays actual local ASGI POST/GET fixtures; it needs that
+qualified Python environment as well as Node/jsdom. The fixture binds imports to
+the checked-out source, uses a 30-second startup deadline and fails explicitly
+on missing Python dependencies; it never skips the regression or contacts HA/AI.

@@ -79,8 +79,10 @@ class Provider(Protocol):
     async def send(self, body: str, key: str) -> ProviderResult: ...
 
 
-def request_body(provider, model, system, prompt, max_tokens, *, evidence_refs=None):
-    schema = provider_schema(provider, evidence_refs)
+def request_body(
+    provider, model, system, prompt, max_tokens, *, evidence_refs=None, source_refs=None
+):
+    schema = provider_schema(provider, evidence_refs, source_refs=source_refs)
     if provider == "anthropic":
         return encoded(
             {

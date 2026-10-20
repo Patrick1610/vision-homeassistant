@@ -77,10 +77,34 @@ class Diagnosis(BaseModel):
     requested_sections: list[Section] = Field(max_length=3)
 
 
+class ManualStep(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    instruction: str = Field(min_length=1, max_length=1000)
+    source_refs: list[Reference] = Field(min_length=1, max_length=4)
+
+
+class ManualPlan(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    prerequisites: list[Unknown] = Field(max_length=4)
+    steps: list[ManualStep] = Field(min_length=2, max_length=4)
+
+
+class ResearchFinding(Finding):
+    source_refs: list[Reference] = Field(max_length=4)
+    manual_plan: ManualPlan | None
+
+
+class ResearchDiagnosis(Diagnosis):
+    diagnoses: list[ResearchFinding] = Field(max_length=12)
+
+
 class AnalysisInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
     kind: TaskKind = "audit"
     target: str | None = Field(default=None, max_length=500)
+    target_type: Literal["entity", "device"] = "entity"
+    research_id: str | None = Field(default=None, pattern=r"^[a-f0-9]{32}$")
+    research_digest: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     profile: Privacy = "compact"
     run_id: str | None = Field(default=None, max_length=200)
     compare: str | None = Field(default=None, max_length=200)
@@ -225,8 +249,9 @@ TASKS = {
 }
 
 
-def provider_schema(provider, evidence_refs=None):
-    schema = Diagnosis.model_json_schema()
+def provider_schema(provider, evidence_refs=None, *, source_refs=None):
+    research = source_refs is not None
+    schema = (ResearchDiagnosis if research else Diagnosis).model_json_schema()
 
     def normalize(value):
         if isinstance(value, list):
@@ -266,7 +291,16 @@ def provider_schema(provider, evidence_refs=None):
         refs = sorted(set(evidence_refs))
         if not refs:
             raise ValueError("A provider schema requires current evidence references")
-        fields = result["$defs"]["Finding"]["properties"]
+        fields = result["$defs"]["ResearchFinding" if research else "Finding"]["properties"]
         for field in ("evidence", "counter_evidence"):
             fields[field]["items"]["enum"] = refs.copy()
+    if research:
+        refs = sorted(set(source_refs))
+        if not refs:
+            raise ValueError("A research schema requires actual current public-source references")
+        for fields in (
+            result["$defs"]["ResearchFinding"]["properties"],
+            result["$defs"]["ManualStep"]["properties"],
+        ):
+            fields["source_refs"]["items"]["enum"] = refs.copy()
     return result

@@ -28,7 +28,7 @@ process umask is 0077. This is filesystem protection, **not encryption at rest**
 HA backups can contain credentials and observations; protect them accordingly.
 Known credentials and common secret patterns are redacted from outputs and
 formatted logs, including quoted/escaped assignments. Compact provider bundles
-exclude source free text and identifiers. Diagnostic projections require explicit
+exclude local HA source free text and identifiers. Diagnostic projections require explicit
 richer opt-in and pseudonymize typed identifiers and bounded errors; arbitrary
 personal data cannot be perfectly removed. Inspect the exact request preview.
 
@@ -39,6 +39,16 @@ failover limits are frozen before send. Follow-ups stay on the original local
 snapshot; additional evidence sections are closed enums, with no HA tools, SQL,
 shell or arbitrary fetch. Local schema and current-round support/counterevidence
 validation apply even to billed responses. All provider text remains untrusted.
+
+Public research has its own human-reviewed catalog/query plan and one bounded
+job. Only fixed official HA paths and catalog GitHub REST paths can be read;
+model text, browser URLs, household fields and remote links cannot choose fetches.
+The client disables environment proxies, redirects, credentials and cookies;
+response streaming, job limits and atomic persistent pre-dispatch quotas fail
+closed. Public text stays untrusted and is escaped, never executed. A new frozen
+provider request binds its final source excerpts/hashes and original local
+snapshot. Current-round public references and manual-step references are locally
+validated in addition to the original local evidence schema.
 
 Report security problems privately to the repository maintainer through the
 repository's private vulnerability reporting facility when enabled. Do not post
