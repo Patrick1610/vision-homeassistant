@@ -145,3 +145,26 @@ Public RC CI/readback and live qualification subsequently passed within the boun
 recorded in VALIDATION. The 2026-10-20 stable metadata-only checkpoint requires its
 own normal review and public/final-live/tag gates; no such outcome is preclaimed.
 Jev remains unavailable without its required key, so no score is claimed.
+
+## 0.2.1 source review and stable packaging checkpoint
+
+Phase A's critical stream `9f0f4ba1-b282-480e-bb99-7730e2178500`, channel
+`vision021-a`, accepted `83355b6aaa458a7bafedbcbc01660a4a03c3fd0f` in sequence 4
+with zero critical/high/medium findings. The subsequent dev.1 public/live gates
+passed. The accepted sidecar-permission low was addressed and independently tested
+in phase B after authoritative schema validation; unsupported sources stay intact.
+
+Phase B's critical stream `8d1eefae-9199-4862-9c76-4d5fec613574`, channel
+`vision021-b`, accepted `f146ec01ac2f9145bcce0ca501f737599527a4bc` in sequence 3
+with zero critical/high/medium findings. Public-source fidelity and retained-device
+scope findings closed, as did the bounded pre-publication follow-up. Three new lows
+remain explicitly nonblocking and scope-limited: internal byte-stop labeling,
+visibility of an old unpublished backoff before claim, and leading-token public
+alias boundaries. Stable metadata does not change those paths. Independent tests,
+both actual architecture images, public CI/readback and bounded live retention/
+public-research/Anthropic semantic checks passed as recorded in VALIDATION.
+
+At the dated 2026-10-20 checkpoint, the 0.2.1 metadata/documentation-only delta
+requires its own controller review and stable publication/final-live/tag gates.
+No stable gate is preclaimed. Jev remains unavailable without its configured key;
+no scalar score is invented.
