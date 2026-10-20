@@ -1,9 +1,9 @@
 # Vision
 
 Canonical repository root: this directory. Serious open-source software, MIT,
-source package v0.2.0. Data, local investigations, targeted AI and the UI passed
-their phase reviews. RC public/live qualification is recorded in docs/VALIDATION.md;
-stable publication and final live outcomes belong to the dated release checkpoints.
+source package v0.2.1-dev.1. The 0.2.0 foundation remains preserved. The new
+device-reliability phase is under qualification; critical review/public/live gates
+remain with the controller. See docs/VALIDATION.md for version-bound evidence.
 Read `docs/VISION_SPEC.md`, `docs/ARCHITECTURE.md` and `PLANS.md` before changes.
 
 - Vision observes Home Assistant and MUST NEVER call services, change state,

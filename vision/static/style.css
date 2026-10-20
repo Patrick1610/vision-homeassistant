@@ -1149,3 +1149,240 @@ summary {
 .manual-plan p {
   margin: 0;
 }
+
+/* Observed device reliability: local SVG, visible uncertainty, no health score. */
+.reliability-hero {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 22px;
+  margin-bottom: 18px;
+}
+.period-picker {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.period-picker a {
+  padding: 5px 10px;
+  border-radius: 7px;
+  font-size: 12px;
+  text-decoration: none;
+}
+.period-picker a[aria-current] {
+  background: var(--green-soft);
+  color: var(--green);
+  font-weight: 700;
+}
+.device-chart {
+  margin: 8px 0;
+}
+.device-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 180px;
+}
+.device-chart figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 10px;
+}
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 16px;
+  margin-top: 12px;
+  font-size: 11px;
+}
+.chart-legend span:before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  margin-right: 5px;
+}
+.series-persistent,
+.legend-persistent:before,
+.heatmap-bad {
+  fill: var(--red);
+  background: var(--red);
+}
+.series-new,
+.legend-new:before {
+  fill: var(--gold);
+  background: var(--gold);
+}
+.series-expected,
+.legend-expected:before {
+  fill: #93b6a4;
+  background: #93b6a4;
+}
+.chart-gap,
+.legend-gap:before {
+  fill: #e0e3e1;
+  background: #e0e3e1;
+}
+.chart-axis {
+  stroke: var(--line);
+}
+.heatmap-observed {
+  fill: var(--green-soft);
+}
+.burden-narrative {
+  font-size: 14px;
+  max-width: 800px;
+}
+.reliability-hero .context-strip {
+  padding: 5px 0 0;
+  gap: 5px 16px;
+}
+.backlog-strip {
+  padding: 16px 0 24px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.backlog-strip p {
+  margin: 5px 0;
+  color: var(--muted);
+}
+.integration-heatmap {
+  padding: 18px 0;
+}
+.heatmap-row {
+  display: grid;
+  grid-template-columns: minmax(70px, 0.4fr) minmax(0, 2fr) minmax(80px, 0.6fr);
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0;
+  font-size: 12px;
+}
+.heatmap-row svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+@media (max-width: 600px) {
+  .reliability-hero {
+    padding: 16px;
+  }
+  .heatmap-row {
+    grid-template-columns: 75px minmax(0, 1fr);
+  }
+  .heatmap-row small {
+    grid-column: 2;
+  }
+  .device-chart figcaption {
+    font-size: 9px;
+  }
+  .device-chart svg {
+    min-height: 100px;
+  }
+}
+.chart-plot {
+  display: grid;
+  grid-template-columns: 45px minmax(0, 1fr);
+  gap: 8px;
+}
+.chart-scale {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--muted);
+}
+.device-chart figcaption {
+  margin-left: 53px;
+}
+.device-chart figcaption span {
+  max-width: 24%;
+}
+
+/* Primary manual check beside the trend, first in mobile reading order. */
+.reliability-workspace {
+  display: grid;
+  grid-template-columns: minmax(270px, 1fr) minmax(0, 1.4fr);
+  grid-template-areas: "next trend";
+  gap: 20px;
+  align-items: start;
+  margin-bottom: 16px;
+}
+.reliability-workspace > .reliability-hero {
+  grid-area: trend;
+  margin: 0;
+  padding: 18px;
+}
+.reliability-next {
+  grid-area: next;
+  min-width: 0;
+}
+.reliability-next > .overline {
+  margin: 0 0 9px;
+}
+.reliability-next .priority-grid {
+  display: block;
+  margin: 0;
+}
+.reliability-next .priority-card {
+  padding: 18px;
+  gap: 9px;
+}
+.reliability-next .priority-card .button {
+  margin-top: 0;
+}
+.reliability-next .priority-card details {
+  font-size: 12px;
+}
+.reliability-workspace .section-heading {
+  margin-bottom: 12px;
+}
+.reliability-workspace .section-heading h2 {
+  font-size: 23px;
+}
+.burden-signal {
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 650;
+  margin: 10px 0 6px;
+}
+.burden-proof {
+  font-size: 12px;
+  margin-bottom: 9px;
+}
+.burden-proof .burden-narrative {
+  font-size: 12px;
+}
+.reliability-workspace .context-strip {
+  font-size: 11px;
+}
+.reliability-workspace .chart-legend {
+  font-size: 10px;
+  gap: 5px 10px;
+}
+.secondary-checks .priority-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 800px) {
+  .reliability-workspace {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "next" "trend";
+    gap: 14px;
+  }
+  .reliability-next .priority-card {
+    padding: 16px;
+  }
+  .reliability-workspace > .reliability-hero {
+    padding: 16px;
+  }
+  .reliability-workspace .device-chart svg {
+    min-height: 90px;
+  }
+}
+@media (max-width: 600px) {
+  .secondary-checks .priority-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

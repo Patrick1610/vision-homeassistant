@@ -10,12 +10,12 @@ import sqlite3
 import threading
 import time
 import uuid
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 from pathlib import Path
 
 from .evidence import fingerprint
 
-SCHEMA_VERSION = 8
+SCHEMA_VERSION = 9
 AI_MAX_REQUESTS = 512
 AI_MAX_STORAGE_BYTES = 64 * 1024 * 1024
 AI_RESULT_RESERVE_BYTES = 1024 * 1024
@@ -27,6 +27,11 @@ MAX_SNAPSHOTS_PER_VERSION = 3
 MAX_SNAPSHOT_BYTES = 1024 * 1024 * 1024
 SNAPSHOT_FREE_RESERVE = 16 * 1024 * 1024
 STORAGE_FAILURES = {
+    "unsupported_preview_schema": (
+        "Unsupported unpublished device schema; preserve the private data volume and backups. "
+        "With Vision stopped, use a compatible preview or restore a compatible backup copy. "
+        "Do not delete history or tables"
+    ),
     "snapshot_space": "Insufficient space for migration snapshot; free private volume space",
     "snapshot_budget": "Migration snapshot budget reached; review backups with Vision stopped",
     "snapshot_invalid": "Migration snapshot validation failed; preserve the private data volume",
@@ -237,12 +242,112 @@ MIGRATIONS = {
             for operation in ("INSERT", "UPDATE", "DELETE")
         ),
     ),
+    9: (
+        "CREATE TABLE device_observations (id INTEGER PRIMARY KEY,device_id TEXT NOT NULL,"
+        "state TEXT NOT NULL CHECK(state IN ('online','offline','partial','unknown','excluded')),"
+        "started REAL NOT NULL,ended REAL,episode_started REAL,episode_kind TEXT NOT NULL,"
+        "cohort TEXT NOT NULL,attention TEXT NOT NULL,platforms TEXT NOT NULL,"
+        "evidence TEXT NOT NULL,reason TEXT NOT NULL,encoded_bytes INTEGER GENERATED ALWAYS AS ("
+        "length(cast(device_id AS BLOB))+length(cast(state AS BLOB))+length(cast(episode_kind "
+        "AS BLOB))+length(cast(cohort AS BLOB))+length(cast(attention AS "
+        "BLOB))+length(cast(platforms AS BLOB))+length(cast(evidence AS "
+        "BLOB))+length(cast(reason AS BLOB))+64) STORED)",
+        "CREATE UNIQUE INDEX device_observations_open ON device_observations(device_id) WHERE "
+        "ended IS NULL",
+        "CREATE INDEX device_observations_device ON device_observations(device_id,started,id)",
+        "CREATE INDEX device_observations_end ON device_observations(ended,started)",
+        "CREATE INDEX device_observations_start ON device_observations(started,id)",
+        "CREATE TABLE device_current (device_id TEXT PRIMARY KEY,observation_id INTEGER "
+        "REFERENCES device_observations(id),payload TEXT NOT NULL,registry_present INTEGER NOT "
+        "NULL,removed_at REAL)",
+        "CREATE TABLE device_storage (kind TEXT PRIMARY KEY,records INTEGER NOT NULL,bytes "
+        "INTEGER NOT NULL)",
+        "INSERT INTO device_storage VALUES ('history',0,0),('current',0,0)",
+        *(
+            "CREATE TRIGGER device_"
+            + kind
+            + "_size_"
+            + operation.lower()
+            + " AFTER "
+            + operation
+            + (" OF " + ",".join(columns) if operation == "UPDATE" else "")
+            + " ON "
+            + table
+            + " BEGIN "
+            + (
+                "UPDATE device_storage SET records=records-1,bytes=bytes-("
+                + "+".join("length(cast(OLD." + column + " AS BLOB))" for column in columns)
+                + "+"
+                + str(overhead)
+                + ") WHERE kind='"
+                + kind
+                + "'; "
+                if operation != "INSERT"
+                else ""
+            )
+            + (
+                "UPDATE device_storage SET records=records+1,bytes=bytes+("
+                + "+".join("length(cast(NEW." + column + " AS BLOB))" for column in columns)
+                + "+"
+                + str(overhead)
+                + ") WHERE kind='"
+                + kind
+                + "'; "
+                if operation != "DELETE"
+                else ""
+            )
+            + "END"
+            for kind, table, columns, overhead in (
+                (
+                    "history",
+                    "device_observations",
+                    (
+                        "device_id",
+                        "state",
+                        "episode_kind",
+                        "cohort",
+                        "attention",
+                        "platforms",
+                        "evidence",
+                        "reason",
+                    ),
+                    64,
+                ),
+                ("current", "device_current", ("device_id", "payload"), 32),
+            )
+            for operation in ("INSERT", "UPDATE", "DELETE")
+        ),
+        "CREATE TABLE device_coverage (id INTEGER PRIMARY KEY,started REAL NOT "
+        "NULL,observed_until REAL NOT NULL,ended REAL,reason TEXT NOT NULL)",
+        "CREATE UNIQUE INDEX device_coverage_open ON device_coverage((1)) WHERE ended IS NULL",
+        "CREATE TABLE device_policies (device_id TEXT PRIMARY KEY,attention TEXT NOT NULL "
+        "CHECK(attention IN ('review','known','expected')),power TEXT NOT NULL "
+        "CHECK(power IN ('unknown','battery','mains')),note TEXT NOT NULL,updated REAL NOT NULL,"
+        "baseline_state TEXT NOT NULL,baseline_cohort TEXT NOT NULL,baseline_at "
+        "REAL,worsened_at REAL,worsened_cohort TEXT)",
+        "CREATE TABLE device_checks (id INTEGER PRIMARY KEY,device_id TEXT NOT NULL,created "
+        "REAL NOT NULL,kind TEXT NOT NULL,note TEXT NOT NULL,before_state TEXT NOT NULL,cohort "
+        "TEXT NOT NULL)",
+        "CREATE INDEX device_checks_device ON device_checks(device_id,created,id)",
+    ),
 }
 
 
 class Store:
     def __init__(self, path: Path):
         path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        # A preliminary RO check preserves unsupported-preview bytes and permissions.
+        # If SQLite needs recovery, the writer-reserved check below is authoritative.
+        if path.exists() and path.stat().st_size:
+            try:
+                with closing(
+                    sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True, timeout=5)
+                ) as source:
+                    self.validate_device_schema(source)
+            except sqlite3.Error:
+                # A hot journal/RO-sidecar failure may require writable recovery.
+                # Affirmative StorageStartupError still propagates; RW rechecks below.
+                pass
         # Create privately before SQLite can create the main or WAL files.
         descriptor = os.open(path, os.O_CREAT | os.O_WRONLY, 0o600)
         os.close(descriptor)
@@ -254,7 +359,6 @@ class Store:
         self.db.execute("PRAGMA busy_timeout=5000")
         self.db.execute("PRAGMA synchronous=NORMAL")
         self.db.execute("PRAGMA foreign_keys=ON")
-        os.chmod(path, 0o600)
         self.db.row_factory = sqlite3.Row
         try:
             version = self.db.execute("PRAGMA user_version").fetchone()[0]
@@ -266,6 +370,8 @@ class Store:
             version = self.db.execute("PRAGMA user_version").fetchone()[0]
             if version > SCHEMA_VERSION:
                 raise RuntimeError("Database belongs to a newer Vision version")
+            self.validate_device_schema(self.db)
+            os.chmod(path, 0o600)
             if (
                 version < SCHEMA_VERSION
                 and self.db.execute(
@@ -314,6 +420,27 @@ class Store:
             ) in {sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED}:
                 raise StorageStartupError("storage_busy") from None
             raise
+
+    @staticmethod
+    def validate_device_schema(db):
+        if db.execute("PRAGMA user_version").fetchone()[0] != 9:
+            return
+        required = {
+            "device_current": {
+                "device_id",
+                "observation_id",
+                "payload",
+                "registry_present",
+                "removed_at",
+            },
+            "device_observations": {"device_id", "state", "started", "ended", "encoded_bytes"},
+            "device_storage": {"kind", "records", "bytes"},
+            "device_policies": {"baseline_state", "worsened_at", "worsened_cohort"},
+        }
+        for table, columns in required.items():
+            retained = {row[1] for row in db.execute("PRAGMA table_xinfo(" + table + ")")}
+            if not columns <= retained:
+                raise StorageStartupError("unsupported_preview_schema")
 
     def migration_backup(self, path):
         """Reuse identical consistent snapshots; bound retained and temporary copies."""
@@ -894,6 +1021,12 @@ class Store:
             self.db.execute("DELETE FROM analyses WHERE created<?", (before,))
             self.db.execute("DELETE FROM usage WHERE created<?", (time.time() - 400 * 86400,))
             self.db.execute("DELETE FROM configuration_changes WHERE observed_at<?", (before,))
+            self.db.execute(
+                "DELETE FROM device_observations WHERE ended<? AND NOT EXISTS "
+                "(SELECT 1 FROM device_current WHERE observation_id=device_observations.id)",
+                (before,),
+            )
+            self.db.execute("DELETE FROM device_coverage WHERE ended<?", (before,))
             self.db.execute(
                 "DELETE FROM automation_structures WHERE last_seen<? AND id NOT IN "
                 "(SELECT structure_id FROM automation_current) AND id NOT IN "

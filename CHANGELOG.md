@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.2.1-dev.1
+
+Development preview of device reliability and local manual follow-through;
+public-source research remains a separate later phase.
+
+- Lead with observed registered-device trends for 24 hours, 7 days and 30 days,
+  bounded integration heatmaps and up to three grouped manual-check priorities.
+- Distinguish device-wide unavailable, partial, unknown, disabled and ancillary
+  evidence. Preserve timestamped device membership and monitoring gaps instead
+  of inventing historical device counts from old entity rows.
+- Integrate clipped per-device outage unions and compare equal-half burdens only
+  within the same fully covered known cohort, with excluded devices explicit.
+- Keep persistent known/expected backlog visible, recognize covered partial-to-
+  offline worsening, and record manual-check markers with observational validation.
+- Preserve existing case-episode attention, AI privacy/settings/billing and all
+  legacy history. Normal condition/mode observations remain in the source archive.
+- Add schema 9 without rewriting migrations 1–8; new detail/cache bounds degrade
+  to unknown rather than evicting existing history or claiming complete trends.
+- Device measurement starts with this preview; 0.2.0 had no device cohorts.
+  Changed membership/classification keeps cross-change comparisons and manual-
+  check validation unknown. Earlier phase-A classification revisions were unpublished.
+
 ## 0.2.0
 
 Version-bound qualification and dated release checkpoints: [validation](docs/VALIDATION.md).

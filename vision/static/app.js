@@ -477,15 +477,276 @@ function latestAuditSummary(audit) {
     first = result.diagnoses?.[0];
   return `<span class="overline">OPTIONAL AI PROPOSALS</span>${prose(result.summary, 180, "Complete audit summary")}${first?.next_step ? `<p><strong>Proposed check:</strong> ${esc(short(first.next_step, 150))}</p>` : ""}<a href="#intelligence/?analysis=${encodeURIComponent(audit.id)}">Review proposals and validation →</a><small class="block">${esc(date(audit.created))} · Requires manual validation</small>`;
 }
+const number = (value, digits = 1) =>
+  Number.isFinite(value)
+    ? value.toLocaleString(undefined, { maximumFractionDigits: digits })
+    : "Unknown";
+function deviceDuration(hours) {
+  if (!Number.isFinite(hours)) return "Unknown device-hours";
+  if (hours > 0 && hours < 1 / 60)
+    return hours * 3600 < 0.1
+      ? "less than 0.1 device-second"
+      : number(hours * 3600) + " device-seconds";
+  if (hours > 0 && hours < 0.1) return number(hours * 60) + " device-minutes";
+  return number(hours) + " device-hours";
+}
+const coverageLabel = (fraction) => Number.isFinite(fraction)
+  ? Math.round(fraction * 100) + "%" : "Unknown";
+function deviceStorageView(storage) {
+  if (!storage) return "";
+  const summary = `${number(storage.records, 0)} / ${number(storage.row_limit, 0)} intervals · ${number(storage.bytes / 1048576)} / ${number(storage.encoded_byte_limit / 1048576)} MiB encoded`,
+    eligibility = Number.isFinite(storage.earliest_retention_eligible_at)
+      ? `Earliest ordinary-retention eligibility after ${date(storage.earliest_retention_eligible_at)} (${storage.retention_days} days). This is not a guaranteed resumption time; sufficient complete-cohort headroom is still required.`
+      : "Ordinary-retention eligibility is unknown until a cached snapshot identifies an eligible closed interval; no resumption time is promised.";
+  return `${storage.blocked ? `<p class="coverage-note">Device-history capacity reached: ${esc(summary)}. Existing history remains preserved. Uncaptured time and new worsening cannot be proved while history capture is blocked. Current evidence remains inspectable. ${esc(eligibility)}</p>` : ""}<details class="history-capacity"><summary>Device-history capacity</summary><p>${esc(summary)}.</p><p>${number(storage.remaining_rows, 0)} rows and ${number(storage.remaining_encoded_bytes / 1048576)} MiB encoded headroom. Encoded fields exclude SQLite/index/WAL overhead; this is not a file-size limit.</p><p>${esc(eligibility)}</p><p>Eligibility snapshot ${esc(date(storage.retention_estimate_as_of))}. Configured retention only; history is not evicted to make room.</p></details>`;
+}
+function deviceChart(data) {
+  const points = data.points || [],
+    width = 640,
+    height = 140;
+  const max = Math.max(
+    2,
+    2 *
+      Math.ceil(
+        Math.max(
+          0,
+          ...points.map(
+            (p) => (p.persistent || 0) + (p.new || 0) + (p.expected || 0),
+          ),
+        ) / 2,
+      ),
+  );
+  const bar = width / Math.max(1, points.length);
+  const bars = points
+    .map((p, i) => {
+      let y = height;
+      const stacks = ["persistent", "new", "expected"]
+        .map((kind) => {
+          const value = p[kind];
+          if (value == null) return "";
+          const h = (value / max) * height;
+          y -= h;
+          return `<rect class="series-${kind}" x="${i * bar + 1}" y="${y}" width="${Math.max(1, bar - 2)}" height="${h}"><title>${esc(kind)}: ${esc(value)} devices</title></rect>`;
+        })
+        .join("");
+      return `${p.coverage < 1 || p.observed === 0 || p.observed === null || p.selection_limited || p.persistent == null ? `<rect class="chart-gap" x="${i * bar}" y="0" width="${bar}" height="${height}"><title>${esc(date(p.start))}: ${coverageLabel(p.coverage)} monitoring coverage; missing membership or omitted evidence remains unknown</title></rect>` : ""}${stacks}`;
+    })
+    .join("");
+  const ticks = [
+    data.start,
+    data.start + (data.end - data.start) / 3,
+    data.start + (2 * (data.end - data.start)) / 3,
+    data.end,
+  ];
+  const tickLabel = (at) =>
+    new Date(at * 1000).toLocaleString(undefined, {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  return `<figure class="device-chart"><div class="chart-plot"><div class="chart-scale" aria-label="Unavailable registered devices"><span>${esc(max)} devices</span><span>${number(Math.floor(max / 2), 0)}</span><span>0</span></div><svg viewBox="0 0 ${width} ${height + 12}" role="img" aria-label="Unique observed unavailable devices at bucket ends. Grey marks missing coverage.">${bars}<line class="chart-axis" x1="0" x2="${width}" y1="${height}" y2="${height}"/></svg></div><figcaption>${ticks.map((at) => `<span>${esc(tickLabel(at))}</span>`).join("")}</figcaption><div class="chart-legend"><span class="legend-persistent">Persistent / baseline</span><span class="legend-new">New observed transitions</span><span class="legend-expected">Expected</span><span class="legend-gap">Unknown coverage</span></div></figure>`;
+}
+function deviceActions(items, primary = true) {
+  if (!items.length)
+    return `<div class="calm-state"><div><h3>No current investigation selected</h3><p>Known and expected backlog remains visible below. Missing coverage does not establish healthy devices.</p></div></div>`;
+  return `<div class="priority-grid">${items
+    .slice(0, 3)
+    .map((item, index) => {
+      const featured = primary && index === 0;
+      const otherDevices = (item.related_devices || []).filter(
+        (device) => device.device_id !== item.device_id,
+      );
+      return `<article class="priority-card ${featured ? "featured" : ""}"><span class="overline">${esc(item.kind.replaceAll("_", " "))}</span><h3>${esc(item.title)}</h3>${prose(item.impact, 110, "Full affected scope")}${item.evidence_since ? `<small class="affected-id">Retained evidence from ${esc(date(item.evidence_since))}${item.new_device_count ? ` · ${esc(item.new_device_count)} observed transitions in 24 h` : ""}</small>` : ""}<div class="next-check"><span class="overline">NEXT MANUAL CHECK</span>${prose(item.manual_step, 120, "Full check")}</div><a class="${featured ? "button primary" : "quiet-link"}" ${featured ? 'data-primary-investigation="true"' : ""} href="${esc(item.href)}" aria-label="${esc(item.action_label || "Open investigation")}: ${esc(item.title)}">${esc(item.action_label || (featured ? "Open investigation" : "View evidence"))} ↗</a>${otherDevices.length ? `<details><summary>Other affected devices (${esc(item.device_count - 1)})</summary><ul>${otherDevices.map((device) => `<li><a href="#devices/reliability?device=${encodeURIComponent(device.device_id)}">${esc(device.name)}</a></li>`).join("")}</ul>${item.related_devices_limited ? "<p>Only the first eight affected members are listed. Full integration inventory remains available separately.</p>" : ""}</details>` : ""}<details><summary>Evidence & validation</summary>${item.scope_note ? `<p>${esc(item.scope_note)}</p>` : ""}<p>${esc(item.validation)}</p></details></article>`;
+    })
+    .join("")}</div>`;
+}
+function heatmapUnknown(point) {
+  return point.offline == null || point.observed == null || point.observed === 0 ||
+    point.selection_limited || point.coverage < 1;
+}
+function heatmapDescription(point) {
+  const coverage = `Monitoring coverage ${coverageLabel(point.coverage)}`,
+    subset = point.selection_limited
+      ? " Retained device-history subset only; omitted devices remain unknown."
+      : "";
+  if (point.observed == null || point.observed === 0)
+    return `Unknown: no observed device membership at this bucket end. ${coverage}.${subset}`;
+  if (point.offline == null)
+    return `Unavailable-device count unknown. ${coverage}.${subset}`;
+  return `${point.offline} unavailable devices; ${point.unknown ?? "Unknown"} unassessed, ${point.partial ?? "Unknown"} partial; ${point.observed} observed devices. ${coverage}.${point.coverage < 1 ? " Uncovered time remains unknown." : ""}${subset}`;
+}
+function integrationMap(data) {
+  const groups = data.integrations || { items: [] };
+  return `<details class="integration-heatmap"><summary>Integration observations (${esc(groups.total || 0)})</summary><p class="muted">Each cell is an observed device count at a bucket end. Grey is unknown, gold is partial evidence, burgundy marks device-wide unavailable. Shared membership is correlation, not a network diagnosis; group totals can overlap for devices with multiple integrations.</p>${(groups.items || []).map((item) => `<div class="heatmap-row"><a href="#devices/reliability?platform=${encodeURIComponent(item.platform)}">${esc(item.platform)}</a><svg viewBox="0 0 360 22" role="img" aria-label="${esc(item.platform)} unavailable-device history">${(item.points || []).map((point, i, points) => `<rect x="${(i * 360) / points.length}" y="1" width="${Math.max(1, 360 / points.length - 2)}" height="20" class="${heatmapUnknown(point) || (point.offline === 0 && point.unknown > 0) ? "chart-gap" : point.offline > 0 ? "heatmap-bad" : point.partial > 0 ? "series-new" : "heatmap-observed"}"><title>${esc(date(point.end))}: ${esc(heatmapDescription(point))}</title></rect>`).join("")}</svg><small>${esc(item.devices)} devices · ${item.offline == null ? "Unknown current state" : esc(item.offline) + " unavailable"}</small></div>`).join("")}${groups.limited ? "<p>Only 12 integration groups are shown; other observed groups remain available in the device list.</p>" : ""}</details>`;
+}
+function reliabilityOverview(data) {
+  const counts = data.counts || {},
+    burden = data.burden || {},
+    trend = data.trend || {};
+  const narrative =
+    burden.direction === "unknown"
+      ? "Outage-burden trend is unknown: no fully covered, stable comparison cohort yet."
+      : `For the stable observed subset (${burden.comparable_devices} comparable; ${burden.excluded_devices ?? trend.uncompared_devices ?? 0} excluded of ${burden.total_devices ?? burden.comparable_devices} devices), outage burden ${burden.direction}: ${deviceDuration(burden.before_device_hours)} → ${deviceDuration(burden.after_device_hours)} across equal halves. Other devices remain unassessed for this comparison.`;
+  const comparison =
+    burden.direction === "unknown"
+      ? "Burden comparison unknown · no stable, fully covered cohort"
+      : `First → second half: ${{ increased: "↑", decreased: "↓", unchanged: "→" }[burden.direction] || "?"} ${deviceDuration(burden.before_device_hours)} → ${deviceDuration(burden.after_device_hours)} · ${burden.comparable_devices}/${burden.total_devices ?? burden.comparable_devices} comparable`;
+  const priorities = (data.priorities || []).slice(0, 3);
+  return `<div class="reliability-workspace"><section class="reliability-next" aria-label="Primary manual check"><p class="overline">YOUR NEXT MANUAL CHECK</p>${deviceActions(priorities.slice(0, 1))}</section><section class="reliability-hero"><div class="section-heading"><div><p class="overline">DEVICE RELIABILITY</p><h2>What changed in the house</h2></div><div class="period-picker" aria-label="Observation window">${["24h", "7d", "30d"].map((window) => `<a href="#overview/?window=${window}" ${window === data.window ? 'aria-current="true"' : ""}>${window}</a>`).join("")}</div></div>${deviceChart(data)}<p class="burden-signal">${esc(comparison)}</p><details class="burden-proof"><summary>Comparison evidence & limits</summary><p class="burden-narrative">${esc(narrative)}</p></details><div class="context-strip"><span><strong>${deviceDuration(data.device_hours)}</strong> observed unavailable</span><span><strong>${number(counts.offline, 0)}</strong> devices unavailable</span><span>${number(counts.partial, 0)} partial</span><span>${number(counts.unknown, 0)} unknown / unassessed · ${number(counts.excluded, 0)} disabled</span></div></section></div>${data.coverage_start == null ? `<p class="coverage-note">Device measurement has not started. Waiting for registry and state coverage; no healthy-device claim is possible.</p>` : `<p class="muted">Device measurement started ${esc(date(data.coverage_start))}. Earlier device history is unknown; retained entity history remains available.</p>`}${data.cache_as_of == null ? `<p class="coverage-note">${data.cache_state === "failed" ? "No chart snapshot is available: capture or compilation failed." : "No chart snapshot has been compiled yet."} Duration and coverage values remain unknown until a snapshot succeeds.</p>` : data.cache_pending ? `<p class="coverage-note">Chart snapshot from ${esc(date(data.cache_as_of))}; an updated snapshot is pending. Current checks use the latest local attention.</p>` : ""}${data.cache_state === "failed" && data.cache_as_of != null ? '<p class="coverage-note">Chart refresh failed. The last loaded snapshot does not establish fresh coverage.</p>' : ""}${!data.reliable_now ? '<p class="coverage-note">Current device coverage is unavailable. Last observations do not establish current health.</p>' : ""}${data.selection?.excluded_devices ? `<p class="coverage-note">This window includes ${esc(data.selection.included_devices)} of ${esc(data.selection.total_devices)} device histories; ${esc(data.selection.excluded_devices)} are omitted by the whole-device selection bound. Their state and duration remain unknown.</p>` : ""}${deviceStorageView(data.storage)}${data.limited || data.inventory_coverage?.limited ? '<p class="coverage-note">Observation selection is bounded; omitted records remain unknown and no complete trend is claimed.</p>' : ""}${priorities.length > 1 ? `<section class="secondary-checks"><div class="section-heading"><h2>Other manual checks</h2><a class="quiet-link" href="#devices/reliability">All observed devices →</a></div>${deviceActions(priorities.slice(1), false)}</section>` : `<p><a href="#devices/reliability">All observed devices →</a></p>`}<div class="backlog-strip"><span>${esc(data.known_offline || 0)} known unavailable · ${esc(data.expected_offline || 0)} expected unavailable</span><p>These remain in the observed backlog without weekly acknowledgment. A known partial→offline worsening can return to the action queue.</p><a href="#devices/reliability?state=offline">Inspect device backlog →</a></div>${integrationMap(data)}<details class="coverage-panel"><summary>Evidence, coverage & comparison method</summary><p>${esc(data.meaning)}</p><p>${number(data.covered_hours)} monitored wall-hours · ${deviceDuration(data.known_device_hours)} of known state · ${deviceDuration(data.unknown_device_hours)} of unknown state.</p><p>Unavailable-duration totals and burden include expected observations; ${deviceDuration(data.expected_device_hours)} is the expected portion. These are availability observations, not proof of a physical outage.</p><p>First/last status only: ${esc(trend.improved || 0)} improved, ${esc(trend.worsened || 0)} worsened, ${esc(trend.unchanged || 0)} unchanged; ${esc(trend.uncompared_devices || 0)} not comparable. This does not measure failure frequency or prove a cause.</p><p>Changed membership or classification makes comparisons and manual-check validation unknown across that change.</p><p>${esc(data.power_expectation)}</p><p>${esc(data.inventory_coverage?.unmapped_entities || 0)} entities have no current registered device association. Disabled, diagnostic-only and unclassified devices are not counted as healthy.</p><p><a href="#history/availability">Older entity observations</a> · <a href="#issues">All retained source observations</a></p>${table(
+    ["Bucket end", "Persistent", "New", "Expected", "Coverage"],
+    (data.points || []).map((p) => [
+      esc(date(p.end)),
+      esc(p.persistent ?? "Unknown"),
+      esc(p.new ?? "Unknown"),
+      esc(p.expected ?? "Unknown"),
+      coverageLabel(p.coverage),
+    ]),
+  )}</details>`;
+}
+function deviceTimeline(item) {
+  const events = [
+    ...(item.coverage_gaps || []).map((row) => ({
+      at: row.started,
+      title: "Unknown observation gap",
+      detail: "No covered device observations until " + date(row.ended),
+      end: row.ended,
+    })),
+    ...(item.history || []).map((row) => ({
+      at: row.started,
+      title: row.state,
+      detail: row.reason + " · " + row.attention,
+      end: row.ended,
+    })),
+    ...(item.checks || []).map((row) => ({
+      at: row.created,
+      title: "Manual check · " + row.kind,
+      detail: row.note,
+      validation: row.validation,
+    })),
+  ].sort((a, b) => b.at - a.at);
+  return `<ol class="observation-timeline">${events.map((event) => `<li><time>${esc(date(event.at))}</time><div><strong>${esc(event.title)}</strong><p>${esc(event.detail)}</p>${event.validation ? badge(event.validation) + "<small>Later observations; no causal attribution.</small>" : `<small>${event.end ? "Interval ended " + esc(date(event.end)) : "Coverage watermark limits observed duration"}</small>`}</div></li>`).join("")}</ol>`;
+}
+async function reliabilityDevices(route = "reliability") {
+  const params = new URLSearchParams(route.split("?")[1] || "");
+  const id = params.get("device");
+  if (id) {
+    const item = await api("reliability/devices/" + encodeURIComponent(id));
+    return `<p><a href="#devices/reliability">← Observed devices</a></p><section class="problem-hero"><span class="overline">DEVICE OBSERVATIONS</span><h2>${esc(item.name)}</h2>${badge(item.reliable_now ? item.state : "unknown")}${badge(item.attention)}<p>${esc(item.evidence.rule)}</p><p>Locally declared power expectation: ${esc(item.power)} · ${esc(item.evidence.meaningful)} meaningful signals · ${esc(item.evidence.unavailable)} unavailable · ${esc(item.evidence.unknown)} unknown · ${esc(item.evidence.unassessed_members ?? item.evidence.unknown)} unassessed members. <span class="evidence-recorded-at" title="When retained member details changed; not a monitoring-sync timestamp">Evidence details last recorded: ${Number.isFinite(item.evidence_at) ? esc(new Date(item.evidence_at * 1000).toLocaleString()) : "Unknown (no retained timestamp)"}.</span></p></section>${!item.reliable_now || item.reason === "removed_from_registry" ? '<p class="coverage-note">Current membership/coverage is uncertain. Removal or silence is not recovery.</p>' : ""}${card("Manual check and follow-through", `<p>Perform a check yourself, then record it locally. Vision does not ping, repair or control the device.</p><form id="device-check-form" data-device="${esc(id)}"><label>Check performed<select name="kind"><option value="power">Power / expected sleep</option><option value="integration">Integration status</option><option value="connection">Connection evidence</option><option value="other">Other manual check</option></select></label><label>Local note<input name="note" maxlength="400"></label><button type="submit">Record performed check</button></form>${(item.checks || []).map((check) => `<article class="row"><strong>${esc(date(check.created))} · ${esc(check.kind)}</strong><p>${esc(check.note)}</p>${badge(check.validation)}<small>${esc(check.meaning)}</small></article>`).join("") || empty("No performed checks recorded yet.")}`)}${card("Observed device timeline", `${deviceTimeline(item)}<p>Latest 30 state/coverage transitions and 20 local check markers. Intervals are observations, not physical outage start/repair proof.</p>`)}<details class="coverage-panel"><summary>Durable local attention and power expectations</summary><p>Known/expected does not erase observed outage evidence. These settings stay until you change them; no weekly acknowledgment is required.</p><form id="device-policy-form" data-device="${esc(id)}"><label>Attention<select name="attention">${["review", "known", "expected"].map((value) => `<option ${value === item.attention ? "selected" : ""}>${value}</option>`).join("")}</select></label><label>Declared power expectation<select name="power">${["unknown", "battery", "mains"].map((value) => `<option ${value === item.power ? "selected" : ""}>${value}</option>`).join("")}</select></label><label>Local note<input name="note" maxlength="300" value="${esc(item.policy?.note || "")}"></label><button type="submit">Save in Vision</button>${item.policy?.worsened_at ? '<button type="submit" name="acknowledge_worsening" value="true">Acknowledge this worsening in Vision</button><small>A note or power edit keeps the prior baseline. This explicit action accepts the current observed state as the new local baseline.</small>' : ""}</form></details>${card(
+      "Retained primary and ancillary evidence",
+      table(
+        ["Entity", "Role", "Availability"],
+        (item.members || []).map((member) => [
+          `<a href="#devices/${encodeURIComponent(member.entity_id)}">${esc(member.entity_id)}</a>`,
+          esc(member.role),
+          esc(member.availability),
+        ]),
+      ) +
+        `<p>${esc(item.member_count)} current members; at most 64 shown. No numeric states are retained.</p>`,
+    )}`;
+  }
+  const query = new URLSearchParams({
+    state: params.get("state") || "all",
+    platform: params.get("platform") || "",
+    page: params.get("page") || "1",
+  });
+  const data = await api("reliability/devices?" + query);
+  const next = new URLSearchParams(query);
+  next.set("page", data.page + 1);
+  return `<div class="section-heading"><h2>Observed registered devices</h2><a class="quiet-link" href="#devices/entities">Entity inventory →</a></div><p>${esc(data.total)} device observations. Partial, unknown, disabled and removed membership are distinct from device-wide unavailable evidence.</p>${!data.reliable_now ? '<p class="coverage-note">Current coverage is unavailable; retained states are historical evidence.</p>' : ""}<form id="device-filter"><label>Observed state<select name="state">${["all", "offline", "partial", "unknown", "excluded", "online"].map((state) => `<option value="${state}" ${state === query.get("state") ? "selected" : ""}>${state}</option>`).join("")}</select></label><label>Integration<input name="platform" maxlength="100" value="${esc(query.get("platform"))}"></label><button type="submit">Filter devices</button></form>${table(
+    ["Device", "Observed state", "Attention", "Power"],
+    data.items.map((item) => [
+      `<a href="#devices/reliability?device=${encodeURIComponent(item.device_id)}">${esc(item.name)}</a>`,
+      badge(data.reliable_now ? item.state : "unknown"),
+      badge(item.attention),
+      esc(item.power),
+    ]),
+  )}${data.has_more ? `<a class="button" href="#devices/reliability?${next}">Next devices →</a>` : ""}<p><a href="#overview">Return to device trend</a> · <a href="#issues">All retained source observations</a></p>`;
+}
+function bindReliability() {
+  const filter = $("#device-filter");
+  if (filter)
+    filter.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const value = new FormData(filter);
+      const next =
+        "#devices/reliability?" +
+        new URLSearchParams({
+          state: value.get("state"),
+          platform: value.get("platform"),
+          page: "1",
+        });
+      if (location.hash === next) render();
+      else location.hash = next;
+    });
+  for (const [selector, suffix, fields] of [
+    ["#device-check-form", "checks", ["kind", "note"]],
+    ["#device-policy-form", "policy", ["attention", "power", "note"]],
+  ]) {
+    const form = $(selector);
+    if (!form) continue;
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const input = new FormData(form),
+        body = {};
+      for (const field of fields) body[field] = input.get(field);
+      if (suffix === "policy" && event.submitter?.name === "acknowledge_worsening")
+        body.acknowledge_worsening = true;
+      const button = form.querySelector("button");
+      button.disabled = true;
+      try {
+        await api(
+          "reliability/devices/" +
+            encodeURIComponent(form.dataset.device) +
+            "/" +
+            suffix,
+          { method: "POST", body: JSON.stringify(body) },
+        );
+        notice.textContent =
+          "Saved only in Vision. Later covered observations determine validation; no HA action was performed.";
+        await render();
+      } catch (error) {
+        notice.textContent = error.message;
+        button.disabled = false;
+      }
+    });
+  }
+}
+
+function overviewEvidence(data) {
+  const health = data.health || {}, coverage = data.local?.cases?.rule_coverage;
+  return `<details class="monitoring-evidence"><summary>Monitoring sources & retained investigations</summary>${data.last_gap ? `<p>Last monitoring gap ${esc(date(data.last_gap))}. Missing observations remain unknown.</p>` : ""}${coverage?.truncated ? `<p>Static checks are bounded: ${esc(coverage.retained)} retained; ${esc(coverage.omitted)} additional checks omitted.</p>` : ""}<p>Last sync ${esc(date(health.last_sync))}. Registry permissions and trace-detail coverage can limit local conclusions.</p><details><summary>Capability and trace coverage</summary><pre>${esc(JSON.stringify({capabilities:health.capabilities, traces:health.trace_detail_coverage},null,2))}</pre></details>${latestAuditSummary(data.latest_audit)}<p><a href="#history/changes?outcome=changed">Observed structural changes</a> · <a href="#automations">Automation investigations</a> · <a href="#devices/entities">Entity inventory</a> · <a href="#history">Retained history</a></p></details>`;
+}
+
 async function overview() {
-  const [primary, availableResult, changeResult] = await Promise.allSettled([
-    api("overview"),
+  const data = await api("overview");
+  const r = data.reliability;
+  if (r && typeof r === "object" && Array.isArray(r.points) &&
+      ["24h", "7d", "30d"].includes(r.window) && Number.isFinite(r.start) &&
+      Number.isFinite(r.end) && r.end > r.start && r.counts &&
+      ["online", "offline", "partial", "unknown", "excluded"].every(
+        (key) => Number.isInteger(r.counts[key]) && r.counts[key] >= 0)) {
+    const primaryData = data;
+    const window =
+      new URLSearchParams(location.hash.split("?")[1] || "").get("window") ||
+      "24h";
+    const metricData =
+      window === "24h"
+        ? primaryData.reliability
+        : await api("reliability?window=" + encodeURIComponent(window));
+    return reliabilityOverview(metricData) + overviewEvidence(primaryData);
+  }
+  const knownLegacy = !Object.hasOwn(data, "reliability") &&
+    data.health?.version === "0.2.0" && Array.isArray(data.local?.cases?.items) &&
+    Number.isFinite(data.local.cases.total) && Number.isFinite(data.coverage_started);
+  if (!knownLegacy) throw Error("Device reliability snapshot unavailable; no complete healthy or zero-duration conclusion is established.");
+  // Compatibility with the published 0.2.0 shape only; modern device views do not
+  // fetch secondary entity counts/history that cannot affect their device priorities.
+  const [availableResult, changeResult] = await Promise.allSettled([
     api("cases?source=availability&status=attention&limit=1"),
     api("history/page?kind=changes&outcome=changed&limit=3"),
   ]);
-  if (primary.status !== "fulfilled") throw primary.reason;
-  const data = primary.value,
-    availability =
+  const availability =
       availableResult.status === "fulfilled" ? availableResult.value : null,
     changes = changeResult.status === "fulfilled" ? changeResult.value : null,
     local = data.local,
@@ -533,6 +794,9 @@ async function overview() {
 }
 
 async function devices(route) {
+  if (!route || route.startsWith("reliability"))
+    return reliabilityDevices(route || "reliability");
+  if (route === "entities") route = null;
   const data = await api("devices");
   if (route && /^(device|integration)%3A/i.test(route)) {
     const key = decodeURIComponent(route),
@@ -542,7 +806,7 @@ async function devices(route) {
       "dependencies?" + new URLSearchParams({ kind, identifier }),
     );
     return (
-      `<p><a href="#devices">← Entity inventory</a></p>` +
+      `<p><a href="#devices/entities">← Entity inventory</a></p>` +
       card(key, impactView(impact))
     );
   }
@@ -554,7 +818,7 @@ async function devices(route) {
       "entities/" + encodeURIComponent(entity) + "/investigation",
     );
     return (
-      `<p><a href="#devices">← Entity inventory</a></p>` +
+      `<p><a href="#devices/entities">← Entity inventory</a></p>` +
       card(
         item.name,
         `<p>${esc(entity)} · ${badge(item.availability)}</p><p>Device ${esc(item.device_id)} · ${esc(item.outages.episodes)} observed offline segments · ${esc(duration(item.outages.seconds))} measured.</p><p>${item.expected_offline ? "Expected-offline attention exception is active; source state is preserved." : "No expected-offline exception."}</p>`,
@@ -875,17 +1139,18 @@ async function issues(route) {
     return dossierView(data);
   }
   const params = new URLSearchParams((route || "").replace(/^\?/, ""));
+  if (!params.has("status")) params.set("status", "all");
   const data = await api("cases?" + params);
   const select = (name, values) =>
-    `<label>${esc(name)}<select name="${esc(name)}">${values.map((value) => `<option ${value === (params.get(name) || (name === "status" ? "attention" : "all")) ? "selected" : ""}>${esc(value)}</option>`).join("")}</select></label>`;
+    `<label>${esc(name)}<select name="${esc(name)}">${values.map((value) => `<option ${value === (params.get(name) || "all") ? "selected" : ""}>${esc(value)}</option>`).join("")}</select></label>`;
   const pageLink = (page, text) => {
     const next = new URLSearchParams(params);
     next.set("page", page);
     return `<a class="button" href="#issues/?${next}">${esc(text)}</a>`;
   };
   return card(
-    "Cases requiring investigation",
-    `<form id="case-filter"><label>Search<input name="q" maxlength="200" value="${esc(params.get("q") || "")}"></label>${select("status", ["attention", "all", "known", "expected", "snoozed", "resolved", "limited"])}${select("source", ["all", "automation", "automation_step", "repair", "log", "static", "availability"])}<button type="submit">Apply filters</button></form><p>${esc(data.total)} matching cases · Page ${esc(data.page)}</p>${caseCards(data.items)}<div class="toolbar">${data.page > 1 ? pageLink(data.page - 1, "Previous") : ""}${data.has_more ? pageLink(data.page + 1, "Next") : ""}</div>`,
+    "Retained source observations",
+    `<form id="case-filter"><label>Search<input name="q" maxlength="200" value="${esc(params.get("q") || "")}"></label>${select("status", ["attention", "all", "known", "expected", "snoozed", "resolved", "limited"])}${select("source", ["all", "automation", "automation_step", "repair", "log", "static", "availability"])}<button type="submit">Apply filters</button></form><p>${esc(data.total)} retained source observations · Page ${esc(data.page)}. Normal condition stops, intentional mode limits and static diagnostics are evidence, not automatically pending actions. <a href="#overview">Current manual-check priorities →</a></p>${caseCards(data.items)}<div class="toolbar">${data.page > 1 ? pageLink(data.page - 1, "Previous") : ""}${data.has_more ? pageLink(data.page + 1, "Next") : ""}</div>`,
   );
 }
 function requestView(data, enabled) {
@@ -1364,6 +1629,7 @@ async function render({ background = false } = {}) {
     content.innerHTML = html;
     searchTable();
     await bindIntelligence(encoded || null);
+    bindReliability();
     const localStatus = $("#case-status-form");
     if (localStatus)
       localStatus.addEventListener("submit", async (event) => {
@@ -1477,7 +1743,7 @@ window.addEventListener("hashchange", () => {
 });
 setInterval(() => {
   if (
-    ["", "#overview"].includes(location.hash) &&
+    ["", "#overview"].includes(location.hash.split("/")[0]) &&
     !document.querySelector("details[open]")
   )
     render({ background: true });

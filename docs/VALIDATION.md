@@ -1,6 +1,13 @@
 # Validation and release status — 2026-10-20
 
-**Current source package: 0.2.0.** A/B/C/D are accepted on their immutable
+**Current source package: 0.2.1-dev.1.** Device-reliability phase A is implemented
+for local qualification. Independent critical review, both-container qualification,
+public CI/readback and live-upgrade acceptance are pending at this phase checkpoint.
+No new HA/provider/public-research call or publication is claimed by the writer.
+
+## Previous 0.2.0 qualification checkpoint
+
+**Previous source package: 0.2.0.** A/B/C/D are accepted on their immutable
 candidates. The published 0.2.0-rc.1 was qualified on the live Supervisor install,
 including one native compact Anthropic investigation and bounded history checks.
 
@@ -955,3 +962,165 @@ with the existing single Starlette/httpx warning; exact Node 22.23.3 passed all
 All 18 Vision source/assets match the qualified RC except `__version__`; the five
 linked packaging/test files contain version substitutions only. No feature,
 provider/model, option/default, schema/store or 0.2.1-backlog change is included.
+
+## 0.2.1-dev.1 device reliability — local implementation checkpoint
+
+From canonical 0.2.0 base `6fd7923a5d4e3ab38fbe5eaa6c03fad1514f7d95`, the
+working phase-A preview passed **377 Python tests** (33.04 s; one existing
+Starlette TestClient warning), **42 real-DOM tests on Node 22.23.3**, Ruff check/
+format, JS syntax and diff whitespace checks. Existing 341 Python/34 DOM coverage
+is retained. New tests exercise union/coverage/burden arithmetic, invalid and
+conflicting evidence, timestamped mapping changes, persistent attention and
+partial→offline worsening, episode overlays, local checks, storage rollback,
+restart, preserving schema-8→9 migration and real guarded API workflows.
+
+A synthetic 5,686-entity/100,003-legacy-availability-row fixture verifies repeated
+local overview/reliability reads issue at most 16 SQL statements, read no complete
+availability/device-observation history, write no database rows and return less
+than 160 KB in that fixture. This does not establish hardware latency or an
+universal response size for every existing compatibility field. Metrics are cached
+by the monitor; unsupported/omitted coverage remains explicitly unknown.
+
+The new chart starts from timestamped device observations after upgrade, not old
+entity history retroactively joined to today's registry. Duration integrals are
+separate from bucket-end counts. Equal-half burden direction covers only the
+whole-window stable known subset, with comparable/excluded counts; global gaps
+block that comparison. Local recovery validation is observational, not causal.
+
+Initial schema/projection test-contract mismatches were corrected without removing
+preservation checks. The new DOM readiness gate was corrected to actual rendered
+content, revealing a device-filter binding bug that is fixed and covered.
+Independent metric oracles, populated-history migration, both architecture builds,
+Safari layout/workflows, mandatory critical review, public publication/readback and
+new live acceptance are **pending at this freeze checkpoint**. No actual HA write,
+provider call or public-source research request is claimed for this phase.
+
+### 0.2.1 phase A corrective candidate — 2026-10-20
+
+Correction base is the first frozen `e676c3895c05` candidate. Its 377 Python /
+42 DOM and independent 73 + 6 checks above are historical evidence, not acceptance
+of this corrected source. Critical review of that first candidate was NO_GO;
+new controller review/native/container acceptance remains pending at this checkpoint.
+The earlier **341 PASS in 36.84 s** CI-repair checkpoint is restored exactly.
+
+Local corrective verification: `.venv/bin/python -m pytest -q` **401 PASS in
+39.30 s**, with the existing one Starlette/httpx warning. The full real-DOM suite
+on Node **22.23.3** passed **49 tests**. Ruff check/format (61 Python files), JS
+syntax, diff whitespace and the publication scan passed. Original migrations
+1–8 retain identical AST/SQL-string values. The HA gateway, settings and existing
+AI sources remain byte-identical to the correction base. No provider setting,
+privacy opt-in, paid call, HA operation, publication or phase-B executor was added.
+
+Additional regression coverage includes 40 continuously-partial member flips
+without interval growth; no device transaction for unchanged evidence; durable
+worsening through unknown/note/power/restart and a separate guarded acknowledgment;
+changed-baseline membership; post-gap episode baselines; independent complete-
+device window selection; row/encoded-byte admission with NULL-pointer retention
+and later recovery; UTF-8 counters/rollback; active registry capacity over removed
+pointers while retaining policy/check/history; per-device membership omission;
+corrupt/non-string states; empty versus online membership; coalescing off-loop
+rebuilds, immediate local attention and explicit failed-cache status. DOM checks
+cover compact primary action order, integer axes, grey limited/empty evidence,
+restored monitoring/audit/history details, actual entity backlinks and explicit
+acknowledgment. A real synthetic API→SQLite→shipped-DOM chain supplies Bearer,
+quoted token/password, key, URL, path and reserved-IP canaries and escaped markup;
+secret values are absent from stored/returned/rendered notes and markup is inert.
+The original canary test was valid: the contrary initial review allegation came
+from broker redaction, independently rebutted by 13 controller-side API probes.
+
+A synthetic 6,000-device / 48,000-interval / 31-day host-local benchmark measured:
+**1.068 s** synchronous capture/compile; **1.227 s** async capture/compile with
+44 concurrent snapshot/JSON reads and maximum **16.35 ms** additional lag on a
+5 ms heartbeat. Thirty warm snapshots had **2.45 ms** median / **3.00 ms** maximum,
+90 small counter/queue SQL reads, **zero history SQL and writes**, and a 10,486-byte
+response in that fixture. These timings are not an Odroid or universal latency SLA.
+The worker, not a request handler, performs expensive history capture/compile.
+
+The 250,000-row / 128 MiB limit accounts for encoded history fields, not complete
+SQLite file, index or WAL bytes. Existing history is never evicted to meet admission.
+Each window includes whole-device histories only and discloses omissions; duration
+and burden conclusions are limited to that subset. Current evidence and the last
+coherent chart have separate timestamps and pending/error state. Ordinary configured
+retention can free closed history, including alongside NULL current pointers.
+No claims are made about old entity rows proving historical device membership,
+unknown devices being healthy, shared integration membership proving a network
+cause, or a local check causing an observed recovery. Phase B remains separate.
+
+
+### 0.2.1 phase A second correction — 2026-10-20
+
+Base `fdee9380df32a97a1873ead6e9d89e3b624ac0dc` remains the historical first
+corrective checkpoint (401 Python / 49 DOM). The controller independently verified
+all 22 old tables/options/backups after schema-8→9/restart and a real 0.2.0 backup
+restore, plus 6,000-device/48,000-row and exact 250,000-row bounded selections.
+Both frozen architecture images also exercised real network-disabled RO-WAL
+capture/restart successfully. Those results bind **fdee**, not this new source;
+the controller will repeat the relevant gates on the new frozen commit.
+
+Current local verification: `.venv/bin/python -m pytest -q` **427 PASS / 41.26 s**,
+one existing Starlette/httpx warning; Node **22.23.3** full DOM suite **56 PASS**.
+Ruff check/format (62 files), JS syntax and diff checks passed. Original test
+coverage and the full 1,200-availability-fixture safety checks remain enabled.
+
+New real startup→ASGI→DOM capture-failure tests retain measurement start and return
+null unavailable/known/unknown/expected device-hours, monitored hours and coverage
+fraction before the first compiled snapshot. Captured known coverage remains
+numerical under ordinary row-selection limits; the correction does not erase
+separate available coverage evidence. Retry succeeds, and an actual known zero
+remains zero. Evidence-detail timestamps are tested missing, finite, epoch-zero
+and nonfinite/invalid; no poll/interval fallback occurs. Real API heatmaps distinguish
+no historical membership at 100% monitoring coverage, an observed zero and a
+whole-device subset with omitted peers.
+
+The gap-growth test retains 600 unchanged online device intervals across eight
+gaps rather than adding 4,800 continuations. One offline device adds eight honest
+post-gap baselines: total 601→609 rows. Global known coverage is 90 s and both
+known-device and unavailable-device integrals match it; burden and manual-check
+validation remain unknown across the gaps. Cached retention-eligibility/headroom
+status issues no history SQL on GET and makes no guaranteed recovery-time claim.
+
+A literal frozen experimental e676 schema-9 fixture is rejected with the fixed
+StorageStartupError category before source/backup/permissions change. Its old
+availability/device records remain intact; no destructive scratch migration is
+added. Classless roles, category precedence, explicit-unavailable unclassified
+members, no-primary/unknown vetoes, native mower/alarm/tracker counterexamples,
+episode defaults and oldest-pointer reclamation are tested. There is no real
+HA role-distribution, provider, public-research or publication claim in these
+local tests. All new public/live acceptance remains with the controller.
+
+### 0.2.1 phase A — startup recovery correction
+
+Controller qualification of exact `c5064453` included 427 Python tests in 39.12 s,
+56 Node 22 DOM tests, populated v8→v9 preservation of all 22 old tables/options/
+backups and reopening its snapshot through the old Store. Unsupported unpublished
+v9 was rejected without changing its 27 tables. Both real architecture images
+passed HTTP/restart and network-isolated RO-WAL capture; 6,000-device/48,000-row
+and 250,000-row worker/selection checks passed. Native 320/390/1280 px primary
+actions, exact device forms, evidence-time and capacity views passed. The prior
+RO-WAL container gate is completed for that source, not an outstanding claim.
+
+The next critical report closed all earlier findings and identified one new
+startup recovery defect. Its correction makes only the preliminary RO check
+best-effort for `sqlite3.Error`; the writer-reserved validation remains required
+before chmod/migration. Tests crash a real subprocess mid-transaction in DELETE
+journal mode, prove the resulting hot journal returns SQLITE_READONLY_ROLLBACK
+on the actual RO check, then verify writable recovery restores all 256 committed
+records before migration and makes an exact schema-8 snapshot. Separate open/read
+failures recover, while affirmative unsupported-v9 rejection preserves source
+bytes/mode, reserved usage and the old backup even after RO failure.
+
+No released device-classification migration is implied: 0.2.0 has no device
+cohorts and all prior A candidates were unpublished. A populated membership/
+classification-change test retains both historical cohorts and keeps burden,
+status comparison and performed-check validation unknown across that change.
+Shipped-DOM tests distinguish blocked/nonblocked capacity and clarify the equal
+first/second halves within the selected window. No new migration, HA operation,
+AI option, provider action or phase-B implementation is included.
+
+Local correction checks: `.venv/bin/python -m pytest -q` **432 PASS in 39.06 s**
+with the existing single Starlette/httpx warning; the full Node **22.23.3** DOM
+suite passed **58 tests**. Ruff lint/format (63 Python files), JS syntax, diff and
+publication checks passed. Migrations 1–9 retain identical AST/SQL definitions; HA, monitor,
+reliability kernel, app/AI/configuration and package metadata remain byte-identical
+to `c5064453`. The candidate's new critical follow-up and controller acceptance
+are still pending; phase B remains closed.
