@@ -206,3 +206,272 @@ action was performed. The stable [v0.1.1 release](https://github.com/Patrick1610
 was published through the browser; anonymous public-page and Git-tag readback
 confirm `a76cdd916963cd832782e350eb97af74fc42d16c`. The v0.1.0 tag is unchanged.
 This completion checkpoint changes documentation only.
+
+## Vision 0.2.0 — authorized execution
+
+The owner explicitly authorized the 0.2.0 scope in VISION_SPEC.md, autonomous
+end-to-end development/publication/live verification and targeted AI solutions
+for specific problems. Requested builder model/effort: gpt-6.1-sol/ultra; the
+implementation agent cannot independently observe the effective runtime effort.
+One productwriter works in this existing repository on main. No separate custom
+workflow runtime, second checkout, history rewrite or HA write is activated.
+The original release history above remains historical evidence.
+
+1. **A — Data foundation:** accepted at immutable `7034e22` after critical follow-up review.
+   Atomic schema 1→3 upgrade and restart recovery, persistent structural snapshots
+   and transitions, bounded safe automation control flow/operands/references,
+   all-step trace projection with whole-run semantics, existing-read typed graph.
+2. **B — Local insight and investigation UI:** implemented; verification/review in progress.
+3. **C — Targeted AI tasks/privacy/scoped conversation:** authorized; follows B review.
+4. **D — Scale/security/UI/release qualification:** authorized; follows C review;
+   final public tree/CI/release and live Vision upgrade evidence are separate gates.
+
+Phase A checks: `python -m pytest -q`, `ruff check .`, `ruff format --check .` and
+`git diff --check` all passed: 91 tests, one existing Starlette transport
+deprecation warning, final suite duration 3.29 s. The new synthetic tests cover all legacy tables and uncertain
+reservations, atomic migration failure, structural source separation/reversions,
+stable hashes across process hash seeds, safe operands/control flow, continued
+errors, timeouts, step timestamps, truncation and typed graph persistence.
+An oversized-error stress case exposed excessive regex work before truncation;
+that run was interrupted after 89.94 s. Redaction now bounds input before regex
+processing and drops a token split by the boundary, after replacing configured
+secrets in full. A new test verifies partial secrets are not exposed; bounded
+per-run error storage and the final full suite pass.
+No live HA upgrade, public release or provider request is asserted for phase A.
+
+### A corrective review iteration
+
+External critical review `70057443-b25f-46e4-852f-a9df98071c8b` returned NO_GO.
+The owner/controller authorized corrective A work; B remains closed until the
+same review channel accepts the corrected immutable candidate. Jev was attempted
+by the controller but remains unavailable without its configured API key.
+
+Corrective work adds preserving schema 3, a private SQLite-consistent original
+migration backup and restore instructions, an independent frozen v1 DDL fixture,
+unknown/recovered run-time provenance, non-destructive degraded trace updates,
+fair bounded detail reads/backoff/capability probes, per-run config associations,
+safe path identity/coverage and HA deque saturation. Added detail budgets compact
+only new step-detail projections while retaining all existing historical records.
+Graph fingerprints avoid unchanged rewrites; all redaction paths have a hard
+internal bound. Tests cover the reproduced loop timeout/old false-branch bug,
+upstream 20-element truncation, exact observed/retained error counts, backup and
+restore, all-schema parity, persistent circuit recovery/fairness, individual missing
+traces alongside good traces, degraded stubs and aggregate storage.
+Final corrective verification: 110 tests passed in 29.92 s, with the existing
+Starlette test-client warning. Ruff lint/format and diff checks passed. The
+2,000-run aggregate probe measured 8,383,060 retained detail bytes, 43,260 maximum
+bytes for one automation, 1,614 compacted summaries and a 13,537,280-byte closed
+database, preserving every run. A separate small-budget test exercises moving
+compact metadata into its existing run without losing counts or allowing a
+degraded stub to replace it. Unknown-time error observations also cannot replace
+a newer proven incident link. Product mutations pause again for follow-up review.
+
+### A follow-up correction
+
+The follow-up critical review of `92301fd` returned NO_GO with no high findings
+and one medium: a timestamped standalone false condition at `action/N` must remain
+`condition_stopped`. The correction uses the terminal timestamped false result
+without a path-name assumption, with unconditional error/timeout vetoes. It also
+applies the independent legacy/unknown non-NULL timestamp authority correction
+and advances compacted completion metadata on a later finished observation.
+
+Low findings are addressed proportionately: unchanged list stubs avoid run/timing
+upserts during backoff; registry cleaning and AST projection are reused; returning
+rich evidence removes stale compact metadata; unknown-time blockers are visible
+without changing incident history; event run/timing storage is atomic and recovered
+NULL-start orphans get an observation time for retention. Future migrations create
+a current source-version backup while preserving the immutable original; disk
+and private-history implications are explicit in ARCHITECTURE.md.
+
+Final local verification: 129 tests passed in 29.79 s, with the existing Starlette
+warning; Ruff and diff checks pass. The 19 added regressions include seven that
+failed on the previous candidate before the prepared correction. B remains
+closed while the next immutable candidate receives semantic/external re-review.
+
+### A parallel-step timestamp correction
+
+Independent HA source review reproduced an aborted parallel wait whose older
+start timestamp precedes a different branch's later false condition. Step times
+are starts, so their order cannot prove the abort cause. Retained parallel paths
+or any retained step error/timeout now veto inferred condition stops; the run
+remains generically stopped with explicit unknown-reason coverage. A standalone
+false action condition and authoritative `failed_conditions` remain recognizable.
+
+The two new synthetic regressions first failed on `bc200e0`, then passed with
+the correction. The targeted set passed 40 tests; the full suite passed 131 tests
+in 38.42 s with the existing Starlette warning. Ruff lint/format and diff checks
+passed. No HA capability, AI outbound behavior or later-phase product work
+changed. Product mutations pause for semantic checks and external follow-up.
+
+### A acceptance and B implementation
+
+Critical review `70057443-b25f-46e4-852f-a9df98071c8b`, third round, accepted
+`7034e22` with no critical/high/medium findings. The controller independently
+passed 131 tests in 34.76 s and qualified its exact ARM64 image: schema-1 fixture
+upgrade/restart, unchanged private options and legacy history, and restoration
+of a copy of the original backup using the actual old 0.1.1 binary. Jev remains
+unavailable without its configured API key; no score is claimed. The controller
+then explicitly authorized B mutations in the existing repository.
+
+B adds a local case service, meaningful overview priorities, redacted dossiers,
+source-preserving known/expected/snoozed attention overlays, typed impact links,
+run-bound configuration/step comparison and observed configuration differences.
+History uses typed parameterized queries, stable keyset pages and UTC-day filters;
+the automation index uses one bulk statistics query without AST/run-list payloads.
+Static findings use explicit observed references, wait/continue flags and real
+refused starts; dynamic references, rights and omitted source remain unknown.
+No HA capability or AI outbound contract changes in B.
+
+The final A lows are handled proportionately in B: synthetic trigger-event rows
+cannot suppress a failed trace at the same proven start time; operator-looking
+backup files are not deleted; identical rich evidence removes stale duplicate
+metadata. Historical errors with unverified start times remain conservative and
+visible in local dossiers/attention workflows. Independent B probes also fixed
+backdated refused-start observation dates and inbound automation/entity graph
+identity. Early browser feedback moved concrete investigations before counts,
+added actionable step/error previews, grouped duplicate run-source cards, replaced
+comparison JSON with readable observations and corrected native-select sizing.
+
+Final B local verification: **160 tests passed in 32.01 s**, with the existing
+Starlette warning. The 29 new B cases include the three actionable A lows, the
+independent source-helper findings and conservative unknown-time refused starts.
+Ruff lint/format, JavaScript syntax, pinned Prettier formatting and diff checks
+pass. The synthetic 320 px select overflow is confirmed corrected by the
+controller; full candidate UI/scale checks and external B review follow the
+immutable commit. Product mutations pause at that gate; C remains closed.
+
+### B review correction — lifecycle and bounded read model
+
+External critical review `d3e801fb-824c-4bab-bbff-7a5ee7664818` rejected
+`2f9899a7` with three medium and three low findings. The controller authorized
+only corrective B work; ignored C preparation is preserved and paused.
+
+Additive schema 5 binds annotations/notes to a retained case generation without
+editing migrations 1–4. Prune/startup remove orphans; note history is capped at
+50 and follows retention. A fresh case after pruning starts in review, while
+source rows and separately configured exceptions are preserved. Finding refresh
+moves to monitor startup/sync, gated by small static identities and transactional
+run revision triggers; public GETs only read. Inventory exceptions are fetched
+in bulk. Static selection is capped at 20 per automation/500 globally with
+explicit omitted coverage and no false resolution of old budget-omitted facts.
+Info-level advice ranks below availability, and availability-only overview shows
+concrete dossiers. Backup collisions choose a unique private file without
+overwriting operator bytes. Malformed retained summaries become explicit unknowns.
+
+The previous exact `2f9899a7` candidate independently passed 160 tests and an
+ARM64 schema 1→4 upgrade/restart/old-0.1.1-backup-restore qualification. Synthetic
+Safari checked 11 rendered routes at five widths with 5,207 entities (55 checks,
+no overflow/load errors). Those results are historical candidate evidence, not
+acceptance of these corrections or a live 0.2.0 update. The corrective candidate
+requires new internal verification and same-channel external follow-up before C.
+
+Corrective B verification passed **182 tests in 31.74 s**, including 22 new
+review regressions. Ruff lint/format (41 Python files), JavaScript syntax,
+pinned Prettier and diff checks passed. Scaled real overview/cases GETs stay
+within 20/5 queries and perform no writes, AST reads or all-run refresh; they
+also complete with an independent WAL writer lock. These are local synthetic
+checks. Freeze the coherent correction for independent/source, browser/container
+and same-channel external review; C and final release/live gates remain closed.
+
+### B second follow-up — bounded migration retry and page metadata
+
+The second critical round in `vision020-b` closed the earlier corrective findings
+but rejected `5a2e8bc` for repeated full snapshots on failed-migration restarts.
+Two lows requested bounded coverage metadata and batch run lookup at page limit 100.
+The controller authorized this consolidated B correction; C scratch is preserved
+and paused again.
+
+Backups now reuse a proven identical consistent same-version SQLite snapshot,
+including WAL data, and enforce three retained source revisions, one temporary
+comparison copy, a 1 GiB aggregate peak snapshot budget and a 16 MiB free-space
+reserve before copying. Changed source history cannot reuse a stale backup to
+satisfy the cap. Unknown crash temporaries fail closed without deletion; existing
+operator bytes/permissions and the original snapshot remain intact. Fixed safe
+startup categories report capacity/pending/invalid reasons through the application.
+Case metadata contains aggregate coverage only, with per-automation details on
+the requested detail route. One bulk run lookup covers a whole page, including
+duplicates, malformed summaries and missing runs.
+
+Prior `5a2e8bc` independent qualification passed 182 tests in 32.83 s and exact
+ARM64 schema 1→5/restart/actual old-0.1.1-backup-restore checks. Eleven rendered
+routes at 320/1280 px had no anomalies; a separate availability-only 320 px route
+showed three concrete linked dossiers. Those are prior-candidate results and do
+not imply acceptance of this new retry correction. No new schema, HA capability,
+AI outbound expansion, version bump or release action occurs here.
+
+Second corrective local verification passed **194 tests in 36.76 s** (12 new
+retry/page regressions), Ruff lint/format for 42 Python files, Node syntax,
+pinned Prettier and diff checks. Repeated failure/WAL-only source change/capacity/
+operator-file/crash-temporary cases and fully run-linked pages at limit 100 pass.
+Commit/freeze for independent and same-channel external checks; no B GO yet.
+
+### B third follow-up — source reservation and live-inode exclusion
+
+The third external round closed the prior retry-growth and page-load findings,
+but rejected `2f90d89` because an otherwise valid backup could alias the live
+main database inode. Independent coordinated testing also reproduced a second
+writer committing new WAL data between backup and migration. Both must close
+before B acceptance. The controller authorized this consolidated correction;
+C scratch remains preserved and paused.
+
+Startup now holds `BEGIN IMMEDIATE` before re-reading the source version and
+through backup plus migration commit/rollback. A separate normal read-only
+connection performs the backup API call without self-backup deadlock. Another
+startup waits and then re-reads the committed version under the reservation.
+Existing original/candidate aliases of live main/WAL/SHM inodes fail closed before
+copy/DDL. Fixed pending-file guidance names the known private directory/pattern
+and sidecars, and a separate oversized-source reason avoids misleading backup
+cleanup instructions. Per-automation ephemeral coverage uses batch writes and
+stale namespace cleanup; original structural/issue history is preserved. Run-page
+lookup handles 100 distinct entities and numeric identifiers, including zero.
+
+The exact prior `2f90d89` candidate independently passed 194 tests in 37.99 s,
+container upgrade/restart/actual old-binary restore and ten browser checks. Those
+are previous-candidate results; they did not close the new concurrent-writer and
+live-inode defects. The new local run passed **213 tests in 33.12 s**, including
+19 atomic-startup regressions (focused 1.12 s). External and independent acceptance
+remain pending. No schema, HA allowlist, AI outbound or version metadata changes.
+
+### Accepted B foundation and development preview packaging
+
+The fourth external critical follow-up accepted exact
+`9a3dd713e1ffa3234392991ad62adeb9fd98a98a` with zero critical/high/medium
+findings. Independent verification passed 213 tests in 33.17 s, Ruff lint/format,
+JavaScript syntax and diff checks. Its exact ARM64 image upgraded schema 1→5,
+restarted with preserved settings/history/ledger and restored a copy of the
+original backup using the actual old 0.1.1 binary. Independent source probes
+also exercised two real startup processes and all six main/WAL/SHM backup-alias
+cases. These checks accepted the B foundation, rather than the unfinished C scope.
+
+The owner then requested a testable published preview through the restored
+`ai-builder-dev` account. The controller authorized coordinated metadata/docs/
+packaging tests only for **0.2.0-dev.1**, preserving the original repository URL,
+slug and data volume. This version contains the accepted local investigation
+foundation; targeted AI is still under construction in ignored disposable C
+preparation. Existing AI-off defaults, saved options and compact outbound behavior
+remain unchanged. Requested implementation configuration remains gpt-6.1-sol/ultra;
+this statement records the request, not independent runtime attestation.
+
+Preview packaging must pass local checks and a separate normal review. The
+controller owns both-architecture builds, public PR/CI/readback and the live
+Vision update with Supervisor's previous-version backup retained. Those gates
+remain open until their actual results are recorded. No stable 0.2.0 tag or
+completion claim is authorized by this intermediate package.
+
+Packaging verification passed `.venv/bin/python -m pytest -q`: **213 tests in
+35.32 s**, with the existing Starlette deprecation warning. Ruff lint/format
+(28 Python files), `node --check vision/static/app.js` and `git diff --check`
+passed. The package adds no monitoring, schema or provider runtime changes.
+Freeze this coordinated metadata/documentation candidate for the controller's
+normal review, builds, publication and live qualification.
+
+The controller's pre-publication browser check found a stale hardcoded 0.1.1
+wordmark badge. The narrow development-preview correction fills an HTML
+placeholder from the same runtime `__version__` used by health/package metadata.
+A real HTTP regression substitutes a probe runtime version and checks both the
+visible badge and health response. The vacuous future-profile packaging guard is
+removed; C will test its actual privacy options. In-progress C edits remain
+outside this preview correction commit. Public publication is still pending.
+Focused packaging/HTTP verification passed four tests in 0.24 s, with the
+existing Starlette warning; Ruff lint/format and diff checks passed. The
+controller will repeat full verification on the exact corrected preview tree.

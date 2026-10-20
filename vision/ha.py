@@ -97,7 +97,19 @@ class HAClient:
                         if data.get("success"):
                             future.set_result(data.get("result"))
                         else:
-                            future.set_exception(HAError("read_unavailable"))
+                            error = data.get("error")
+                            code = error.get("code") if isinstance(error, dict) else None
+                            safe_code = "read_unavailable"
+                            if code == "not_found":
+                                safe_code = "read_not_found"
+                            elif isinstance(code, str) and code in {
+                                "unauthorized",
+                                "unauthenticated",
+                                "unknown_command",
+                                "not_supported",
+                            }:
+                                safe_code = "capability_unavailable"
+                            future.set_exception(HAError(safe_code))
         finally:
             for future in self.pending.values():
                 if not future.done():
@@ -118,7 +130,7 @@ class HAClient:
             self.pending.pop(request_id, None)
 
     async def automation_config(self, automation_id):
-        # HA exposes JSON-backed UI automations here; YAML-only entries may 404.
+        # Admin-only YAML automation config lookup; unavailable entries may 404.
         if not IDENTIFIER.fullmatch(automation_id):
             raise HAError("read_policy_denied")
         async with self.session.get(

@@ -13,6 +13,9 @@ data/
 options.json
 *.db
 *.db-*
+*.db.pre-migration.bak
+*.db.v*.bak
+*.db.backup-*
 .env*
 .DS_Store
 .ai-review-broker/

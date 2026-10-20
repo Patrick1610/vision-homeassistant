@@ -9,10 +9,12 @@ PATTERNS = [
     r"\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+",
     r"(?i)(?:https?://|wss?://)\S+",
     r"\b(?:\d{1,3}\.){3}\d{1,3}\b",
-    r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}",
+    r"[\w.+-]{1,64}@[\w.-]{1,253}\.[A-Za-z]{2,63}",
     r"(?i)(?:password|secret|token|api[_ -]?key)\s*[:=]\s*[^\s,;]+",
 ]
 SENSITIVE = re.compile(r"(?i)password|secret|token|credential|authorization|api.?key")
+MAX_REDACTION_INPUT = 16384
+TRUNCATION_MARKER = "[TRUNCATED]"
 
 
 class Redactor:
@@ -22,9 +24,26 @@ class Redactor:
     def text(self, value: str, limit=4000) -> str:
         for secret in self.secrets:
             value = value.replace(secret, "[REDACTED]")
+        # Bound regex work before processing untrusted messages. If the boundary
+        # splits a token, discard that whole token rather than expose a fragment.
+        ceiling = MAX_REDACTION_INPUT if limit is None else min(limit, MAX_REDACTION_INPUT)
+        value = self.bounded(value, ceiling)
         for pattern in PATTERNS:
             value = re.sub(pattern, "[REDACTED]", value)
-        return value[:limit] if limit is not None else value
+        # Replacements can expand short secrets/URLs; preserve the final marker too.
+        return self.bounded(value, ceiling)
+
+    @staticmethod
+    def bounded(value, ceiling):
+        if len(value) > ceiling:
+            room = max(0, ceiling - len(TRUNCATION_MARKER))
+            boundary = value[room]
+            value = value[:room]
+            if not boundary.isspace() and value and not value[-1].isspace():
+                pieces = value.rsplit(maxsplit=1)
+                value = pieces[0] + " " if len(pieces) == 2 else ""
+            value += TRUNCATION_MARKER
+        return value
 
     def clean(self, value, depth=0):
         if depth > 12:
