@@ -77,7 +77,7 @@ def test_availability_duration_recurring_expected_and_gap(monitor):
     monitor.store.execute("INSERT INTO exceptions VALUES ('sensor.example','sleeping',NULL)")
     monitor.observe_state(state("unknown"), now=140)
     assert monitor.inventory()[0]["expected_offline"]
-    assert monitor.store.rows("SELECT active FROM issues")[0]["active"] == 0
+    assert monitor.store.rows("SELECT active FROM issues")[0]["active"] == 1
     monitor.gap()
     intervals = monitor.store.rows("SELECT * FROM availability ORDER BY id")
     assert intervals[-1]["ended"] == 140

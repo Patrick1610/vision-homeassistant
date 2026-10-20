@@ -114,52 +114,242 @@ function bindAnalysis() {
     }),
   );
 }
-function issueRows(issues, buttons = false) {
-  return table(
-    [
-      "Issue",
-      "Source / priority",
-      "Observed",
-      "Occurrences",
-      "Status",
-      ...(buttons ? ["Analysis"] : []),
-    ],
-    issues.map((i) => [
-      `${esc(i.title)}<details><summary>Evidence</summary><pre>${esc(JSON.stringify(parse(i.detail), null, 2))}</pre></details>`,
-      `${esc(i.source)} · ${badge(i.severity, i.severity)}`,
-      `${esc(date(i.last_seen))}<br><small>First: ${esc(date(i.first_seen))}</small>`,
-      esc(i.occurrences),
-      badge(i.active ? "Needs review" : "Resolved / expected"),
-      ...(buttons
-        ? [
-            `<button data-analyze="incident" data-target="${esc(i.key)}">Analyze</button>`,
-          ]
-        : []),
-    ]),
+const issueLink = (key, text) =>
+  `<a href="#issues/${encodeURIComponent(key)}">${esc(text)}</a>`;
+const autoLink = (entity, text = entity, runId = null) =>
+  `<a href="#automations/${encodeURIComponent(entity)}${runId ? "?run_id=" + encodeURIComponent(runId) : ""}">${esc(text)}</a>`;
+const list = (items) =>
+  items.length
+    ? `<ul>${items.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`
+    : empty("None recorded.");
+function caseCards(items) {
+  return items.length
+    ? items
+        .map(
+          (item) =>
+            `<article class="case-row"><div>${badge(item.severity, item.severity)} ${badge(item.status)} ${badge(item.source)}</div><h3>${issueLink(item.key, item.title)}</h3><p class="evidence-text">${esc(item.summary)}</p><p><strong>Check:</strong> ${esc(item.manual_check)}</p>${item.detail.entity_id ? `<p>${item.detail.entity_id.startsWith("automation.") ? autoLink(item.detail.entity_id, item.detail.entity_id, item.detail.run_id) : `<a href="#devices/${encodeURIComponent(item.detail.entity_id)}">${esc(item.detail.entity_id)}</a>`}</p>` : ""}${item.related_case_keys?.length ? `<p>${item.related_case_keys.map((key) => issueLink(key, "Related source observation")).join(" · ")}</p>` : ""}<small>First observed ${esc(date(item.first_seen))} · Last observed ${esc(date(item.last_seen))}</small></article>`,
+        )
+        .join("")
+    : empty("No cases require review in this selection.");
+}
+function deltaView(delta) {
+  if (!delta) return empty("Structural comparison unavailable.");
+  return `<p>${esc(delta.summary)}</p>${
+    delta.items.length
+      ? `<details><summary>Observed projection differences</summary>${table(
+          ["Path", "Before", "After"],
+          delta.items.map((item) => [
+            esc(item.path),
+            esc(item.before),
+            esc(item.after),
+          ]),
+        )}${delta.truncated ? "<p>First 20 differences shown.</p>" : ""}</details>`
+      : ""
+  }`;
+}
+function nodeLink(key, present = true) {
+  if (!present) return `${esc(key)} <small>(not in current inventory)</small>`;
+  const [kind, ...parts] = key.split(":"),
+    identifier = parts.join(":");
+  if (
+    kind === "automation" ||
+    (kind === "entity" && identifier.startsWith("automation."))
+  )
+    return autoLink(identifier);
+  if (kind === "entity")
+    return `<a href="#devices/${encodeURIComponent(identifier)}">${esc(key)}</a>`;
+  if (kind === "device" || kind === "integration")
+    return `<a href="#devices/${encodeURIComponent(key)}">${esc(key)}</a>`;
+  return esc(key);
+}
+function impactView(data) {
+  if (!data) return empty("No retained dependency observations.");
+  return (
+    `<p class="muted">${esc(data.coverage)}</p>` +
+    table(
+      ["From", "Relation", "To", "Declared path"],
+      data.relations.map((row) => [
+        nodeLink(row.source, row.source_present),
+        esc(row.relation),
+        nodeLink(row.target, row.target_present),
+        esc(row.path),
+      ]),
+    ) +
+    (data.truncated ? `<p class="muted">First 100 relations shown.</p>` : "") +
+    `<h3>Automations with declared dependencies</h3>` +
+    table(
+      ["Automation", "Relation", "Via"],
+      (data.affected_automations || []).map((row) => [
+        nodeLink(row.source, row.source_present),
+        esc(row.relation),
+        nodeLink(row.target, row.target_present),
+      ]),
+    ) +
+    (data.affected_truncated || data.members_truncated
+      ? `<p class="muted">Impact coverage is limited to 200 members and 100 declared automation relations.</p>`
+      : "")
   );
 }
-async function overview() {
-  const data = await api("overview");
-  const health = data.health;
-  return `<div class="grid">${[
-    ["Entities", data.entities, "In current inventory"],
-    ["Devices", data.devices, "Registered in Home Assistant"],
-    ["Automations", data.automations, "Observed, never controlled"],
-    ["Unexpected offline", data.unavailable, "Unknown or unavailable"],
-  ]
-    .map(([a, b, c]) =>
-      card(a, `<div class="metric">${esc(b)}</div><small>${esc(c)}</small>`),
-    )
-    .join("")}</div><div class="split">${card(
-    "Observation coverage",
-    `<p>${badge(health.connected ? "Connected" : "Disconnected", health.connected ? "success" : "warning")}</p><p>Last inventory sync: ${esc(date(health.last_sync))}</p><p class="muted">Monitoring session: ${esc(date(data.coverage_started))}. Downtime is an observation gap. Status may be stale while disconnected.</p><details><summary>Capabilities</summary>${table(
-      ["Read capability", "Availability"],
-      Object.entries(health.capabilities).map(([k, v]) => [esc(k), esc(v)]),
-    )}</details>`,
-  )}${card("Latest audit & improvements", findings(data.latest_audit))}</div>${card("Recent incidents", issueRows(data.issues.slice(0, 10)))}`;
+function stepObservation(step) {
+  if (!step) return "Not retained / execution unknown";
+  const result = [];
+  if (step.result != null) result.push("Condition result: " + step.result);
+  if (step.wait_completed != null)
+    result.push(step.wait_completed ? "Wait completed" : "Wait incomplete");
+  if (step.timeout || step.wait_timed_out) result.push("Timeout observed");
+  if (step.errors) result.push(step.errors + " error observations");
+  if (step.done) result.push("Step completed");
+  if (step.explicit_stop) result.push("Explicit stop observed");
+  if (step.offset_seconds != null)
+    result.push(
+      "Started +" + duration(step.offset_seconds) + " from run start",
+    );
+  return result.join(" · ") || "Step observed; result not retained";
 }
-async function devices() {
+function runDigest(run) {
+  return run.configuration_digest
+    ? `<span>Run-bound configuration ${esc(run.configuration_digest.slice(0, 12))}</span><details><summary>Full retained configuration digest</summary><code>${esc(run.configuration_digest)}</code></details>`
+    : "Run-bound configuration unknown";
+}
+function stepView(run) {
+  if (!run) return empty("Select a retained run to inspect its steps.");
+  const raw = run.evidence;
+  const evidence =
+    raw &&
+    typeof raw === "object" &&
+    Array.isArray(raw.steps) &&
+    Array.isArray(raw.errors) &&
+    raw.steps.every(
+      (step) =>
+        step && typeof step === "object" && typeof step.path === "string",
+    ) &&
+    raw.errors.every(
+      (error) =>
+        error &&
+        typeof error === "object" &&
+        typeof error.path === "string" &&
+        typeof error.message === "string",
+    ) &&
+    raw.coverage &&
+    typeof raw.coverage === "object" &&
+    !Array.isArray(raw.coverage)
+      ? raw
+      : null;
+  const nodes = new Map(
+    (run.configuration?.nodes || []).map((node) => [node.path, node]),
+  );
+  const refs = (path) =>
+    (run.configuration?.references || [])
+      .filter((ref) => ref.path === path)
+      .map((ref) => ref.id)
+      .join(", ");
+  return (
+    `<p>${badge(run.outcome, run.outcome)} · Started ${esc(date(run.started))} · ${esc(run.start_source)}</p><div class="muted">${runDigest(run)}</div>` +
+    (evidence
+      ? `<p>${esc(evidence.step_count)} returned step observations · ${esc(evidence.error_count)} error observations${evidence.coverage.error_count_is_lower_bound ? " (lower bound)" : ""}${evidence.completed_with_errors ? " · Completed with step errors" : ""}</p><p class="muted">Step times are starts; they do not prove parallel completion order. ${evidence.coverage.details_compacted ? "Step details compacted under the storage budget." : ""}${evidence.coverage.abort_reason_unknown ? " Abort reason is unknown." : ""}</p>` +
+        table(
+          [
+            "Path / iteration",
+            "Declared logic",
+            "Step start",
+            "Result",
+            "Wait / errors",
+          ],
+          evidence.steps.map((step) => [
+            esc(step.path) + " / " + esc(step.iteration),
+            esc(nodes.get(step.path)?.kind || "Not retained") +
+              "<br>" +
+              esc(refs(step.path)) +
+              (nodes.get(step.path)?.predicate
+                ? "<br>" + esc(JSON.stringify(nodes.get(step.path).predicate))
+                : ""),
+            esc(date(step.observed_at)),
+            step.result == null ? "Not retained" : esc(step.result),
+            esc(
+              [
+                step.wait_completed === false
+                  ? "Wait incomplete"
+                  : step.wait_completed
+                    ? "Wait complete"
+                    : "",
+                step.wait_timed_out || step.timeout ? "Timeout observed" : "",
+                step.errors ? step.errors + " errors" : "",
+              ]
+                .filter(Boolean)
+                .join(" · "),
+            ),
+          ]),
+        ) +
+        evidence.errors
+          .map(
+            (error) =>
+              `<article class="row"><strong>${esc(error?.kind || "Unknown error")} · ${esc(error?.path || "unknown")}</strong><p class="evidence-text">${esc(error?.message || "Error text unavailable")}</p></article>`,
+          )
+          .join("") +
+        `<details><summary>Coverage</summary><pre>${esc(JSON.stringify(evidence.coverage, null, 2))}</pre></details>`
+      : empty(
+          "Retained step evidence is unavailable or has unknown coverage; step outcomes are unknown.",
+        ))
+  );
+}
+function overviewCases(items) {
+  const concrete = items.filter(
+    (item) => item.source !== "availability" && item.severity !== "info",
+  );
+  if (concrete.length) return concrete;
+  const availability = items.filter((item) => item.source === "availability");
+  return availability.length ? availability.slice(0, 3) : items.slice(0, 3);
+}
+async function overview() {
+  const data = await api("overview"),
+    health = data.health;
+  const local = data.local;
+  const visible = overviewCases(local.cases.items);
+  return (
+    card(
+      "Investigate first",
+      `<p class="muted">Local observations and checks, available with AI disabled. Source severity and execution errors take priority over availability volume.</p>${local.cases.rule_coverage?.truncated ? `<p class="callout">Local static checks are bounded: ${esc(local.cases.rule_coverage.retained)} retained, ${esc(local.cases.rule_coverage.omitted)} additional checks omitted. Coverage is incomplete.</p>` : ""}${caseCards(visible)}<p><a href="#issues">Review all ${esc(local.cases.total)} cases needing attention →</a></p>`,
+    ) +
+    `<p class="summary-strip">${esc(data.entities)} entities · ${esc(data.automations)} automations · ${esc(local.structural_changes_24h)} structural changes observed in 24 h</p>` +
+    `<div class="split">${card("Availability", `<p><strong>${esc(local.availability_count)}</strong> active source observations; ${esc(data.unavailable)} are unexpected in the current inventory.</p><p>Expected, known and snoozed cases keep their source facts.</p><a href="#issues/?source=availability">Investigate availability →</a>`)}${card("Observation coverage", `<p>${badge(health.connected ? "Connected" : "Disconnected", health.connected ? "success" : "warning")}</p><p>Last sync ${esc(date(health.last_sync))}</p><p class="muted">Monitoring began ${esc(date(data.coverage_started))}. Last gap ${esc(date(data.last_gap))}. Gaps are unknown coverage.</p><details><summary>Read coverage and pending traces</summary><pre>${esc(JSON.stringify({ capabilities: health.capabilities, traces: health.trace_detail_coverage }, null, 2))}</pre></details>`)}</div>${card("Latest optional audit", findings(data.latest_audit))}`
+  );
+}
+async function devices(route) {
   const data = await api("devices");
+  if (route && /^(device|integration)%3A/i.test(route)) {
+    const key = decodeURIComponent(route),
+      [kind, ...parts] = key.split(":"),
+      identifier = parts.join(":");
+    const impact = await api(
+      "dependencies?" + new URLSearchParams({ kind, identifier }),
+    );
+    return (
+      `<p><a href="#devices">← Entity inventory</a></p>` +
+      card(key, impactView(impact))
+    );
+  }
+  if (route) {
+    const entity = decodeURIComponent(route),
+      item = data.entities.find((value) => value.entity_id === entity);
+    if (!item) return empty("Entity not in current inventory.");
+    const dossier = await api(
+      "entities/" + encodeURIComponent(entity) + "/investigation",
+    );
+    return (
+      `<p><a href="#devices">← Entity inventory</a></p>` +
+      card(
+        item.name,
+        `<p>${esc(entity)} · ${badge(item.availability)}</p><p>Device ${esc(item.device_id)} · ${esc(item.outages.episodes)} observed offline segments · ${esc(duration(item.outages.seconds))} measured.</p><p>${item.expected_offline ? "Expected-offline attention exception is active; source state is preserved." : "No expected-offline exception."}</p>`,
+      ) +
+      card(
+        "Local observations",
+        dossier.cases
+          .map((value) => `<p>${issueLink(value.key, value.title)}</p>`)
+          .join("") || empty("No retained case for this entity."),
+      ) +
+      card("Affected automations and relations", impactView(dossier.impact))
+    );
+  }
   return (
     search("Find a device, entity or state…") +
     card(
@@ -167,12 +357,12 @@ async function devices() {
       table(
         ["Entity", "Availability", "Device", "Observed offline", "Exception"],
         data.entities.map((e) => [
-          `${esc(e.name)}<br><small>${esc(e.entity_id)}</small>`,
+          `${`<a href="#devices/${encodeURIComponent(e.entity_id)}">${esc(e.name)}</a>`}<br><small>${esc(e.entity_id)}</small>`,
           badge(
             e.availability,
             e.availability === "available" ? "success" : "warning",
           ),
-          esc(e.device_id),
+          e.device_id ? nodeLink("device:" + e.device_id) : "—",
           `${esc(e.outages.episodes)} observed segments<br><small>${esc(duration(e.outages.seconds))} measured</small>`,
           e.expected_offline ? badge("Expected offline") : "—",
         ]),
@@ -183,7 +373,7 @@ async function devices() {
       table(
         ["Device", "Manufacturer", "Model", "ID"],
         data.devices.map((d) => [
-          esc(d.name_by_user || d.name || "Unnamed device"),
+          `<a href="#devices/${encodeURIComponent("device:" + d.id)}">${esc(d.name_by_user || d.name || "Unnamed device")}</a>`,
           esc(d.manufacturer),
           esc(d.model),
           esc(d.id),
@@ -193,92 +383,191 @@ async function devices() {
     `<p class="muted">Segments are bounded by observed transitions and connection gaps; they are not an exact count of physical outages. Disabled entities without a state are excluded from availability monitoring.</p>`
   );
 }
-async function automations(entity) {
-  if (entity) {
-    const data = await api("automations/" + encodeURIComponent(entity));
-    const rows = data.runs.map((r) => [
-      esc(date(r.started)),
-      badge(r.outcome, r.outcome),
-      r.triggered ? "Observed" : "Not observed",
-      `<pre>${esc(JSON.stringify(parse(r.detail), null, 2))}</pre>`,
-    ]);
+async function automations(route) {
+  if (!route) {
+    const data = await api("automations");
     return (
-      `<p><a href="#automations">← All automations</a></p>` +
+      search("Find an automation…") +
       card(
-        data.name,
-        `<p>${esc(data.entity_id)} · ${badge(data.enabled == null ? "Not loaded" : data.enabled ? "Enabled" : "Disabled")}</p><p>Last HA trigger: ${esc(date(data.last_triggered))}</p><p class="muted">${esc(data.coverage)}</p><button class="primary" data-analyze="automation" data-target="${esc(entity)}">Analyze automation</button>`,
-      ) +
-      `<div class="split">${card(
-        "Execution statistics",
+        "Automation inventory",
         table(
-          ["Outcome", "Retained runs", "Observed triggers"],
-          data.stats.map((s) => [
-            badge(s.outcome, s.outcome),
-            esc(s.count),
-            esc(s.observed_triggers),
+          ["Automation", "Enabled", "Last triggered", "Retained outcomes"],
+          data.map((item) => [
+            autoLink(item.entity_id, item.name),
+            badge(
+              item.enabled == null ? "Not loaded" : item.enabled ? "Yes" : "No",
+            ),
+            esc(date(item.last_triggered)),
+            item.stats
+              .map((stat) => `${esc(stat.outcome)}: ${esc(stat.count)}`)
+              .join("<br>") || "No retained runs",
           ]),
         ),
-      )}${card(
-        "Configuration structure & dependencies",
-        data.structure
-          ? `<dl>${Object.entries(data.structure)
-              .map(
-                ([k, v]) =>
-                  `<dt>${esc(k)}</dt><dd>${esc(Array.isArray(v) ? v.join(", ") : v)}</dd>`,
-              )
-              .join("")}</dl>`
-          : empty(
-              "Configuration/trace not available with current HA permissions or retention.",
-            ),
-      )}</div>` +
-      card(
-        "Execution evidence",
-        table(["Started", "Trace outcome", "Trigger event", "Detail"], rows),
       ) +
-      card(
-        "AI analyses",
-        data.analyses.length
-          ? data.analyses.map(findings).join("")
-          : empty("No analysis for this automation."),
-      ) +
-      card("Issues", issueRows(data.issues))
+      `<p class="muted">A trigger is not a completed run. Open an automation for local logic, step evidence, comparisons and impact.</p>`
     );
   }
-  const data = await api("automations");
+  const [encodedEntity, query = ""] = route.split("?"),
+    entity = decodeURIComponent(encodedEntity),
+    params = new URLSearchParams(query);
+  const data = await api(
+    "investigation/" + encodeURIComponent(entity) + "?" + params,
+  );
+  const structure = data.structure;
+  const selected = params.get("run_id") || "";
+  const options = (chosen) =>
+    `<option value="">Choose a run</option>` +
+    data.runs
+      .map(
+        (run) =>
+          `<option value="${esc(run.run_id)}" ${run.run_id === chosen ? "selected" : ""}>${esc(date(run.started))} · ${esc(run.outcome)} · ${esc(run.run_id)}</option>`,
+      )
+      .join("");
   return (
-    search("Find an automation…") +
+    `<p><a href="#automations">← All automations</a></p>` +
     card(
-      "Automation inventory",
+      data.name,
+      `<p>${esc(entity)} · ${badge(data.enabled == null ? "Not loaded" : data.enabled ? "Enabled" : "Disabled")}</p><p class="muted">${esc(data.coverage)}</p>`,
+    ) +
+    card(
+      "Retained execution comparison",
+      `<form id="run-form" data-entity="${esc(entity)}"><label>Inspect run<select name="run_id" required>${options(selected)}</select></label><label>Compare with<select name="compare">${options(params.get("compare"))}</select></label><button type="submit">Inspect evidence</button></form><p>Each run is bound to its own configuration digest when available. Different or unknown digests limit comparison.</p>${
+        data.comparison
+          ? `<p class="callout">${esc(data.comparison.limitation)}${data.comparison.coverage_limited ? " Step coverage is incomplete or compacted; missing observations do not prove absence." : ""}</p>` +
+            (data.comparison.comparable
+              ? table(
+                  [
+                    "Step / iteration",
+                    "First run observation",
+                    "Compared run observation",
+                  ],
+                  data.comparison.differences.map((item) => [
+                    esc(item.path) + " / " + esc(item.iteration),
+                    esc(stepObservation(item.left)),
+                    esc(stepObservation(item.right)),
+                  ]),
+                )
+              : "")
+          : ""
+      }`,
+    ) +
+    (data.comparison
+      ? `<div class="split">${card("First run", stepView(data.comparison.left))}${card("Compared run", stepView(data.comparison.right))}</div>`
+      : card("Run steps and redacted errors", stepView(data.run))) +
+    card(
+      data.structure_coverage.current_configuration_available
+        ? "Current observed automation logic"
+        : "Historical trace logic · current configuration unavailable",
+      structure
+        ? `<p>Retained mode ${badge(structure.mode)}${structure.max_runs ? " · maximum " + esc(structure.max_runs) : ""}</p><p class="muted">${esc(data.configuration_limit)}</p>` +
+            table(
+              ["Path", "Step", "Safe operands", "Declared references"],
+              structure.nodes.map((node) => [
+                esc(node.path),
+                esc(node.kind) +
+                  (node.service ? " · " + esc(node.service) : ""),
+                esc(
+                  JSON.stringify(
+                    node.predicate ||
+                      node.timeout ||
+                      (node.delay_seconds != null
+                        ? { delay_seconds: node.delay_seconds }
+                        : {}),
+                  ),
+                ) +
+                  (node.omitted_predicates
+                    ? `<br><small>Omitted: ${esc(node.omitted_predicates.join(", "))}</small>`
+                    : ""),
+                esc(
+                  structure.references
+                    .filter((ref) => ref.path === node.path)
+                    .map((ref) => ref.kind + ":" + ref.id)
+                    .join(", "),
+                ),
+              ]),
+            ) +
+            `<details><summary>Structure coverage</summary><pre>${esc(JSON.stringify(data.structure_coverage, null, 2))}</pre></details>`
+        : empty(
+            "No structural configuration available; predicates and targets remain unknown.",
+          ),
+    ) +
+    card(
+      "Local findings",
+      data.local_cases.length
+        ? data.local_cases
+            .map(
+              (item) =>
+                `<p>${issueLink(item.key, item.title)} ${badge(item.active ? "Source active" : "Source inactive")}</p>`,
+            )
+            .join("")
+        : empty("No retained local cases for this automation."),
+    ) +
+    card("Dependency impact", impactView(data.impact)) +
+    card(
+      "Observed configuration changes",
       table(
-        [
-          "Automation",
-          "Enabled",
-          "Last triggered",
-          "Run outcomes",
-          "Usage signal",
-        ],
-        data.map((a) => [
-          `<a href="#automations/${encodeURIComponent(a.entity_id)}">${esc(a.name)}</a><br><small>${esc(a.entity_id)}</small>`,
-          badge(a.enabled == null ? "Not loaded" : a.enabled ? "Yes" : "No"),
-          esc(date(a.last_triggered)),
-          a.stats
-            .map((s) => `${esc(s.outcome)}: ${esc(s.count)}`)
-            .join("<br>") || "No retained traces",
-          a.possibly_unused
-            ? badge("Possibly unused", "warning")
-            : "Trigger recorded",
+        ["Observed", "Kind / source", "Before → after"],
+        data.configuration_changes.map((change) => [
+          esc(date(change.observed_at)),
+          esc(change.kind + " · " + change.source),
+          deltaView(change.delta) +
+            `<details><summary>Configuration digests</summary><code>${esc(change.before_digest || "No baseline")} → ${esc(change.after_digest)}</code></details>`,
         ]),
       ),
-    ) +
-    `<p class="muted">No recorded last trigger is a hypothesis of non-use. Trigger events alone never prove successful completion. Click an automation for evidence.</p>`
+    )
   );
 }
-async function issues() {
-  const data = await api("issues");
-  return (
-    search("Search incidents and evidence…") +
-    card("Issues & recurring problems", issueRows(data, true)) +
-    `<p class="muted">Log warnings remain observations needing review. A warning disappearing from HA's bounded log buffer does not prove its cause was repaired.</p>`
+async function issues(route) {
+  if (route && !route.startsWith("?")) {
+    const data = await api(
+        "cases/" + encodeURIComponent(decodeURIComponent(route)),
+      ),
+      item = data.case;
+    return (
+      `<p><a href="#issues">← All cases</a></p>` +
+      card(
+        item.title,
+        `<p>${badge(item.severity, item.severity)} ${badge(item.status)} ${badge(item.source_active ? "Source active" : "Source inactive")}</p><p>First observed ${esc(date(item.first_seen))} · Last observed ${esc(date(item.last_seen))}</p><p>${esc(data.recurrence.meaning)} Reported: ${esc(data.recurrence.reported)}${data.recurrence.retained_runs != null ? " · Retained runs: " + esc(data.recurrence.retained_runs) + " · Runs with error observations: " + esc(data.recurrence.retained_error_runs) : ""}</p>${data.affected.map((entity) => (entity.startsWith("automation.") ? autoLink(entity, entity, data.run?.run_id) : `<a href="#devices/${encodeURIComponent(entity)}">${esc(entity)}</a>`)).join(" · ")}`,
+      ) +
+      `<div class="split">${card("Observed facts", list(data.facts))}${card("Unknowns and hypotheses", list(data.unknowns) + list(data.hypotheses))}</div>` +
+      card("Manual checks", list(data.manual_checks)) +
+      card(
+        "Local attention status",
+        `<p>This changes Vision's attention queue. The underlying observation and its original dates stay intact.</p><form id="case-status-form" data-key="${esc(item.key)}"><label>Status<select name="status">${["review", "known", "expected", "snoozed"].map((status) => `<option ${item.local_status === status ? "selected" : ""}>${status}</option>`).join("")}</select></label><label>Note<input name="note" maxlength="300" value="${esc(item.note || "")}"></label><label>Snooze hours<input name="hours" type="number" min="1" max="8760" value="24" required></label><button type="submit">Save local status</button></form>${item.expires ? `<p>Attention resumes ${esc(date(item.expires))}.</p>` : ""}`,
+      ) +
+      card(
+        "Observation timeline",
+        table(
+          ["Time", "Observation", "Provenance"],
+          data.timeline.map((event) => [
+            esc(date(event.at)),
+            esc(event.kind + " · " + event.summary) +
+              (event.run_id && data.affected[0]?.startsWith("automation.")
+                ? `<br><a href="#automations/${encodeURIComponent(data.affected[0])}?run_id=${encodeURIComponent(event.run_id)}">Inspect this run</a>`
+                : ""),
+            esc(event.source) +
+              (event.uncertain ? " · Gap / uncertain boundary" : ""),
+          ]),
+        ) +
+          `<p class="muted">Last observation gap ${esc(date(data.last_observation_gap))}. Unknown run times cannot establish ordering.</p>`,
+      ) +
+      (data.run ? card("Linked execution evidence", stepView(data.run)) : "") +
+      card("Affected relations", impactView(data.impact)) +
+      `<details><summary>Retained redacted source detail</summary><pre>${esc(JSON.stringify(item.detail, null, 2))}</pre></details>`
+    );
+  }
+  const params = new URLSearchParams((route || "").replace(/^\?/, ""));
+  const data = await api("cases?" + params);
+  const select = (name, values) =>
+    `<label>${esc(name)}<select name="${esc(name)}">${values.map((value) => `<option ${value === (params.get(name) || (name === "status" ? "attention" : "all")) ? "selected" : ""}>${esc(value)}</option>`).join("")}</select></label>`;
+  const pageLink = (page, text) => {
+    const next = new URLSearchParams(params);
+    next.set("page", page);
+    return `<a class="button" href="#issues/?${next}">${esc(text)}</a>`;
+  };
+  return card(
+    "Cases requiring investigation",
+    `<form id="case-filter"><label>Search<input name="q" maxlength="200" value="${esc(params.get("q") || "")}"></label>${select("status", ["attention", "all", "known", "expected", "snoozed", "resolved", "limited"])}${select("source", ["all", "automation", "automation_step", "repair", "log", "static", "availability"])}<button type="submit">Apply filters</button></form><p>${esc(data.total)} matching cases · Page ${esc(data.page)}</p>${caseCards(data.items)}<div class="toolbar">${data.page > 1 ? pageLink(data.page - 1, "Previous") : ""}${data.has_more ? pageLink(data.page + 1, "Next") : ""}</div>`,
   );
 }
 async function intelligence() {
@@ -322,47 +611,73 @@ async function intelligence() {
     )
   );
 }
-async function history() {
-  const data = await api("history");
-  return (
-    card(
-      "Availability transitions",
-      table(
-        ["Entity", "State", "Start", "End", "Coverage"],
-        data.availability.map((a) => [
-          esc(a.entity_id),
-          badge(a.state, a.state === "available" ? "success" : "warning"),
-          esc(date(a.started)),
-          a.ended ? esc(date(a.ended)) : "Observed open interval",
-          a.uncertain ? "Gap / uncertain boundary" : "Observed interval",
-        ]),
-      ),
-    ) +
-    card(
-      "Automation execution history",
-      table(
-        ["Automation", "Started", "Outcome", "Trigger"],
-        data.runs.map((r) => [
-          esc(r.entity_id),
-          esc(date(r.started)),
-          badge(r.outcome, r.outcome),
-          r.triggered ? "Observed" : "Not observed",
-        ]),
-      ),
-    ) +
-    card(
-      "Request accounting",
-      table(
-        ["Time", "Provider / model", "Status", "Estimated USD"],
-        data.usage.map((u) => [
-          esc(date(u.created)),
-          `${esc(u.provider)} · ${esc(u.model)}`,
-          esc(u.status),
-          Number(u.cost_usd).toFixed(6),
-        ]),
-      ),
-    ) +
-    `<p class="muted">Up to 300 recent observations per section. Retention is configurable. Billing reservations with uncertain outcomes remain charged conservatively.</p>`
+async function history(route) {
+  const [kind = "runs", query = ""] = (route || "runs").split("?"),
+    params = new URLSearchParams(query);
+  params.set("kind", kind);
+  const data = await api("history/page?" + params);
+  const rows = data.items.map((item) => {
+    if (kind === "runs")
+      return [
+        esc(date(item.started)),
+        autoLink(item.entity_id),
+        badge(item.outcome, item.outcome),
+        esc(item.start_source),
+        `<a href="#automations/${encodeURIComponent(item.entity_id)}?run_id=${encodeURIComponent(item.run_id)}">Inspect run</a>`,
+      ];
+    if (kind === "availability")
+      return [
+        esc(date(item.started)),
+        esc(item.entity_id),
+        esc(item.state),
+        esc(date(item.ended)),
+        item.uncertain ? "Gap / uncertain" : "Observed",
+      ];
+    if (kind === "issues")
+      return [
+        esc(date(item.last_seen)),
+        issueLink(item.key, item.title),
+        esc(item.source),
+        esc(item.severity),
+        esc(item.occurrences),
+      ];
+    if (kind === "changes")
+      return [
+        esc(date(item.observed_at)),
+        autoLink(item.entity_id),
+        esc(item.kind),
+        esc(item.source),
+        deltaView(item.delta),
+      ];
+    if (kind === "analyses")
+      return [
+        esc(date(item.created)),
+        esc(item.kind),
+        esc(item.provider),
+        esc(item.model),
+        findings(item),
+      ];
+    return [
+      esc(date(item.created)),
+      esc(item.provider),
+      esc(item.model),
+      esc(item.status),
+      esc(Number(item.cost_usd).toFixed(6)),
+    ];
+  });
+  const headers = {
+    runs: ["Started", "Automation", "Outcome", "Time source", "Evidence"],
+    availability: ["Started", "Entity", "State", "Ended", "Coverage"],
+    issues: ["Observed", "Case", "Source", "Severity", "Reported count"],
+    changes: ["Observed", "Automation", "Kind", "Source", "Evidence"],
+    usage: ["Time", "Provider", "Model", "Status", "Estimated USD"],
+    analyses: ["Time", "Task", "Provider", "Model", "Retained findings"],
+  }[kind];
+  const next = new URLSearchParams(params);
+  if (data.next_cursor) next.set("cursor", data.next_cursor);
+  return card(
+    "Search retained history",
+    `<form id="history-filter"><label>Section<select name="kind">${["runs", "availability", "issues", "changes", "usage", "analyses"].map((value) => `<option ${value === kind ? "selected" : ""}>${value}</option>`).join("")}</select></label><label>Search<input name="q" maxlength="200" value="${esc(params.get("q") || "")}"></label><label>Entity (runs / availability / changes)<input name="entity" maxlength="200" value="${esc(params.get("entity") || "")}"></label><label>Outcome / state / source<input name="outcome" maxlength="100" value="${esc(params.get("outcome") || "")}"></label><label>Day (UTC)<input name="day" type="date" value="${esc(params.get("day") || "")}"></label><button type="submit">Search history</button></form><p class="muted">${esc(data.coverage)} Structural baselines record observation time, not HA edit time. Costs include conservative uncertain reservations.</p>${table(headers, rows)}${data.next_cursor ? `<a class="button" href="#history/${kind}?${next}">Next observations →</a>` : ""}<p><a href="#history/${kind}">Start of this section</a></p>`,
   );
 }
 async function settings() {
@@ -384,7 +699,7 @@ async function settings() {
     ) +
     card(
       "Expected offline behavior",
-      `<p>Suppress availability incidents for a known exception. This changes only Vision's database. Reasons are redacted before storage.</p><form id="exception-form"><label>Entity<select name="entity_id" required>${devices.entities.map((e) => `<option value="${esc(e.entity_id)}">${esc(e.name)} (${esc(e.entity_id)})</option>`).join("")}</select></label><label>Reason<input name="reason" maxlength="300" required placeholder="For example, a battery device sleeps overnight"></label><label>Expires after hours<input name="hours" type="number" min="1" max="8760" value="24" required></label><button type="submit">Save exception</button></form>` +
+      `<p>Reduce attention for expected availability observations while preserving source facts. This changes only Vision's database. Reasons are redacted before storage.</p><form id="exception-form"><label>Entity<select name="entity_id" required>${devices.entities.map((e) => `<option value="${esc(e.entity_id)}">${esc(e.name)} (${esc(e.entity_id)})</option>`).join("")}</select></label><label>Reason<input name="reason" maxlength="300" required placeholder="For example, a battery device sleeps overnight"></label><label>Expires after hours<input name="hours" type="number" min="1" max="8760" value="24" required></label><button type="submit">Save exception</button></form>` +
         table(
           ["Entity", "Reason", "Expires", ""],
           exceptions.map((e) => [
@@ -410,17 +725,17 @@ async function render() {
   try {
     const health = await api("health");
     if (id !== generation) return;
-    if (health.configuration_error) notice.textContent = health.configuration_error;
+    if (health.configuration_error)
+      notice.textContent = health.configuration_error;
     $("#connection").textContent =
       (health.connected ? "Connected" : "Disconnected") + " · Read only";
     const views = {
       overview,
-      devices,
-      automations: () =>
-        automations(encoded ? decodeURIComponent(encoded) : null),
-      issues,
+      devices: () => devices(encoded || null),
+      automations: () => automations(encoded || null),
+      issues: () => issues(encoded || null),
       intelligence,
-      history,
+      history: () => history(encoded || null),
       settings,
     };
     const html = await views[active]();
@@ -428,6 +743,64 @@ async function render() {
     content.innerHTML = html;
     searchTable();
     bindAnalysis();
+    const localStatus = $("#case-status-form");
+    if (localStatus)
+      localStatus.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const fields = new FormData(localStatus);
+        try {
+          await api(
+            "cases/" + encodeURIComponent(localStatus.dataset.key) + "/status",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                status: fields.get("status"),
+                note: fields.get("note"),
+                hours: Number(fields.get("hours")),
+              }),
+            },
+          );
+          notice.textContent =
+            "Local attention status saved; source observation preserved.";
+          render();
+        } catch (error) {
+          notice.textContent = error.message;
+        }
+      });
+    for (const [selector, page] of [
+      ["#case-filter", "issues"],
+      ["#history-filter", "history"],
+    ]) {
+      const filter = $(selector);
+      if (filter)
+        filter.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const fields = new FormData(filter),
+            query = new URLSearchParams();
+          for (const [key, value] of fields)
+            if (value && key !== "kind") query.set(key, value);
+          location.hash =
+            "#" +
+            page +
+            "/" +
+            (page === "history" ? fields.get("kind") : "") +
+            "?" +
+            query;
+        });
+    }
+    const runForm = $("#run-form");
+    if (runForm)
+      runForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const fields = new FormData(runForm),
+          query = new URLSearchParams();
+        for (const [key, value] of fields) if (value) query.set(key, value);
+        location.hash =
+          "#automations/" +
+          encodeURIComponent(runForm.dataset.entity) +
+          "?" +
+          query;
+      });
     const preview = $("#preview");
     if (preview)
       preview.addEventListener("click", async () => {

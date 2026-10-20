@@ -6,9 +6,10 @@ import json
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Literal
 
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -17,7 +18,7 @@ from .ai import AIError, AnalysisInput, Intelligence, evidence_bundle
 from .config import Runtime, Settings
 from .monitor import Monitor
 from .security import Redactor, protect_logging
-from .store import Store
+from .store import STORAGE_FAILURES, StorageStartupError, Store
 
 STATIC = Path(__file__).parent / "static"
 
@@ -25,6 +26,12 @@ STATIC = Path(__file__).parent / "static"
 class ExceptionInput(BaseModel):
     entity_id: str = Field(pattern=r"^[a-z_]+\.[A-Za-z0-9_]+$", max_length=200)
     reason: str = Field(min_length=1, max_length=300)
+    hours: int = Field(default=24, ge=1, le=8760)
+
+
+class CaseStatusInput(BaseModel):
+    status: Literal["review", "known", "expected", "snoozed"]
+    note: str = Field(default="", max_length=300)
     hours: int = Field(default=24, ge=1, le=8760)
 
 
@@ -61,9 +68,12 @@ def create_app(runtime=None, settings=None, *, connect=True):
     async def lifespan(app):
         try:
             app.state.store = Store(runtime.data / "vision.db")
+        except StorageStartupError as error:
+            raise RuntimeError(STORAGE_FAILURES[error.code]) from None
         except Exception:
             raise RuntimeError("Vision storage unavailable; check private data volume") from None
         app.state.monitor = Monitor(app.state.store, settings, runtime, redactor)
+        app.state.insights = app.state.monitor.insights
         app.state.ai = Intelligence(app.state.store, settings, app.state.monitor, redactor)
         app.state.ai_job = None
         app.state.tasks = []
@@ -127,10 +137,12 @@ def create_app(runtime=None, settings=None, *, connect=True):
             "version": __version__,
             "read_only": True,
             "storage": "ready",
+            "storage_journal_mode": app.state.store.journal_mode,
             "connected": monitor.connected,
             "last_sync": monitor.last_sync,
             "capabilities": monitor.capabilities,
             "configuration_error": configuration_error,
+            "trace_detail_coverage": app.state.store.get_meta("trace_fetch_status"),
         }
 
     @app.get("/api/overview")
@@ -156,6 +168,7 @@ def create_app(runtime=None, settings=None, *, connect=True):
             "latest_audit": latest[0] if latest else None,
             "coverage_started": monitor.started,
             "last_gap": db.get_meta("last_gap"),
+            "local": app.state.insights.overview(),
         }
 
     @app.get("/api/devices")
@@ -164,11 +177,7 @@ def create_app(runtime=None, settings=None, *, connect=True):
 
     @app.get("/api/automations")
     async def automations():
-        return [
-            app.state.monitor.automation_detail(e)
-            for e in sorted(app.state.monitor.entities.keys() | app.state.monitor.registry.keys())
-            if e.startswith("automation.")
-        ]
+        return app.state.monitor.automation_index()
 
     @app.get("/api/automations/{entity_id}")
     async def automation(entity_id: str):
@@ -191,12 +200,96 @@ def create_app(runtime=None, settings=None, *, connect=True):
             "SELECT * FROM issues ORDER BY active DESC,last_seen DESC LIMIT 500"
         )
 
+    @app.get("/api/cases")
+    async def cases(
+        status: str = "attention",
+        source: str = "all",
+        q: str = Query(default="", max_length=200),
+        page: int = Query(default=1, ge=1, le=10000),
+        limit: int = Query(default=25, ge=1, le=100),
+    ):
+        try:
+            return app.state.insights.cases(
+                status=status, source=source, q=q, page=page, limit=limit
+            )
+        except ValueError as error:
+            raise HTTPException(422, str(error)) from None
+
+    @app.get("/api/cases/{key:path}")
+    async def case_detail(key: str):
+        if len(key) > 500:
+            raise HTTPException(422, "Case identifier too long")
+        try:
+            return app.state.insights.dossier(key)
+        except LookupError:
+            raise HTTPException(404, "Case not found") from None
+
+    @app.post("/api/cases/{key:path}/status")
+    async def case_status(key: str, value: CaseStatusInput):
+        if len(key) > 500:
+            raise HTTPException(422, "Case identifier too long")
+        try:
+            return app.state.insights.annotate(key, value.status, value.note, value.hours)
+        except LookupError:
+            raise HTTPException(404, "Case not found") from None
+
+    @app.get("/api/investigation/{entity_id}")
+    async def investigation(
+        entity_id: str,
+        run_id: str | None = Query(default=None, max_length=200),
+        compare: str | None = Query(default=None, max_length=200),
+    ):
+        try:
+            return app.state.insights.automation(entity_id, run_id, compare)
+        except LookupError as error:
+            raise HTTPException(404, str(error)) from None
+
+    @app.get("/api/dependencies")
+    async def dependencies(
+        kind: Literal["entity", "automation", "device", "integration"],
+        identifier: str = Query(min_length=1, max_length=200),
+    ):
+        return app.state.insights.impact(identifier, kind)
+
+    @app.get("/api/entities/{entity_id}/investigation")
+    async def entity_investigation(entity_id: str):
+        entity = app.state.monitor.entity_view(entity_id)
+        if not entity:
+            raise HTTPException(404, "Entity not in current inventory")
+        cases = app.state.store.rows(
+            "SELECT key,title,active FROM issues WHERE json_extract(detail,'$.entity_id')=? "
+            "ORDER BY active DESC,last_seen DESC,key LIMIT 50",
+            (entity_id,),
+        )
+        return {"entity": entity, "cases": cases, "impact": app.state.insights.impact(entity_id)}
+
+    @app.get("/api/history/page")
+    async def history_page(
+        kind: str = "runs",
+        q: str = Query(default="", max_length=200),
+        entity: str = Query(default="", max_length=200),
+        outcome: str = Query(default="", max_length=100),
+        cursor: str | None = Query(default=None, max_length=400),
+        limit: int = Query(default=50, ge=1, le=100),
+        day: str | None = Query(default=None, max_length=10),
+    ):
+        try:
+            return app.state.insights.history(
+                kind, q=q, entity=entity, outcome=outcome, cursor=cursor, limit=limit, day=day
+            )
+        except ValueError as error:
+            raise HTTPException(422, str(error)) from None
+
     @app.get("/api/history")
     async def history():
         db = app.state.store
         return {
             "availability": db.rows("SELECT * FROM availability ORDER BY id DESC LIMIT 300"),
-            "runs": db.rows("SELECT * FROM runs ORDER BY started DESC LIMIT 300"),
+            "runs": db.rows(
+                "SELECT r.*,coalesce(t.start_source,'legacy_unverified') start_source,"
+                "t.observed_at FROM runs r LEFT JOIN run_timing t USING(entity_id,run_id) "
+                "ORDER BY started DESC LIMIT 300"
+            ),
             "analyses": db.rows("SELECT * FROM analyses ORDER BY id DESC LIMIT 100"),
             "usage": db.rows("SELECT * FROM usage ORDER BY id DESC LIMIT 300"),
         }
@@ -213,9 +306,6 @@ def create_app(runtime=None, settings=None, *, connect=True):
             app.state.store.execute(
                 "INSERT OR REPLACE INTO exceptions VALUES (?,?,?)",
                 (value.entity_id, redactor.text(value.reason), time.time() + value.hours * 3600),
-            )
-            app.state.store.execute(
-                "UPDATE issues SET active=0 WHERE key=?", ("availability:" + value.entity_id,)
             )
         return {"saved": True}
 
@@ -286,7 +376,9 @@ def create_app(runtime=None, settings=None, *, connect=True):
 
     @app.get("/")
     async def index():
-        return FileResponse(STATIC / "index.html")
+        return HTMLResponse(
+            (STATIC / "index.html").read_text().replace("{{VISION_VERSION}}", __version__)
+        )
 
     app.mount("/static", StaticFiles(directory=STATIC), name="static")
     return app

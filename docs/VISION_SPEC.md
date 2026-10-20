@@ -3,6 +3,44 @@
 The initial functional baseline was delivered as v0.1.0. Presentation amendments
 are recorded below; patch releases retain the same read-only functional scope.
 
+## Authorized 0.2.0 scope
+
+The owner authorized an autonomous 0.2.0 implementation, tests, public release
+and live verification on 2026-10-20. Preserve all existing Git history and the
+immutable 0.1.0/0.1.1 release tags. This section defines the accepted scope;
+phase completion and actual evidence belong in PLANS.md and VALIDATION.md.
+
+- **Data foundation:** transactional, versioned SQLite migrations retaining all
+  historical records, private settings and conservative billing reservations.
+  Bounded sanitized automation control flow, typed static references, selected
+  literal operands, trace step summaries and structural configuration history.
+  Separate whole-run completion from continued step errors and missing coverage.
+- **Local insight:** prioritized concrete cases, incident dossiers with timelines,
+  recurrence, evidence links and local known/expected/snoozed status. Deep
+  automation comparison, static rules, typed dependency impact and searchable,
+  paginated history and observed changes. Facts, hypotheses, missing evidence
+  and manual checks remain visibly distinct. Core utility must not require AI.
+- **Targeted intelligence:** separate bounded investigations for audit, incident,
+  automation logic, optimization, availability, template errors, missing targets,
+  mode conflicts, condition stops and timeouts where evidence supports them.
+  Every task uses a relevant evidence selection, validated citations, supporting
+  and contrary evidence and explicit unknowns. No universal prompt masquerading
+  as multiple tasks. Scoped dossier follow-ups have bounded conversation history.
+  Any extra evidence request is limited to enumerated local evidence sections;
+  it cannot contain HA operations, SQL, shell or arbitrary tools.
+- **Privacy and delivery:** local-only, compact and explicitly opted-in diagnostic
+  profiles; existing configurations remain compact or disabled. Show the exact
+  outgoing prompt/task/schema versions and evidence provenance. Keep credentials
+  and real HA observations out of public fixtures and external reviews. Preserve
+  retry/failover, budgets and uncertain billing. Test synthetic incidents, upgrade
+  persistence, large inventories, read-policy security and actual UI workflows.
+
+The existing FastAPI/SQLite/vanilla JavaScript stack and light interface with a
+dark Vision wordmark, small green dot and burgundy/gold accents remain. No new
+HA write, service, configuration, repair, template execution or generic transport
+capability is authorized. AI has no HA credentials or tools. No paid provider
+request is required or enabled by this release work.
+
 Repository: `vision-homeassistant`. License: MIT. Public custom Home Assistant
 app repository. Philosophy: **Jarvis controls the house. Vision understands the
 house.** Vision's name refers to the fictional successor of J.A.R.V.I.S.; this is

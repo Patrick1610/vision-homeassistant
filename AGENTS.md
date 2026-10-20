@@ -1,6 +1,8 @@
 # Vision
 
-Canonical repository root: this directory. Serious open-source software, MIT, v0.1.1.
+Canonical repository root: this directory. Serious open-source software, MIT,
+development preview v0.2.0-dev.1. The accepted data/local-investigation foundation
+is included; targeted AI remains under development for the stable 0.2.0 release.
 Read `docs/VISION_SPEC.md`, `docs/ARCHITECTURE.md` and `PLANS.md` before changes.
 
 - Vision observes Home Assistant and MUST NEVER call services, change state,

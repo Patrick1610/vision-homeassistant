@@ -51,3 +51,45 @@ tag link was removed and the changelog explicitly marked publication pending.
 Both findings were verified resolved before final GO; actual tag/release creation
 is a separate browser operation with anonymous Git readback. Transient reviewer
 transport/response-schema errors were retried in the same review session.
+
+The 0.2.0 data-foundation review `70057443-b25f-46e4-852f-a9df98071c8b`
+accepted immutable `7034e224a33671e5ccf199725385467fd5a38ae9` in its third
+critical round with no critical/high/medium findings and four nonblocking lows.
+Its first two candidates were rejected and corrected. B handles the event-row
+tie, conservative backup cleanup and duplicate compact-metadata notes. The
+remaining conservative historical-time blocker is preserved and explained,
+because unverified timestamps cannot establish ordering. Jev was attempted but
+its required key was unavailable; no score is claimed. B awaits its own immutable
+candidate and external review; A acceptance is not B/release/live acceptance.
+
+The B critical review `d3e801fb-824c-4bab-bbff-7a5ee7664818`, channel
+`vision020-b`, rejected exact `2f9899a7de6583969fb6784463f73b3e8eec710d`:
+three medium findings (orphan attention lifecycle/unbounded notes, repeated
+landing-path AST/run scans, unbounded static fanout) and three lows (backup
+collision overwrite, malformed retained evidence, GET write amplification).
+Authorized corrective B work adds preserving schema 5 episode binding, bounded
+note/static selection with explicit coverage, monitor-owned gated refresh,
+bulk expected flags, no-clobber backups and explicit unknown evidence. New
+synthetic regressions cover the real scaled HTTP paths, a concurrent WAL writer,
+schema-4 upgrade, generation lifecycle, malformed payloads and availability-only
+UI selection. Same-channel follow-up is pending; no B GO is claimed.
+
+The same stream's second round accepted the earlier mechanisms on `5a2e8bc`,
+but returned NO_GO with one new medium: repeated migration failures created
+unbounded full backup copies. Two lows concerned per-automation coverage maps
+in every response and per-card run lookup. The next correction proves snapshot
+reuse with fresh SQLite-copy comparison, gates copy count/bytes/free space,
+handles uncertain crash temporaries conservatively and exposes only fixed safe
+startup reasons. Aggregate page coverage and one bulk run/evidence query replace
+the two linear page costs. Independent and same-channel follow-up remain pending.
+
+The third B round rejected `2f90d89` for adoption of a live-database hardlink as a
+rollback snapshot. Independent testing additionally demonstrated a WAL write in
+the backup→migration gap. Corrective startup now holds the writer reservation
+across both operations and uses a separate read-only backup source. Main/WAL/SHM
+inode aliases fail closed. Low notes receive safe actionable pending/size reasons,
+batched ephemeral metadata and stale-key cleanup; numeric run-ID batch lookup
+is covered. Two-startup and competing-writer tests include failure/retry, and the
+hardlink test restores a source whose bytes exactly match a fresh API snapshot.
+Nondeterministic valid copy bytes hit the retained cap rather than growing without
+bound. Same-channel critical follow-up is pending; no B GO is claimed.
