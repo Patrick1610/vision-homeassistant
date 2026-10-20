@@ -10,6 +10,7 @@ from datetime import datetime
 from .evidence import MAX_STEPS, dependency_graph, fingerprint, structure, trace_summary, trace_time
 from .ha import IDENTIFIER, HAClient, HAError
 from .insights import Insights
+from .reliability import BINARY_CLASSES, DIAGNOSTIC_CLASSES, MEASUREMENT_CLASSES, DeviceReliability
 
 BAD = {"unavailable", "unknown"}
 OUTCOMES = {"succeeded", "condition_stopped", "stopped", "blocked", "failed", "running", "unknown"}
@@ -114,6 +115,7 @@ class Monitor:
         self.devices = []
         self.registry = {}
         self.registry_digests = {}
+        self.availability_metadata = {}
         self.structures = self.store.structures()
         self.config_attempts = {}
         self.connected = False
@@ -121,6 +123,7 @@ class Monitor:
         self.capabilities = {}
         self.started = time.time()
         self.store.set_meta("monitor_started", self.started)
+        self.reliability = DeviceReliability(self)
         self.gap()
         self.insights = Insights(self)
         self.insights.refresh()
@@ -133,8 +136,9 @@ class Monitor:
             "UPDATE availability SET ended=?,uncertain=1 WHERE ended IS NULL", (last,)
         )
         self.store.set_meta("last_gap", now)
+        self.reliability.gap(now)
 
-    def observe_state(self, state, now=None):
+    def observe_state(self, state, now=None, *, track_device=True):
         if not state or not isinstance(state.get("entity_id"), str):
             return
         now = time.time() if now is None else now
@@ -144,8 +148,19 @@ class Monitor:
         if previous and updated < previous["updated"]:
             return
         attrs = state.get("attributes", {})
+        attrs = attrs if isinstance(attrs, dict) else {}
+        device_class = attrs.get("device_class")
+        self.availability_metadata[entity_id] = {
+            "device_class": device_class
+            if isinstance(device_class, str)
+            and device_class in (DIAGNOSTIC_CLASSES | MEASUREMENT_CLASSES | BINARY_CLASSES)
+            else None
+            if device_class is None
+            else "unrecognized"
+        }
         # No numeric sensor states or arbitrary attributes are stored.
         status = state.get("state", "unknown")
+        status = status if isinstance(status, str) else "unknown"
         availability = status if status in BAD else "available"
         entity = {
             "entity_id": entity_id,
@@ -191,6 +206,8 @@ class Monitor:
                 "UPDATE issues SET active=0 WHERE key=?", ("availability:" + entity_id,)
             )
         self.store.set_meta("last_observation", now)
+        if track_device:
+            self.reliability.observe(entity_id, now)
 
     def event(self, event):
         kind = event.get("event_type")
@@ -200,6 +217,8 @@ class Monitor:
                 self.observe_state(data["new_state"])
             elif data.get("entity_id"):
                 self.entities.pop(data["entity_id"], None)
+                self.availability_metadata.pop(data["entity_id"], None)
+                self.reliability.observe(data["entity_id"], time.time())
                 self.store.execute(
                     "UPDATE availability SET ended=?,uncertain=1 "
                     "WHERE entity_id=? AND ended IS NULL",
@@ -694,7 +713,8 @@ class Monitor:
             for entry in registry:
                 entity_id = entry["entity_id"]
                 projection = {
-                    key: entry.get(key) for key in ("device_id", "disabled_by", "platform")
+                    key: entry.get(key)
+                    for key in ("device_id", "disabled_by", "platform", "entity_category")
                 }
                 digest = fingerprint(projection)
                 current[entity_id] = (
@@ -709,13 +729,17 @@ class Monitor:
         with self.store.transaction():
             for state in states:
                 present.add(state["entity_id"])
-                self.observe_state(state)
+                self.observe_state(state, track_device=False)
         for removed in self.entities.keys() - present:
             self.entities.pop(removed, None)
+            self.availability_metadata.pop(removed, None)
             self.store.execute(
                 "UPDATE availability SET ended=?,uncertain=1 WHERE entity_id=? AND ended IS NULL",
                 (time.time(), removed),
             )
+        self.reliability.refresh(
+            time.time(), registry_complete=devices is not None and registry is not None
+        )
         repairs = await self.optional(ha, "repairs/list_issues")
         if repairs is not None:
             active = []

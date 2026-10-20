@@ -17,7 +17,7 @@ from vision.ai import AIConflict, AIError
 from vision.ai_contract import AnalysisInput, Diagnosis, provider_schema
 from vision.app import create_app
 from vision.config import Settings
-from vision.store import MIGRATIONS, Store
+from vision.store import MIGRATIONS, SCHEMA_VERSION, Store
 
 
 def insert_pair(db, ident, created, body="🟢", status="completed"):
@@ -73,7 +73,7 @@ def test_schema_eight_preserves_original_rows_and_backfills_utf8_sizes(tmp_path)
             for table in ("analyses", "ai_requests")
         }
     store = Store(path)
-    assert store.db.execute("PRAGMA user_version").fetchone()[0] == 8
+    assert store.db.execute("PRAGMA user_version").fetchone()[0] == SCHEMA_VERSION
     for table, rows in old.items():
         assert [tuple(row) for row in store.db.execute("SELECT * FROM " + table)] == rows
     assert_sizes(store)

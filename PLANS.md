@@ -811,3 +811,202 @@ with the existing single Starlette/httpx warning; exact Node 22.23.3 passed all
 All 18 Vision source/assets match the qualified RC except `__version__`; the five
 linked packaging/test files contain version substitutions only. No feature,
 provider/model, option/default, schema/store or 0.2.1-backlog change is included.
+
+## Vision 0.2.1 — accepted phase A, started 2026-10-20
+
+Direct owner mandate continues with one canonical writer, requested gpt-6.1-sol /
+ultra and no custom workflow runtime. Start from clean `6fd7923a5d4e3ab38fbe5eaa6c03fad1514f7d95`,
+matching published v0.2.0 tree `c662bd9a1e7e646b470ba2a52d7b1236c932efcc`
+(public commit `d1a49bf55ceae40e0ceaeb755dd397b114d47254`). The accepted phase A
+scope is in VISION_SPEC. The controller owns external review/public/live gates;
+this writer does not push, call HA or use paid providers. Phase B research is
+separate and must not become phase-A code. Existing provider options/consent,
+ledger/history and immutable tags remain intact.
+
+Implementation plan: a monitor-owned reliability service records new timestamped
+device-state/cohort intervals, coverage sessions, durable local device policies
+and bounded local check markers through an additive migration. A small current-
+observation pointer per device avoids scanning all history at startup. No old entity
+availability row is rewritten into a supposed historical device fact. Missing
+pre-upgrade mapping/coverage is visible. Closed-role classification requires
+actual enabled meaningful entity evidence; state `unknown`, unavailable, partial,
+diagnostic-only, disabled and unmapped coverage are distinct. Effective device
+class is a bounded enum from existing get_states attributes; entity_category and
+disabled metadata use the existing registry read. No numeric state is retained.
+
+Pure interval kernels union/clip [start,end) per device and coverage. Cached
+24 h/7 d/30 d windows use at most 72 buckets; expected/new/persistent are disjoint,
+and imported/gap baselines do not become invented new outages. Monitor refresh
+owns bounded history work; HTTP views read small snapshots. Trend comparisons
+require a stable covered cohort; deletion is not improvement. Persistent local
+known/expected policies do not expire weekly. Local check validation requires
+appropriate later covered observations and never claims causation. API/UI must
+remain useful with no history/registry and preserve current evidence/navigation.
+
+Build end to end, add metric/coverage/cohort and real UI regressions, test the
+preserving upgrade and scale bounds, then freeze a coherent candidate (eligible
+for 0.2.1-dev.1 metadata) for the controller's critical phase-A review. No phase-A
+completion or new live/release acceptance is claimed at this start checkpoint.
+
+### 0.2.1 phase A — implementation freeze checkpoint
+
+Implemented the monitor-owned device cohort, additive schema 9 and local API/UI.
+The first screen is a device-observation chart with visible axes and window controls,
+then at most three grouped manual-check priorities and one primary link. Registered
+devices are not asserted to be physical products. Diagnostic/update/disabled/unknown
+and partial evidence stay distinct. Integration groups retain individual drilldown
+links and do not assert a shared physical outage or network cause.
+
+Device-hours use clipped per-device unions; coverage watermarks prevent restart
+or storage-failure gaps being stretched into observed time. Equal-half burden
+comparisons show their stable known subset and exclusions. First/last status is
+separate. Persistent device attention does not expire weekly; actual same-cohort
+partial→offline transitions can resurface known backlog. Health/run priorities
+respect existing episode-bound, unexpired annotations. Ordinary modes/conditions
+and old poll-refreshed logs remain in the source archive, outside the action queue.
+Local performed-check markers require later continuously covered known evidence
+from the same cohort, with unknown intermediate states/mapping changes blocking
+recovery claims. Markers and source data do not establish causation.
+
+Validation performed before this freeze: `.venv/bin/python -m pytest -q`:
+**377 PASS**, one existing Starlette TestClient deprecation warning, 33.04 s.
+The complete real-DOM suite on Node **22.23.3**: **42 PASS**, including all previous
+34 tests and eight new dashboard/window/filter/check/policy/unknown/focus/duration cases.
+`ruff check .`, `ruff format --check .`, JS syntax and `git diff --check` passed.
+The 36 new Python cases cover interval arithmetic, corrupt/conflicting evidence,
+known cohort comparisons, source-preserving attention/markers, rollback/restart,
+additive upgrade, paging and actual bounded local API reads. A synthetic fixture
+with 5,686 entities and 100,003 old availability rows has no history-table scan or
+DB write on repeated reliability/overview GETs, ≤16 SQL statements and <160 KB
+responses in that fixture. This is bounded local evidence, not a HA hardware SLA.
+
+Initial full-suite failures were a schema-8 literal and a registry-projection spy
+that did not include entity_category; both contracts were updated while retaining
+all preservation assertions and strengthening category-change deduplication coverage.
+The new DOM harness initially matched the static header too early; waiting for
+actual rendered content exposed and helped correct the device-filter route binding.
+No assertion or large fixture was removed to obtain the green results.
+
+The package is **0.2.1-dev.1**, with repository URL/slug/options unchanged. Requested
+implementation configuration remains gpt-6.1-sol/ultra; effective runtime identity
+is not independently inspectable from repository code. Independent metrics/upgrade,
+both architecture containers, native Safari, critical external review, public CI
+and any new live acceptance remain controller gates. No new HA/provider/research
+network request, publication or phase-B implementation was performed by this writer.
+
+Deliberate limits: only newly timestamped device history; finite closed-role
+classification; unknown unclassified/missing evidence; at most 6,000 retained
+current identities and bounded interval/coverage caches. Capacity omission and
+conflicts disable complete metric claims. A known partial→offline transition is
+supported; frequency-worsening inference is not. Device power/sleep expectation
+requires an explicit local declaration. Device/integration context is not yet a
+new AI target or public-source research executor; that remains phase B after GO.
+
+
+### 0.2.1 phase A — corrective freeze checkpoint
+
+The initial `e676c3895c05` checkpoint remains historical: 377 Python / 42 DOM,
+independent 73 metric/lifecycle/queue plus six API groups, populated schema-8
+upgrade/all 22 old tables and host-local scale evidence. Its critical review was
+NO_GO. The reviewer and native browser found real history-growth, loop-blocking,
+durable-worsening, bounded-selection and presentation gaps; those are corrected
+here before any phase-A publication. The note-redaction allegation was a broker-
+redaction false finding: the original test did supply its token canary, and the
+controller's 13 additional API/SQLite probes passed. Assertions were retained.
+
+The correction uses lean history boundaries and separate bounded current evidence,
+trigger-accounted append limits, independent complete-device window selection and
+one off-loop coalescing cache worker. ARCHITECTURE.md defines the precise encoded
+bounds, failure/recovery semantics and source-backed classification policy.
+Current observations/attention are separate from the last coherent chart. Ordinary
+note/power edits cannot rebaseline known worsening; an explicit guarded local
+acknowledgment can. Removed pointers yield capacity to active registry devices
+without losing their old history, policy or performed checks. No new HA/API read,
+provider option, AI behavior, research executor or phase-B code is included.
+
+The primary manual check now appears early, beside a compact chart on desktop and
+before it on mobile. New versus persistent groups have distinct titles/timing and
+exact affected-device navigation. Long comparison methodology remains available
+behind a disclosure; empty/limited membership remains grey. Monitoring gaps,
+capabilities, static limits, audit/history links and correct entity backlinks are
+retained without dead secondary reads on the modern overview.
+
+Local final verification: **401 Python PASS in 39.30 s** and **49 Node 22.23.3
+DOM PASS**; Ruff lint/format, JS syntax, diff and publication scan passed. Detailed
+commands, performance measurements and limits are recorded in VALIDATION.
+During development the full suite caught two unchanged query-budget assertions:
+the added capacity read exposed a duplicate overview health probe, which was
+removed without relaxing those budgets. A benchmark fixture initially omitted its
+required coverage reason; that ignored harness was repaired without product changes.
+The historical **341 PASS / 36.84 s** checkpoint is restored exactly; it is not
+replaced with today's larger count. Schema 9 is not yet public and was corrected
+in place; frozen migrations 1–8 remain identical. External critical follow-up,
+new independent/native/container acceptance and public/live GO remain pending
+controller work at this corrective freeze. Phase B remains closed.
+
+
+### 0.2.1 phase A — second corrective checkpoint
+
+The critical follow-up of `fdee9380` closed both original HIGHs and all eight
+original MEDIUMs, and identified five new MEDIUMs. This delta integrates the
+prepared evidence-time/heatmap fix, fails cold cache start/capture/compile to null
+rather than zero, preserves the real measurement-start metadata and distinguishes
+that state in the shipped UI. A real initial RO-open failure is tested through
+startup, ASGI and the whole DOM; successful retry and legitimate known zero are
+kept distinct.
+
+Global gaps no longer append a continuation per unchanged non-offline device:
+coverage, not the apparent long interval, masks all unobserved time. Offline
+resumption still needs a baseline. The 601-device/eight-gap regression adds only
+eight offline rows and zero online continuation rows; exact known/device-hours
+and unknown marker validation remain covered. Capacity status now includes use,
+limits/headroom and cached earliest ordinary-retention eligibility, explicitly
+not a resumption promise. New worsening cannot be proved while capture is blocked.
+
+A frozen literal e676 experimental-schema-9 fixture proves early controlled
+rejection with source bytes, permissions, old history and its v8 backup preserved.
+No schema bump/rewrite is needed for an unpublished scratch format; current
+migration 9 and frozen migrations 1–8 are unchanged. Role rules now recognize
+source-backed classless sensors/binary sensors and closed functional domains,
+while unknown primary evidence still blocks whole-device offline. Actual role/
+state distribution remains conditional on controller live validation.
+
+Small lows: action-first desktop focus/visual order, explicit RO-reader closure/
+3 s busy timeout, episode defaults/finite validation and oldest-removed pointer
+priority. Published-0.2.0 overview compatibility is retained behind an explicit
+shape guard, preserving the 14 historical DOM/1,200-fixture checks without allowing
+malformed modern data to become legacy zero counters. No fallback framework,
+provider/privacy option, new HA operation or phase-B executor is introduced.
+
+Local verification: **427 Python PASS in 41.26 s**, with the existing single
+Starlette warning; all **56 Node 22.23.3 DOM tests PASS**. Ruff lint/format (62
+Python files), JS syntax and diff checks passed. The new malformed-snapshot DOM
+test initially looked only in the generic main error panel; the existing fixed
+error reason is shown in the notice, so the oracle now verifies both actual
+visible surfaces. No product behavior was changed for that test correction.
+New external critical review and frozen native/container acceptance are pending.
+
+### 0.2.1 phase A — startup recovery corrective checkpoint
+
+The critical review of `c5064453` closed the prior five MEDIUMs and three LOWs;
+one new MEDIUM concerned the preliminary read-only schema check blocking SQLite
+crash recovery. That check now catches only SQLite errors and defers to the
+authoritative writable check. Affirmative unsupported-schema errors still fail
+closed, and permission tightening follows the writable schema validation. A real
+hot DELETE-journal subprocess crash, read-only open/read failures and rejected
+experimental-schema preservation cover the recovery boundary.
+
+Published 0.2.0 has no device cohorts; measurement starts with this preview. All
+earlier phase-A role revisions were unpublished. No schema/cohort migration is
+added. Existing populated-cohort changes remain unknown for comparisons/check
+validation and are disclosed; the burden label now says first → second half of
+the selected window. Capacity DOM guards distinguish the conditional blocked
+warning from ordinary details; the RO-reader spy ignores unrelated connections.
+
+The controller qualified exact `c5064453`: 427 Python tests, 56 DOM tests,
+populated schema-8 migration/restart/old-store snapshot restore, experimental-9
+preservation, bounded scale/worker gates, both architectures' real HTTP/restart
+and network-isolated RO-WAL capture, plus native 320/390/1280 px workflows.
+These are completed, version-bound checks; acceptance of this startup delta,
+critical follow-up, public/live gates and phase B remain pending. Local commands
+and results for the new freeze are recorded in VALIDATION.

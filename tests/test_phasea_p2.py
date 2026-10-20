@@ -269,7 +269,12 @@ async def test_registry_redaction_only_repeats_for_changed_entries(monitor, monk
     original = monitor.redactor.clean
 
     def clean(value, depth=0):
-        if isinstance(value, dict) and set(value) == {"device_id", "disabled_by", "platform"}:
+        if isinstance(value, dict) and set(value) == {
+            "device_id",
+            "disabled_by",
+            "platform",
+            "entity_category",
+        }:
             cleaned.append(value)
         return original(value, depth)
 
@@ -282,6 +287,10 @@ async def test_registry_redaction_only_repeats_for_changed_entries(monitor, monk
     registry[0]["device_id"] = "changed_device"
     await monitor.sync(ha)
     assert len(cleaned) == 101
+    registry[0]["entity_category"] = "diagnostic"
+    await monitor.sync(ha)
+    assert len(cleaned) == 102
+    assert monitor.registry["sensor.example_0"]["entity_category"] == "diagnostic"
 
 
 def test_rich_detail_replaces_stale_moved_metadata(monitor):

@@ -34,7 +34,7 @@ function item(key, source = "repair", priority = 0, detail = {}) {
 }
 function overview(items, total = items.length) {
   return {
-    health: { connected: true, last_sync: 3, capabilities: {} },
+    health: { version: "0.2.0", connected: true, last_sync: 3, capabilities: {} },
     entities: 5200,
     automations: 200,
     unavailable: 37,
@@ -1070,5 +1070,20 @@ test("long retained trace paths, strong labels and times receive the same non-cl
     );
   } finally {
     app.dom.window.close();
+  }
+});
+
+test("only the explicit published 0.2.0 overview shape uses legacy compatibility; malformed modern snapshots fail unknown", async () => {
+  for (const shape of ["current-missing", "null", "malformed", "bad-counts"]) {
+    const fixtures=overviewFixtures([]),data=fixtures["api/overview"];
+    if(shape==="current-missing") data.health.version="0.2.1-dev.1";
+    else data.reliability=shape==="null"?null:shape==="bad-counts"?{window:"24h",start:100,end:200,points:[],counts:{offline:0}}:{points:"not-an-array",counts:{}};
+    const app=await boot("overview",fixtures);
+    try {
+      const text=app.document.querySelector("#content").textContent + app.document.querySelector("#notice").textContent;
+      assert.match(text,/Device reliability snapshot unavailable/);
+      assert.doesNotMatch(text,/No cases in the attention queue|0 device-hours/);
+      assert.equal(app.calls.filter(call=>call.url.includes("cases?source=availability")).length,0);
+    } finally {app.dom.window.close();}
   }
 });

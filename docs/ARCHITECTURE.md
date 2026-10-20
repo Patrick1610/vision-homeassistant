@@ -24,6 +24,144 @@ retained. Reconnects create coverage markers; offline periods are not presented
 as continuously measured uptime. Future action policy would require separately
 authorized capability and audit stages, absent from this version.
 
+## 0.2.1 device-reliability preview
+
+`reliability.py` classifies unique registry device IDs from closed-role enabled
+entity evidence. `entity_category` and `disabled_by` use the existing registry
+list; a closed effective `device_class` enum comes from existing state attributes.
+Hidden is not disabled. Missing enabled states and unclassified primary meaning
+limit conclusions; update/config/diagnostic/battery/signal-only signals are not
+whole-device failure proof. Whole-device unavailable requires at least one primary signal, all primary
+signals explicitly unavailable and every unclassified enabled member also explicitly
+unavailable. Available/unknown/missing unclassified members still veto; no-primary
+devices stay unassessed. Partial and unknown remain separate. A registry
+device is an observation identity, not proof of one physical product. Power is an
+explicit local declaration, never inferred from names, silence or numeric values.
+Official source basis: [registry list](https://github.com/home-assistant/core/blob/8d7fd8b68677c2585be36ec86043308f403875b8/homeassistant/helpers/entity_registry.py#L344-L390)
+and [effective state device class](https://github.com/home-assistant/core/blob/8d7fd8b68677c2585be36ec86043308f403875b8/homeassistant/helpers/entity.py#L1047-L1051).
+The read allowlist is unchanged.
+
+Initial-unknown event and image timestamp entities are ancillary by explicit
+Vision selection policy, not an asserted HA diagnostic category. Camera, text,
+date/time capabilities and enum/date/timestamp sensor classes are recognized
+primary roles; unknown/missing native values still block whole-device conclusions.
+No text, timestamp value or camera image is retained. Official source semantics:
+[event](https://github.com/home-assistant/core/blob/8d7fd8b68677c2585be36ec86043308f403875b8/homeassistant/components/event/__init__.py#L173-L180),
+[image](https://github.com/home-assistant/core/blob/8d7fd8b68677c2585be36ec86043308f403875b8/homeassistant/components/image/__init__.py#L266-L273),
+[camera](https://github.com/home-assistant/core/blob/8d7fd8b68677c2585be36ec86043308f403875b8/homeassistant/components/camera/__init__.py#L520-L529),
+[sensor classes](https://github.com/home-assistant/core/blob/8d7fd8b68677c2585be36ec86043308f403875b8/homeassistant/components/sensor/const.py#L99-L121).
+Classless sensor/binary-sensor entities are primary by explicit Vision policy;
+HA makes device_class optional, so its absence is not diagnostic/non-main-feature
+proof. Category/disabled/battery/signal exclusions still take precedence. Alarm,
+lawn-mower and device-tracker entities are closed primary capabilities. Native
+`triggered`, mower `error` and tracker `not_home` states are not HA `unavailable`;
+no native value, location, number or presumed connectivity is stored/interpreted.
+Unknown nonempty classes retain a closed unrecognized marker, not a fictitious
+absent class. Source basis: [sensor properties](https://contributors.home-assistant.io/core/entities/sensor/#properties),
+[binary sensor properties](https://contributors.home-assistant.io/core/entities/binary-sensor/#properties),
+[alarm states](https://contributors.home-assistant.io/core/entities/alarm-control-panel/#states),
+[mower states](https://contributors.home-assistant.io/core/entities/lawn-mower/#states),
+[tracker states](https://contributors.home-assistant.io/core/entities/device-tracker/#states).
+These roles describe HA availability evidence, not physical reachability guarantees.
+Their actual retained role/state distribution remains a controller live gate.
+
+Unpublished schema 9 stores lean device-state/cohort/policy intervals, separate
+bounded current evidence with its observation timestamp, coverage watermarks,
+persistent local policies and performed-check markers. Member examples/counts,
+name and declared power changes alone do not append an interval. The historical
+row records the coarse evidence at its actual boundary; current evidence is updated
+in place. Migrations 1–8 and old history remain unchanged. Device measurement
+starts now; old entity rows are never back-attributed using today's registry.
+Removal/disablement/rights loss and changed membership are not recovery. A gap
+closes coverage at the last observed watermark. Identical non-offline intervals
+can span a global gap without new rows, but all duration/point/validation kernels
+still intersect that authoritative coverage. Offline intervals close at the
+watermark and resume as a new baseline, never assumed episode continuity. A
+history-capacity stop closes all intervals, so ordinary retention can reclaim
+closed rows even when current evidence has no history pointer.
+
+Append admission is capped at 250,000 rows and 128 MiB of encoded history fields.
+All persisted variable history fields contribute to UTF-8 accounting, with a fixed
+numeric-field allowance; each appended row is additionally bounded to 8 KiB.
+These are encoded-payload bounds, **not** a physical SQLite file-size limit;
+indexes, pages and WAL have overhead. Trigger-maintained counters avoid history
+scans for admission/status. Up to 6,000 current identities each have an 8 KiB
+payload bound, plus bounded device-ID/row overhead. Active registry identities
+have priority over removed current pointers; reclaiming a pointer never deletes
+history, local policy or checks. Ordinary configured retention can prune closed
+intervals; NULL pointers do not block it. Capacity failure closes historical
+coverage, preserves existing rows and continues current evidence. Time not captured
+remains unknown. History resumes only after ordinary retention leaves enough room
+for a conservative full current cohort; no early history eviction makes room.
+Status exposes exact row/encoded-byte use, limits and headroom. The off-loop
+capture caches the earliest closed, unreferenced interval eligible for ordinary
+retention; the displayed eligibility date is not a resumption prediction. Multiple
+rows may need to expire and current-cohort headroom remains required. While capture
+is capacity-blocked, new worsening cannot be proved; current evidence and already
+retained worsening remain inspectable.
+
+One monitor-owned worker captures a separate read-only SQLite WAL snapshot and
+compiles immutable inputs outside the asyncio loop using `asyncio.to_thread`.
+Concurrent refresh requests coalesce into at most one following capture/compile.
+GETs and policy/check POSTs do not compile or wait for a chart. `cache_state`
+(init/pending/ready/failed), `cache_as_of` and `current_as_of` distinguish the
+previous coherent chart from current observations. Current attention changes
+immediately affect the queue. Lifecycle/test readiness can await `wait_cache()`;
+`build_cache(now)` is an explicit synchronous CLI/test entry that refuses an active
+asyncio loop. The RO connection is explicitly closed and has a 3-second busy
+timeout. Failure records the capture/compile stage and consecutive count without
+raw exception text, and retries on the next monitor refresh. A failed refresh
+retains a prior coherent snapshot. Before any successful compile, init/failure
+returns null duration **and** coverage aggregates, retaining the real measurement
+start metadata. It never substitutes zero or claims measurement did not start.
+
+Each 24 h/7 d/30 d window independently selects complete device histories within
+50,000 rows / 16 MiB, 10,000 coverage sessions and at most 72 buckets. No last-N
+fragment of a device is presented as complete. Included/excluded device counts
+and a reason identify partial selection; a longer window reaching its bound does
+not invalidate a complete shorter one. Integration rows are limited to 12.
+Empty membership, truncated/conflicting evidence and monitoring gaps are grey /
+unknown. Duration totals on a partial selection describe that subset only.
+Device-hours union clipped half-open intervals per device, intersected with
+coverage; simultaneous wall-hours are a separate unit. A bucket-end count is not
+a duration integral, and short positive durations retain seconds/minutes.
+Expected/new/persistent are disjoint; imported or post-gap baselines are not
+proven new outages. Equal-half burden comparison uses only the whole-window
+stable known covered subset and shows comparable/excluded totals. First/last
+status comparison is separate from burden and frequency.
+
+Known/expected backlog remains visible without periodic acknowledgment. Proven
+same-baseline-cohort partial→offline worsening is durable through later unknown
+observations, restarts and note/power edits. Only changing attention or an explicit
+`acknowledge_worsening` action establishes a new local baseline; unknown current
+evidence cannot be acknowledged as a known baseline. Existing health/run overlays
+still require matching episode and expiry. Ordinary modes/conditions and old
+poll-refreshed logs remain source history, outside the manual-check action queue.
+At most three grouped priorities show a manual check, one primary link and exact
+affected-device links. Correlation is not a Zigbee/network diagnosis.
+
+Per-device detail shows 30 transitions, 20 checks and 64 members. Up to 10,000
+performed-check markers persist; notes are redacted/bounded. Later validation
+requires continuous known covered evidence from the same cohort and a coherent
+compiled snapshot matching current state/cohort. A gap, omitted device, stale
+snapshot or contradictory evidence keeps validation unknown. Observed recovery
+is not proof the local check caused it. No HA action is available. `evidence_at` is a finite nullable time for the last
+retained evidence-detail change/recording; it is not last poll/sync time. Missing
+values never fall back to interval start or the current clock. Chart/heatmap titles
+explicitly distinguish absent membership, limited subsets and an observed zero.
+Desktop action-first visual order matches DOM focus order; the chart retains its
+wider column. A small explicit published-0.2.0 overview-shape guard preserves the
+old compatibility safety checks. A missing/malformed modern snapshot cannot fall
+through into legacy healthy/zero counters.
+
+Experimental schema 9 from the first unpublished candidate is deliberately not
+migrated or promoted into another public version. An early fixed
+`unsupported_preview_schema` guard rejects that incompatible shape before startup
+mutations or permission changes, preserving its source and old backups. Safe
+operator guidance says to preserve the volume and use a compatible preview/backup
+copy with Vision stopped; never to delete tables/history. Current schema 9 and
+schema-8 preserving upgrades retain their existing migration definitions.
+
 ## 0.2.0 data foundation
 
 Schema 3 adds deduplicated safe structure snapshots, a current-observation pointer,

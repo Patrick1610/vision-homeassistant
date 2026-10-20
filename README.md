@@ -4,16 +4,29 @@
 
 Read-only observability for Home Assistant OS, with optional Anthropic and OpenAI
 intelligence. Local monitoring works without AI, cloud accounts or API keys.
-MIT licensed. **0.2.0**; see [validation](docs/VALIDATION.md) for version-bound
+MIT licensed. **0.2.1-dev.1 — device-reliability development preview**; see [validation](docs/VALIDATION.md) for version-bound
 qualification evidence and [releases](https://github.com/Patrick1610/vision-homeassistant/releases)
 for publication status.
 
-Start with up to three grouped priorities, then follow the retained evidence,
+Start with a 24 h / 7 d / 30 d device-observation chart and up to three grouped
+manual-check priorities, then follow the retained evidence,
 a concrete manual plan and a way to validate it. Focused AI proposals are optional:
 review each frozen request before sending. AI stays off by default; existing
 installations retain their settings and compact privacy unless explicitly changed.
 
+This preview adds timestamped registry-device observations and local check markers.
+Device measurement begins after upgrade: earlier entity history remains available,
+but cannot establish historical device membership. The separate public-source
+research feature is not implemented in this phase. Phase-specific qualification
+and pending review/public/live gates are recorded in validation.
+
 ## What it does
+
+- Unique registered-device trends, clipped device-hours, coverage gaps and a
+  fully covered stable-subset burden comparison. Partial and unknown evidence
+  stay separate; diagnostic/update/disabled entities do not prove device failure.
+- Persistent local device expectations and performed-check markers, with later
+  observational validation; no automatic repair, ping or network diagnosis.
 
 - Devices and entity inventory; unknown/unavailable observations, duration,
   recurring incidents and time-limited exceptions for expected offline behavior.

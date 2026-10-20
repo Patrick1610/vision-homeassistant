@@ -11,7 +11,7 @@ from typing import Literal
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from . import __version__
 from .ai import AIError, AnalysisInput, Intelligence, evidence_bundle
@@ -35,6 +35,20 @@ class CaseStatusInput(BaseModel):
     status: Literal["review", "known", "expected", "snoozed"]
     note: str = Field(default="", max_length=300)
     hours: int = Field(default=24, ge=1, le=8760)
+
+
+class DevicePolicyInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    attention: Literal["review", "known", "expected"]
+    acknowledge_worsening: bool = False
+    power: Literal["unknown", "battery", "mains"] = "unknown"
+    note: str = Field(default="", max_length=300)
+
+
+class DeviceCheckInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    kind: Literal["power", "integration", "connection", "other"]
+    note: str = Field(default="", max_length=400)
 
 
 def secure_response(response):
@@ -77,6 +91,7 @@ def create_app(runtime=None, settings=None, *, connect=True):
         app.state.monitor = Monitor(app.state.store, settings, runtime, redactor)
         app.state.insights = app.state.monitor.insights
         app.state.ai = Intelligence(app.state.store, settings, app.state.monitor, redactor)
+        await app.state.monitor.reliability.wait_cache()
         app.state.tasks = []
         if connect:
             app.state.tasks.append(asyncio.create_task(app.state.monitor.run()))
@@ -88,6 +103,7 @@ def create_app(runtime=None, settings=None, *, connect=True):
                 task.cancel()
             await asyncio.gather(*app.state.tasks, return_exceptions=True)
             await app.state.ai.close()
+            await app.state.monitor.reliability.close()
             app.state.store.close()
 
     app = FastAPI(
@@ -130,10 +146,8 @@ def create_app(runtime=None, settings=None, *, connect=True):
         response = denied if denied is not None else await call_next(request)
         return secure_response(response)
 
-    @app.get("/api/health")
-    async def health():
+    def health_data():
         monitor = app.state.monitor
-        app.state.store.rows("SELECT 1")
         return {
             "version": __version__,
             "read_only": True,
@@ -146,10 +160,18 @@ def create_app(runtime=None, settings=None, *, connect=True):
             "trace_detail_coverage": app.state.store.get_meta("trace_fetch_status"),
         }
 
+    @app.get("/api/health")
+    async def health():
+        app.state.store.rows("SELECT 1")
+        return health_data()
+
     @app.get("/api/overview")
     async def overview():
         monitor, db = app.state.monitor, app.state.store
-        inventory = monitor.inventory()
+        inventory = [
+            monitor.entity_view(key) for key in monitor.entities.keys() | monitor.registry.keys()
+        ]
+        expected_entities = db.expected_entities()
         issues = db.rows(
             "SELECT * FROM issues WHERE active=1 ORDER BY "
             "CASE severity WHEN 'critical' THEN 0 WHEN 'error' THEN 1 ELSE 2 END,"
@@ -157,12 +179,13 @@ def create_app(runtime=None, settings=None, *, connect=True):
         )
         latest = db.rows("SELECT * FROM analyses WHERE kind='audit' ORDER BY id DESC LIMIT 1")
         return {
-            "health": await health(),
+            "health": health_data(),
             "entities": len(inventory),
             "devices": len(monitor.devices),
             "automations": sum(e["entity_id"].startswith("automation.") for e in inventory),
             "unavailable": sum(
-                e["availability"] in {"unknown", "unavailable"} and not e["expected_offline"]
+                e["availability"] in {"unknown", "unavailable"}
+                and e["entity_id"] not in expected_entities
                 for e in inventory
             ),
             "issues": issues,
@@ -170,7 +193,57 @@ def create_app(runtime=None, settings=None, *, connect=True):
             "coverage_started": monitor.started,
             "last_gap": db.get_meta("last_gap"),
             "local": app.state.insights.overview(),
+            "reliability": monitor.reliability.snapshot(),
         }
+
+    @app.get("/api/reliability")
+    async def reliability(window: Literal["24h", "7d", "30d"] = "24h"):
+        return app.state.monitor.reliability.snapshot(window)
+
+    @app.get("/api/reliability/devices")
+    async def reliability_devices(
+        state: str = "all",
+        platform: str = Query(default="", max_length=100),
+        page: int = Query(default=1, ge=1, le=10000),
+        limit: int = Query(default=25, ge=1, le=100),
+    ):
+        try:
+            return app.state.monitor.reliability.list_devices(
+                state=state, platform=platform, page=page, limit=limit
+            )
+        except ValueError as error:
+            raise HTTPException(400, "Invalid device filter") from error
+
+    @app.get("/api/reliability/devices/{device_id}")
+    async def reliability_device(device_id: str):
+        try:
+            return app.state.monitor.reliability.device(device_id)
+        except LookupError as error:
+            raise HTTPException(404, "Device is not in the retained observed cohort") from error
+
+    @app.post("/api/reliability/devices/{device_id}/policy")
+    async def reliability_policy(device_id: str, value: DevicePolicyInput):
+        try:
+            return app.state.monitor.reliability.policy(
+                device_id,
+                value.attention,
+                value.power,
+                value.note,
+                acknowledge_worsening=value.acknowledge_worsening,
+            )
+        except LookupError as error:
+            raise HTTPException(404, "Device is not in the retained observed cohort") from error
+        except ValueError as error:
+            raise HTTPException(400, str(error)) from error
+
+    @app.post("/api/reliability/devices/{device_id}/checks")
+    async def reliability_check(device_id: str, value: DeviceCheckInput):
+        try:
+            return app.state.monitor.reliability.check(device_id, value.kind, value.note)
+        except LookupError as error:
+            raise HTTPException(404, "Device is not in the retained observed cohort") from error
+        except ValueError as error:
+            raise HTTPException(400, "Local manual check history capacity reached") from error
 
     @app.get("/api/devices")
     async def devices():
