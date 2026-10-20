@@ -4,13 +4,14 @@
 
 Read-only observability for Home Assistant OS, with optional Anthropic and OpenAI
 intelligence. Local monitoring works without AI, cloud accounts or API keys.
-MIT licensed. Development preview **0.2.0-dev.1**; see [validation](docs/VALIDATION.md)
-for what has actually been tested and release status.
+MIT licensed. Release candidate **0.2.0-rc.1**; see [validation](docs/VALIDATION.md)
+for exact tested versions and the remaining public/live release gates.
 
-This preview adds local investigations, incident dossiers, automation evidence
-and searchable history. It is an intermediate development release; the new
-problem-specific AI investigations are still being built. Existing AI settings
-and compact evidence behavior are unchanged, and AI remains off by default.
+Start with up to three grouped priorities, then follow the retained evidence,
+a concrete manual plan and a way to validate it. Focused AI proposals are optional:
+review each frozen request before sending. AI stays off by default; existing
+installations retain their settings and compact privacy unless explicitly changed.
+This candidate is not the final stable 0.2.0 release.
 
 ## What it does
 
@@ -24,8 +25,9 @@ and compact evidence behavior are unchanged, and AI remains off by default.
 - Sanitized automation steps, run-bound configuration comparisons, structural
   changes and typed dependency links, with explicit gaps and uncertain outcomes.
 - Filtered, paginated history without copying Home Assistant Recorder data.
-- Optional daily/manual audits, incident hypotheses and automation analysis,
-  using a shared validated diagnosis format with evidence references.
+- Optional focused audits, incident/automation investigations and problem-specific
+  template, availability, reference, mode, condition, wait and communication tasks,
+  with concrete manual checks, validation, counterevidence and unknowns.
 - Primary/backup AI providers, rate-limit backoff, technical failover, primary
   recovery and separately authorized budget failover. Token/cost history persists.
 - Responsive Ingress interface: Overview, Devices, Automations, Issues,
@@ -60,11 +62,13 @@ outage counts. A disappearing log entry does not prove a repair.
 Incident and history tables show bounded recent subsets; the Overview inventory
 counts and per-automation statistics cover their underlying observed data.
 
-AI receives a bounded typed evidence bundle with anonymous evidence IDs, counts,
-availability and execution summaries. Source names, entity IDs, raw logs,
-configuration values and credentials stay local. This protects privacy but limits
-the specificity of root-cause hypotheses. Preview the exact bundle before running
-an audit. Models can be wrong; validate every recommendation manually.
+AI defaults to compact typed summaries without source identifiers or source free text.
+Scoped follow-ups can include sanitized earlier provider conclusions in their preview.
+Local-only never sends; diagnostic requires explicit richer consent and uses
+bounded redacted/pseudonymous evidence. Inspect each exact provider request before
+sending; redaction cannot guarantee removal of all personal data. Scoped follow-ups
+keep the original frozen evidence and require their own preview. Models can be
+wrong; validate every recommendation manually. See [privacy](PRIVACY.md).
 
 ## Development
 
@@ -72,10 +76,12 @@ an audit. Models can be wrong; validate every recommendation manually.
 python3.14 -m venv .venv
 .venv/bin/pip install --require-hashes -r requirements-test.txt
 .venv/bin/python -m pytest
+npm ci --ignore-scripts --no-fund --no-audit # test-only; Node.js 22+
+npm test
 .venv/bin/ruff check .
 .venv/bin/ruff format --check vision tests
 node --check vision/static/app.js
-docker build --build-arg BUILD_ARCH=amd64 -t vision:0.2.0-dev.1 .
+docker build --build-arg BUILD_ARCH=amd64 -t vision:0.2.0-rc.1 .
 ```
 
 Run locally (loopback only): `VISION_DATA=./data .venv/bin/python -m vision`.

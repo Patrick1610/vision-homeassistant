@@ -154,8 +154,16 @@ including calls requesting an unlimited display; split tokens are discarded and
 the truncation marker remains intact.
 
 Trace detail reads have a 12-request/5-second cycle budget and 2-second per-read
-timeout. A persisted round-robin cursor prevents busy early automations from
-starving later ones; failures/blocked starts are prioritized within each automation.
+timeout. Separate persisted round-robin cursors serve newest listed runs and
+historical backfill. When both lanes have eligible work, eleven count slots serve
+newest runs and one serves backfill; unused slots move to the other lane. Lane
+order alternates so the time deadline cannot always cut off trailing backfill.
+The actual newest listed head is selected before full-evidence skipping, so an
+already inspected newest run cannot promote old failures into the newest lane.
+Failures/blocked starts retain priority within the backfill lane. A static
+165-automation inventory with available fast detail reads reaches all newest
+heads in at most fifteen cycles; timeouts, backoff and source changes can extend
+that duration. This is a synthetic count bound, not a live latency guarantee.
 Each unavailable run backs off from 60 seconds to one hour. Only recognized
 capability/transport failures open a global circuit with one bounded recovery
 probe; an expired individual trace or incomplete result cannot poison other reads.
@@ -257,13 +265,63 @@ check. Multiple source records for the same run share an overview card; each
 original issue remains accessible. Dossiers show bounded timelines, gaps,
 unverified run-time blockers, redacted messages and manual checks. Error counts
 are observations: parent/leaf trace errors can describe the same execution error.
-When availability is the only concrete attention source, the overview shows up
-to three concrete availability dossiers. Malformed/legacy step summaries degrade
+The overview groups availability attention into one card with its server count
+and a filtered-queue link; shared membership does not establish a shared cause.
+At most three prioritized groups and one primary investigation CTA precede compact
+supporting counts. Availability-only installations show that concrete group.
+The availability count and recent-change reads degrade independently of primary
+priorities. A failed count remains unknown; retained availability in the primary
+sample stays represented with a filtered-queue link. Conflicting read snapshots
+are labelled, never treated as proof of zero problems. The heading reports the
+full attention total as of the primary read, not the bounded card sample.
+Availability failure can leave priority coverage incomplete; a changes-only
+failure leaves a known empty attention queue intact and separately labels history
+unknown. Malformed/legacy step summaries degrade
 to explicit unknown evidence and limited comparison coverage; they do not turn
 into clean traces or a failed landing page.
 
+Dossiers follow problem → evidence → manual plan → validation, with visible source
+status and unknown coverage. Longer facts, source detail, relations and local
+attention controls are disclosures. Run views use bounded step-start timelines;
+they never derive durations or parallel completion order from the distance between
+starts. Unknown/unverified starts remain labelled; whole-run success with continued
+step errors stays distinct from failed execution. The manual task and its step
+path come from one relevant typed observation; a generic first error is never
+substituted. Additional server checks, related source cases and all retained
+references remain reachable behind concise disclosures. The concrete last gap
+timestamp remains visible when retained.
+
+Intelligence shows up to three short manual proposals initially, with full text,
+references and additional proposals behind disclosures. The selected result is
+not duplicated in the retained list. Older conversation rounds and full legacy
+mapping remain available; withdrawn results remain labelled and cannot continue.
+Exact request bodies/consent remain accessible. A single terminal-state handler
+serves initial request loading and polling. Only an explicit send/watch session
+auto-opens its completed result. Replacement navigation consumes only an actual
+`watch=1` route so Back cannot replay the redirect. If a lost POST response is
+resolved as completed while still on the original audit/preparation page, normal
+push navigation preserves that original entry. A plain retained-request link always keeps the exact sent
+body, digest, envelope and consent accessible, including after a running audit
+finishes polling. Completed audits show an Open received analysis link;
+failed/uncertain/withdrawn requests show state, safe errors and any retained result
+link. Withdrawal never restores continuation rights. After a send error, one lightweight status read may restore
+an unused preview only when the server confirms `preview` and not in flight.
+Unknown status stays conservative; a running job remains observed to completion.
+
+Background overview refresh checks focus, open disclosures, text selection and
+page visibility before reading and again before replacing content. Work started
+before user engagement cannot then discard focused controls or an open panel.
+Any background read failure keeps the last-loaded DOM, focus and selection and
+shows a refresh-failed notice when the notice channel is free or already contains
+that refresh warning. Repeated identical failures do not rewrite it or overwrite
+unrelated user feedback. A failed initial primary read is an explicit error.
+Long text in small/span/strong/time receives the same wrapping as body text;
+affected identifiers shrink and wrap within their card without clipping content
+or focus outlines. CSSOM contracts verify styling and route preservation; actual
+settled WebKit viewport measurements remain a separate layout acceptance gate.
+
 Automation detail labels current observed logic separately from each run's own
-configuration snapshot. Equal nonempty digests permit path/iteration comparison;
+safe structural snapshot. Equal nonempty structure digests permit path/iteration comparison;
 different/missing digests leave runs separate. Missing/compacted evidence stays
 explicit and differences never prove cause. Structural history shows bounded
 safe projection differences; its baseline/observation time is no HA edit time.
@@ -323,3 +381,157 @@ matching HA's grouping rather than its changing five-message deque. Persisted
 counter markers distinguish re-polling from new occurrences and buffer resets.
 Vision does not subscribe to `system_log_event`: HA emits a fresh count-one entry
 there, so combining it with aggregate counts would double-count occurrences.
+
+## Targeted AI investigations — C implementation candidate
+
+Schema 6 additively stores prepared requests and their attempt-to-usage links.
+Schema 7 adds minimal billing receipts, backfilled from existing schema-6 attempts:
+usage ID/time, request/conversation IDs, round, digest, provider, attempt and a
+revocation flag. Receipts reference usage, not the heavy request, and survive its
+ordinary retention until the corresponding 400-day ledger entry is pruned.
+Reservation, attempt link and receipt commit atomically. Legacy analyses and
+usage retain their original tables and records; provenance absent from historical
+legacy calls is not invented.
+`ai_contract.py` defines eleven tasks, their instructions, section allowlists and
+strict local diagnosis schema. `ai_evidence.py` captures bounded local projections
+and selects relevant paths before privacy projection. `ai_privacy.py` handles
+identifier aliases; `ai_provider.py` serializes and sends fixed provider protocols.
+`ai.py` owns immutable previews, scope, consent, conversations and accounting.
+No provider request includes an HA token or exposes HA transport methods/tools.
+The local evidence selector reads retained Monitor/Store projections only.
+
+| Task | Investigation evidence and boundary |
+| --- | --- |
+| Audit | Prioritized retained cases, aggregate inventory/outcomes and coverage. |
+| Incident | One dossier, recurrence, linked execution errors and observation gaps. |
+| Automation logic | Current observed structure separately from each selected run revision; steps and a configuration-bound comparison. |
+| Optimization | Retained waits/delays plus an explicitly selected comparable run; no improvement finding without this prerequisite. |
+| Availability | Offline segments, gaps, expected status and healthy/unhealthy device/integration siblings. |
+| Template error | Actual template-error paths, selected configuration metadata and matched successful counterexamples; no raw expression reconstruction. |
+| Missing target | Current explicit references versus registry presence/disabled status; dynamic/area/label expansion remains unknown. |
+| Refused start | Actual blocked outcome and mode evidence; cancellation does not establish restart causation. |
+| Condition stop | A retained condition-stop outcome and false observations; ordinary false branches alone do not qualify. |
+| Wait timeout | Actual wait paths/flags, continuation semantics and selected comparison; a service TimeoutError alone is insufficient. |
+| Device communication | Actual communication messages and failing action's declared physical targets, with healthy contrary sibling observations. |
+
+The dossier preselects a supported task from retained evidence. Automation links
+carry the exact selected `run_id` and comparison; the preview shows their local
+selection basis. Static current-reference cases do not silently substitute an old
+run's structure. Every preview includes prerequisite/coverage indicators. If a
+specialized prerequisite is absent, the local preview explains the missing
+observation and disables sending. The server rejects it before claim, reservation
+or provider access. A response-level prerequisite guard remains defense in depth.
+
+A manual preview freezes the task, privacy profile, sanitized question, scoped
+prior context, evidence/provenance, schema/prompt versions, provider model/token
+limits and all configured primary/backup request bodies. SHA-256 binds the whole
+credential-free envelope. Outgoing IDs are fresh opaque round-scoped references,
+not raw configuration digests or hashes of HA identifiers. Local evidence and
+identifier mappings remain private. The send endpoint accepts only request ID
+and digest, atomically claims it once, and returns HTTP 202 with a retained request
+ID. A server-owned job sends the frozen UTF-8 bytes, independent of the initiating
+HTTP client. A lightweight status endpoint returns state/error/analysis ID without
+reading full bodies; reopening the request can resume status observation. One job
+runs at a time with a 900-second absolute deadline and 480-second provider read
+limit (connect 10/write 30/pool 10 seconds). This allows bounded schema-compilation
+and large-output work without promising completion at every model/token limit.
+Shutdown/deadline cancellation preserves possible transmitted costs as uncertain.
+Provider credentials are added only as headers at the transport boundary.
+Editing the investigation form automatically revokes only an unused `preview`
+that is not in flight. A displayed running request is withdrawn only through its
+explicit Revoke button. The client marks a send as in flight before awaiting its
+202 response; a transport error leaves that conservative state until server status
+is checked. Failed automatic withdrawal is visible and disables the old Send.
+
+A private process binding includes current configuration and consent generation.
+AI/profile revocation invalidates pending requests even after off→on. Restart also
+invalidates old prepared requests. Each retry/failover checks binding and request
+revocation again before reserving usage or calling a provider. An already sent
+request cannot be recalled; its possible cost remains recorded. Primary recovery,
+rate-limit backoff, separately consented budget failover and uncertain reservations
+remain enforced. Refusal, incomplete output, invalid schema/citations and missing
+usage have distinct outcomes; received billed usage is recorded before validation.
+There is no free retry of a billed invalid diagnosis.
+
+Conversations stay bound to the original task/target/profile/selected runs and
+frozen evidence snapshot. At most four completed rounds and eight serialized
+messages/24 KiB UTF-8 of prior context are permitted. Omitted context is explicit.
+Earlier reference fields and round IDs are stripped from outbound historical
+context. Both providers' native schemas enumerate only this round's references;
+the local validator still rejects every stale/unknown support or counterreference.
+Compact follow-ups use an enum focus and may include bounded sanitized prior
+provider conclusions, uncertainty, unknowns and manual/validation proposals. Raw
+HA/source text and free-form user questions remain excluded from compact.
+Diagnostic questions and all historical provider text pass aliases/redaction
+again before preview. Typed compact dependencies retain relation/node kinds and
+presence flags, changes retain closed kind/source values, and siblings retain
+availability enums; these sections do not become constant placeholders. One
+manually reviewed enum-section expansion can use
+only initially captured sections of this target; no automatic evidence tool,
+HA read, arbitrary query, shell command or path is exposed. Each follow-up needs
+its own preview/send; the first preview makes no promise about a future body.
+A revoked round with a received analysis remains in the conversation audit view,
+labelled withdrawn. Its result and billed usage are retained, while continuation
+of that conversation is blocked, including previously prepared follow-ups.
+Existing explicitly enabled daily audits remain once-daily compact system audits,
+with their exact scheduled requests retained; they cannot inherit diagnostic consent.
+
+Bounds: 120 evidence records and 48,000 UTF-8 bytes including bundle provenance;
+32 selected steps/20 errors and 40 structure nodes per revision; provider body
+128 KiB; local frozen evidence 192 KiB; combined stored preview/evidence 512 KiB.
+At most 32 disposable requests without provider attempts remain (16 MiB worst-case
+payload bound). Attempted/completed requests follow analysis retention, preserving
+exact bodies. Expired unused previews are removed. Admission rejects a new preview
+before payment if it would exceed 512 retained requests or 64 MiB of UTF-8
+request/local-evidence plus analysis-result/evidence payloads. Each unused/sending
+request reserves another 1 MiB for its potential stored result, including revoked
+requests with an already transmitted reserved attempt. Actual encoded stored
+result+evidence must fit that bound; otherwise billed usage remains recorded and
+no oversized analysis is stored. The cap preserves existing history and exact
+completed bodies, even if restored data already exceeds it; it is not a whole-DB,
+WAL, metadata, ledger or backup disk cap. Migration 8 backfills per-row UTF-8
+payload sizes into `ai_storage_sizes` without changing old body columns/content.
+Insert, body/id-update and delete triggers maintain those small integer records
+transactionally, including rollback and retention pruning. Status-only changes do
+not remeasure bodies. Admission and displayed headroom sum integer sizes and
+small request/attempt metadata; they do not rescan retained payloads inside the
+writer transaction. A future migration rebuilding `analyses` or `ai_requests`
+must preserve/recreate these triggers and accounting rows. Future source-table
+upsert support and recovery from externally removed triggers are deferred contract
+work: current application writes use ordinary insert/update/delete with triggers
+present. Do not assume that external trigger-less imports are a supported restore.
+The UI shows remaining
+payload bytes/request slots; it offers no selective history deletion or eviction.
+Billing receipts follow usage for 400
+days. Ordinary body/analysis retention still applies. Request state left `sending`
+after restart becomes `uncertain`, alongside reserved usage.
+
+
+The compatibility `GET /api/intelligence/preview` remains a bounded, read-only
+compact projection for exactly `audit`, `incident` and `automation` (optional local
+`target`). It returns `transmitted` and `local_mapping` only: no prepared request
+ID, send consent, reservation or provider call. It uses the same 120-record/
+48,000-byte bundle and bounded local selector limits above; unknown targets fail
+locally. Exact sendable previews for all eleven tasks use POST on that route.
+A projected empty evidence set fails clearly before request storage or payment.
+
+Provider contracts were checked against official documentation on 2026-10-20:
+[OpenAI Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs?api-mode=responses)
+and [Anthropic Structured Outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs).
+OpenAI Responses uses `store:false` and strict `text.format`; every object is
+closed and every property required. Anthropic Messages uses native
+`output_config.format` (generally available without a beta header), without tools.
+Its provider schema removes unsupported
+string/numeric/array bounds and describes them; the full original Pydantic schema
+still validates locally. No model is silently selected, and protocol mocks do not
+prove a configured model's compatibility, availability or actual billing.
+
+HTTP failures retain only numeric status, a closed reason and fixed manual guidance;
+remote messages, codes, headers and account identifiers are never echoed. Refusal,
+output/context-window truncation and local schema/reference/section failures retain
+received usage. Successful envelopes are bounded at 4 MiB, error envelopes at
+8 KiB, with the bound checked before adding a chunk. Configurable output limits
+span 512–65,536; default 2,048 and saved older limits remain unchanged. A larger
+limit reserves its full configured output cost at the original USD/million rates.
+Recent analysis lists contain metadata/summary only; full findings and legacy
+mapping are loaded by one explicit detail route. History result search remains.

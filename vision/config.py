@@ -5,11 +5,31 @@ import os
 from pathlib import Path
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, SecretStr, model_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, SecretStr, model_validator
 
 
 class Settings(BaseModel):
-    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False, validate_assignment=True)
+    _consent_generation: int = PrivateAttr(default=0)
+
+    def __setattr__(self, name, value):
+        previous = self.__dict__.copy()
+        fields_set = self.__pydantic_fields_set__.copy()
+        try:
+            super().__setattr__(name, value)
+        except ValueError:
+            # Pydantic after-validators can fail after assigning a field. Restore
+            # the complete validated configuration before exposing that failure.
+            self.__dict__.clear()
+            self.__dict__.update(previous)
+            object.__setattr__(self, "__pydantic_fields_set__", fields_set)
+            raise
+        if (
+            name in {"ai_enabled", "ai_privacy"}
+            and name in previous
+            and previous[name] != getattr(self, name)
+        ):
+            self._consent_generation += 1
 
     allowed_user_ids: list[
         Annotated[str, Field(min_length=1, max_length=128, pattern=r"^[A-Za-z0-9_-]+$")]
@@ -21,12 +41,13 @@ class Settings(BaseModel):
     poll_seconds: int = Field(default=60, ge=15, le=3600)
     retention_days: int = Field(default=90, ge=7, le=730)
     ai_enabled: bool = False
+    ai_privacy: Literal["local_only", "compact", "diagnostic"] = "compact"
     daily_audit: bool = False
     audit_hour_utc: int = Field(default=4, ge=0, le=23)
     primary_provider: Literal["anthropic", "openai"] = "anthropic"
     allow_budget_failover: bool = False
     monthly_budget_usd: float = Field(default=5, ge=0, le=10000)
-    max_output_tokens: int = Field(default=2048, ge=512, le=8192)
+    max_output_tokens: int = Field(default=2048, ge=512, le=65536)
     anthropic_api_key: SecretStr = SecretStr("")
     anthropic_model: str = Field(default="", max_length=100, pattern=r"^[\w.:-]*$")
     anthropic_daily_budget_usd: float = Field(default=1, ge=0, le=1000)

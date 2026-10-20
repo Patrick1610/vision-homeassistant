@@ -440,11 +440,16 @@ def test_availability_only_overview_keeps_concrete_case_links():
     source = (Path(__file__).parents[1] / "vision/static/app.js").read_text()
     selector = source.split("function overviewCases(", 1)[1].split("async function overview(", 1)[0]
     availability = [
-        {"key": f"availability:sensor.example_{i}", "source": "availability", "severity": "warning"}
+        {
+            "key": f"availability:sensor.example_{i}",
+            "source": "availability",
+            "severity": "warning",
+            "priority": 6,
+        }
         for i in range(1200)
     ]
-    info = {"key": "static", "source": "static", "severity": "info"}
-    fault = {"key": "failure", "source": "automation", "severity": "error"}
+    info = {"key": "static", "source": "static", "severity": "info", "priority": 8}
+    fault = {"key": "failure", "source": "automation", "severity": "error", "priority": 1}
     script = (
         "function overviewCases("
         + selector
@@ -457,10 +462,13 @@ def test_availability_only_overview_keeps_concrete_case_links():
             + "; const fault="
             + json.dumps(fault)
             + "; console.log(JSON.stringify(["
-            "overviewCases(a),overviewCases([info,...a]),overviewCases([fault,...a])]))"
+            "overviewCases(a,{total:a.length,items:a}),"
+            "overviewCases([info,...a],{total:a.length,items:a}),"
+            "overviewCases([fault,...a],{total:a.length,items:a})]))"
         )
     )
     result = json.loads(subprocess.check_output([node, "-e", script]))
-    assert [row["key"] for row in result[0]] == [row["key"] for row in availability[:3]]
-    assert result[1] == availability[:3]
-    assert result[2] == [fault]
+    assert len(result[0]) == 1 and result[0][0]["group_count"] == 1200
+    assert result[0][0]["href"] == "#issues/?source=availability&status=attention"
+    assert [row["key"] for row in result[1]] == ["availability-group", "static"]
+    assert [row["key"] for row in result[2]] == ["failure", "availability-group"]

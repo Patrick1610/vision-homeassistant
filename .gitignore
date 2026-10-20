@@ -19,3 +19,5 @@ options.json
 .env*
 .DS_Store
 .ai-review-broker/
+
+node_modules/

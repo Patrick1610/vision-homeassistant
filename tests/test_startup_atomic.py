@@ -13,7 +13,13 @@ from fastapi.testclient import TestClient
 
 from vision.app import create_app
 from vision.config import Settings
-from vision.store import MAX_SNAPSHOTS_PER_VERSION, MIGRATIONS, StorageStartupError, Store
+from vision.store import (
+    MAX_SNAPSHOTS_PER_VERSION,
+    MIGRATIONS,
+    SCHEMA_VERSION,
+    StorageStartupError,
+    Store,
+)
 
 
 def schema_four(path):
@@ -83,7 +89,9 @@ def test_writer_reservation_covers_backup_and_first_ddl_then_releases(tmp_path, 
         assert probes == [True, True]
         assert snapshot_marker(tmp_path / "vision.db.v4.bak") == "A"
         assert source.execute("SELECT value FROM meta WHERE key='synthetic'").fetchone()[0] == "A"
-        assert source.execute("PRAGMA user_version").fetchone()[0] == (4 if fail else 5)
+        assert source.execute("PRAGMA user_version").fetchone()[0] == (
+            4 if fail else SCHEMA_VERSION
+        )
         source.execute("UPDATE meta SET value='C' WHERE key='synthetic'")
         source.commit()  # Both success and failure release the writer reservation.
         if fail:
@@ -143,7 +151,10 @@ def test_two_coordinated_startups_wait_and_reread_locked_version(
         first.join(3)
         second.join(3)
         assert not first.is_alive() and not second.is_alive(), "Startup/backup deadlock"
-        assert results == {"first": "RuntimeError" if first_fails else 5, "second": 5}
+        assert results == {
+            "first": "RuntimeError" if first_fails else SCHEMA_VERSION,
+            "second": SCHEMA_VERSION,
+        }
         assert backups == (["first", "second"] if first_fails else ["first"])
         assert len(copy_inodes(tmp_path)) == 1
         assert snapshot_marker(tmp_path / "vision.db.pre-migration.bak") == "A"

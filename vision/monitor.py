@@ -464,7 +464,8 @@ class Monitor:
             if e["entity_id"].startswith("automation.") and e.get("automation_id")
         }
         now = time.time()
-        groups = {}
+        groups, heads = {}, {}
+        pending_pairs = set()
         pending = 0
         for trace in traces:
             entity_id = mapping.get(str(trace.get("item_id")))
@@ -476,6 +477,11 @@ class Monitor:
                 or not IDENTIFIER.fullmatch(run_id)
             ):
                 continue
+            timing = trace.get("timestamp")
+            start = trace_time(timing.get("start")) if isinstance(timing, dict) else None
+            rank = (start is not None, start or 0, run_id)
+            if entity_id not in heads or rank > heads[entity_id][0]:
+                heads[entity_id] = (rank, run_id)
             old = self.store.rows(
                 "SELECT r.outcome,r.detail,r.started,r.context_id,e.summary,"
                 "coalesce(t.start_source,'legacy_unverified') start_source "
@@ -503,18 +509,27 @@ class Monitor:
             if not old or self.trace_list_changed(trace, old[0]):
                 self.save_trace(entity_id, trace)
             pending += 1
+            pending_pairs.add((entity_id, run_id))
             attempt = self.store.rows(
                 "SELECT * FROM trace_fetches WHERE entity_id=? AND run_id=?", (entity_id, run_id)
             )
             if attempt and attempt[0]["next_attempt"] > now:
                 continue
             groups.setdefault(entity_id, []).append((trace, attempt[0] if attempt else None))
-        ordered = sorted(groups)
-        cursor = self.store.get_meta("trace_fetch_cursor", "")
-        ordered = [key for key in ordered if key > cursor] + [
-            key for key in ordered if key <= cursor
-        ]
-        for group in groups.values():
+
+        def rotated(keys, meta):
+            keys = sorted(keys)
+            cursor = self.store.get_meta(meta, "")
+            return [key for key in keys if key > cursor] + [key for key in keys if key <= cursor]
+
+        latest, backfill = {}, {}
+        for entity_id, group in groups.items():
+            for pair in group:
+                if pair[0]["run_id"] == heads[entity_id][1]:
+                    latest[entity_id] = pair
+                else:
+                    backfill.setdefault(entity_id, []).append(pair)
+        for group in backfill.values():
             group.sort(
                 key=lambda pair: (
                     trace_outcome(pair[0]) not in {"failed", "blocked"},
@@ -522,23 +537,42 @@ class Monitor:
                     pair[0]["run_id"],
                 )
             )
-        queue = [
-            (entity_id, groups[entity_id][index])
-            for index in range(max((len(g) for g in groups.values()), default=0))
-            for entity_id in ordered
-            if index < len(groups[entity_id])
+        latest_queue = [
+            ("latest", entity, latest[entity])
+            for entity in rotated(latest, "trace_fetch_latest_cursor")
         ]
+        backfill_order = rotated(backfill, "trace_fetch_cursor")
+        backfill_queue = [
+            ("backfill", entity, backfill[entity][index])
+            for index in range(max((len(g) for g in backfill.values()), default=0))
+            for entity in backfill_order
+            if index < len(backfill[entity])
+        ]
+        # Reserve one of twelve count slots for old error evidence while giving
+        # newest runs an independent fair lane. Alternate which lane starts so
+        # the five-second deadline cannot always cut off the same trailing lane.
+        latest_count = min(len(latest_queue), TRACE_FETCHES_PER_SYNC - bool(backfill_queue))
+        backfill_count = min(len(backfill_queue), TRACE_FETCHES_PER_SYNC - latest_count)
+        turn = self.store.get_meta("trace_fetch_lane_turn", 0)
+        latest_queue, backfill_queue = latest_queue[:latest_count], backfill_queue[:backfill_count]
+        queue = backfill_queue + latest_queue if turn else latest_queue + backfill_queue
+        self.store.set_meta("trace_fetch_lane_turn", 1 - turn)
         circuit = self.store.get_meta("trace_fetch_circuit", {"failures": 0, "next_probe": 0})
         attempted = 0
+        lane_reads = {"latest": 0, "backfill": 0}
         inspected = 0
         started = time.monotonic()
         if now >= circuit["next_probe"]:
-            for entity_id, (trace, previous) in queue:
+            for lane, entity_id, (trace, previous) in queue:
                 remaining = TRACE_FETCH_SECONDS_PER_SYNC - (time.monotonic() - started)
                 if attempted >= TRACE_FETCHES_PER_SYNC or remaining <= 0:
                     break
                 attempted += 1
-                self.store.set_meta("trace_fetch_cursor", entity_id)
+                self.store.set_meta(
+                    "trace_fetch_latest_cursor" if lane == "latest" else "trace_fetch_cursor",
+                    entity_id,
+                )
+                lane_reads[lane] += 1
                 category = None
                 try:
                     async with asyncio.timeout(min(TRACE_FETCH_TIMEOUT, remaining)):
@@ -596,6 +630,12 @@ class Monitor:
         status = {
             "observed_at": time.time(),
             "pending": max(0, pending - inspected),
+            "latest_pending_at_cycle_start": sum(
+                (entity, head[1]) in pending_pairs for entity, head in heads.items()
+            ),
+            "latest_eligible_at_cycle_start": len(latest),
+            "latest_reads": lane_reads["latest"],
+            "backfill_reads": lane_reads["backfill"],
             "attempted": attempted,
             "per_cycle_limit": TRACE_FETCHES_PER_SYNC,
             "time_budget_seconds": TRACE_FETCH_SECONDS_PER_SYNC,

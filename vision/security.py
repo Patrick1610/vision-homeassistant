@@ -1,5 +1,6 @@
 """Defense in depth redaction. AI bundles additionally exclude all source free text."""
 
+import html
 import logging
 import re
 
@@ -10,7 +11,13 @@ PATTERNS = [
     r"(?i)(?:https?://|wss?://)\S+",
     r"\b(?:\d{1,3}\.){3}\d{1,3}\b",
     r"[\w.+-]{1,64}@[\w.-]{1,253}\.[A-Za-z]{2,63}",
-    r"(?i)(?:password|secret|token|api[_ -]?key)\s*[:=]\s*[^\s,;]+",
+    # Escaped nested JSON keys have ambiguous closing value quotes: discard the
+    # remainder of that bounded line rather than retaining a partial secret.
+    r"""(?i)\\+["'](?:password|secret|token|api[_ -]?key|authorization)\\+["']\s*[:=][^\r\n]*""",
+    r"""(?i)["']?(?:password|secret|token|api[_ -]?key|authorization)["']?\s*[:=]\s*"""
+    r"""(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[^\s,;}]+)""",
+    r"\b(?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}\b",
+    r"(?i)(?:[A-Z]:\\|/(?:Users|home|config|data|mnt|media|share|ssl|root|var|tmp)/)\S+",
 ]
 SENSITIVE = re.compile(r"(?i)password|secret|token|credential|authorization|api.?key")
 MAX_REDACTION_INPUT = 16384
@@ -24,10 +31,18 @@ class Redactor:
     def text(self, value: str, limit=4000) -> str:
         for secret in self.secrets:
             value = value.replace(secret, "[REDACTED]")
-        # Bound regex work before processing untrusted messages. If the boundary
-        # splits a token, discard that whole token rather than expose a fragment.
         ceiling = MAX_REDACTION_INPUT if limit is None else min(limit, MAX_REDACTION_INPUT)
         value = self.bounded(value, ceiling)
+        value = value.encode("utf-8", errors="replace").decode("utf-8")
+        # Decode common textual escapes only after bounding all regex work.
+        value = html.unescape(value).replace("\\/", "/")
+        value = re.sub(
+            r"\\u([a-fA-F0-9]{4})",
+            lambda m: chr(int(m[1], 16)) if not 0xD800 <= int(m[1], 16) <= 0xDFFF else m[0],
+            value,
+        )
+        for secret in self.secrets:
+            value = value.replace(secret, "[REDACTED]")
         for pattern in PATTERNS:
             value = re.sub(pattern, "[REDACTED]", value)
         # Replacements can expand short secrets/URLs; preserve the final marker too.
@@ -52,11 +67,10 @@ class Redactor:
             result = {}
             for index, (key, item) in enumerate(value.items()):
                 safe_key = self.text(str(key))
+                sensitive = SENSITIVE.search(str(key)) or SENSITIVE.search(safe_key)
                 if safe_key != str(key):
                     safe_key = f"redacted_key_{index}"
-                result[safe_key] = (
-                    "[REDACTED]" if SENSITIVE.search(str(key)) else self.clean(item, depth + 1)
-                )
+                result[safe_key] = "[REDACTED]" if sensitive else self.clean(item, depth + 1)
             return result
         if isinstance(value, (list, tuple, set)):
             return [self.clean(v, depth + 1) for v in list(value)[:500]]

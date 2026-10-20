@@ -15,7 +15,10 @@ from pathlib import Path
 
 from .evidence import fingerprint
 
-SCHEMA_VERSION = 5
+SCHEMA_VERSION = 8
+AI_MAX_REQUESTS = 512
+AI_MAX_STORAGE_BYTES = 64 * 1024 * 1024
+AI_RESULT_RESERVE_BYTES = 1024 * 1024
 CASE_NOTES_PER_CASE = 50
 DETAIL_BYTES_PER_ENTITY = 256 * 1024
 DETAIL_BYTES_TOTAL = 8 * 1024 * 1024
@@ -33,6 +36,10 @@ STORAGE_FAILURES = {
     ),
     "snapshot_too_large": (
         "Database exceeds migration snapshot size limit; preserve /data and review storage policy"
+    ),
+    "storage_busy": "Storage startup lock timed out; stop competing Vision processes and retry",
+    "snapshot_source": (
+        "Migration snapshot source could not be opened read-only; preserve /data and check access"
     ),
 }
 
@@ -156,6 +163,80 @@ MIGRATIONS = {
             for operation in ("INSERT", "UPDATE", "DELETE")
         ),
     ),
+    6: (
+        "CREATE TABLE ai_requests (id TEXT PRIMARY KEY,created REAL NOT NULL,expires REAL NOT NULL,"
+        "status TEXT NOT NULL,conversation_id TEXT NOT NULL,round INTEGER NOT NULL,"
+        "kind TEXT NOT NULL,"
+        "target TEXT,profile TEXT NOT NULL,run_id TEXT,compare_id TEXT,"
+        "config_binding TEXT NOT NULL,"
+        "digest TEXT NOT NULL,payload TEXT NOT NULL,local_evidence TEXT NOT NULL,"
+        "analysis_id INTEGER REFERENCES analyses(id) ON DELETE SET NULL,error TEXT)",
+        "CREATE INDEX ai_requests_conversation ON ai_requests(conversation_id,round,created)",
+        "CREATE INDEX ai_requests_expiry ON ai_requests(status,expires)",
+        "CREATE TABLE ai_attempts (usage_id INTEGER PRIMARY KEY REFERENCES usage(id) "
+        "ON DELETE CASCADE,request_id TEXT NOT NULL REFERENCES ai_requests(id) ON DELETE CASCADE,"
+        "provider TEXT NOT NULL,attempt INTEGER NOT NULL)",
+    ),
+    7: (
+        "CREATE INDEX ai_requests_analysis ON ai_requests(analysis_id)",
+        "CREATE TABLE ai_billing_receipts (usage_id INTEGER PRIMARY KEY REFERENCES usage(id) "
+        "ON DELETE CASCADE,created REAL NOT NULL,request_id TEXT NOT NULL,"
+        "conversation_id TEXT NOT NULL,round INTEGER NOT NULL,digest TEXT NOT NULL,"
+        "provider TEXT NOT NULL,attempt INTEGER NOT NULL,revoked INTEGER NOT NULL DEFAULT 0)",
+        "CREATE INDEX ai_billing_receipts_request ON ai_billing_receipts(request_id)",
+        "INSERT INTO ai_billing_receipts "
+        "SELECT a.usage_id,u.created,r.id,r.conversation_id,r.round,r.digest,"
+        "a.provider,a.attempt,r.status='revoked' FROM ai_attempts a "
+        "JOIN usage u ON u.id=a.usage_id JOIN ai_requests r ON r.id=a.request_id",
+    ),
+    8: (
+        "CREATE TABLE ai_storage_sizes (kind TEXT NOT NULL CHECK(kind IN ('request','analysis')),"
+        "record_id TEXT NOT NULL,stored_bytes INTEGER NOT NULL CHECK(stored_bytes>=0),"
+        "PRIMARY KEY(kind,record_id))",
+        *(
+            "INSERT INTO ai_storage_sizes SELECT '" + kind + "',cast(id AS TEXT),"
+            "length(cast(" + first + " AS BLOB))+length(cast(" + second + " AS BLOB)) FROM " + table
+            for kind, table, first, second in (
+                ("request", "ai_requests", "payload", "local_evidence"),
+                ("analysis", "analyses", "result", "evidence"),
+            )
+        ),
+        *(
+            "CREATE TRIGGER "
+            + table
+            + "_storage_"
+            + operation.lower()
+            + " AFTER "
+            + operation
+            + (" OF id," + first + "," + second if operation == "UPDATE" else "")
+            + " ON "
+            + table
+            + " BEGIN "
+            + (
+                "DELETE FROM ai_storage_sizes WHERE kind='"
+                + kind
+                + "' AND record_id=cast(OLD.id AS TEXT); "
+                if operation != "INSERT"
+                else ""
+            )
+            + (
+                "INSERT INTO ai_storage_sizes VALUES ('"
+                + kind
+                + "',cast(NEW.id AS TEXT),length(cast(NEW."
+                + first
+                + " AS BLOB))"
+                "+length(cast(NEW." + second + " AS BLOB))); "
+                if operation != "DELETE"
+                else ""
+            )
+            + "END"
+            for kind, table, first, second in (
+                ("request", "ai_requests", "payload", "local_evidence"),
+                ("analysis", "analyses", "result", "evidence"),
+            )
+            for operation in ("INSERT", "UPDATE", "DELETE")
+        ),
+    ),
 }
 
 
@@ -198,6 +279,7 @@ class Store:
                 self.db.execute(f"PRAGMA user_version={target}")
             # A crash/request cancellation cannot prove that a provider did not bill.
             self.db.execute("UPDATE usage SET status='uncertain' WHERE status='reserved'")
+            self.db.execute("UPDATE ai_requests SET status='uncertain' WHERE status='sending'")
             self.db.commit()
             journal = self.db.execute("PRAGMA journal_mode=WAL").fetchone()[0]
             if journal.lower() != "wal":
@@ -222,11 +304,15 @@ class Store:
                 ):
                     self.enforce_evidence_budget(row["entity_id"])
                 self.enforce_evidence_budget()
-        except BaseException:
+        except BaseException as error:
             try:
                 self.db.rollback()
             finally:
                 self.db.close()
+            if isinstance(error, sqlite3.Error) and (
+                getattr(error, "sqlite_errorcode", 0) & 255
+            ) in {sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED}:
+                raise StorageStartupError("storage_busy") from None
             raise
 
     def migration_backup(self, path):
@@ -339,7 +425,10 @@ class Store:
         # Backing up the connection's own write transaction would deadlock.
         # A separate read-only connection sees the stable committed source while
         # our startup connection prevents other writers from changing it.
-        source = sqlite3.connect(self.path.as_uri() + "?mode=ro", uri=True, timeout=5)
+        try:
+            source = sqlite3.connect(self.path.as_uri() + "?mode=ro", uri=True, timeout=5)
+        except sqlite3.Error:
+            raise StorageStartupError("snapshot_source") from None
         try:
             target = sqlite3.connect(temporary)
             try:
@@ -753,6 +842,39 @@ class Store:
                 (CASE_NOTES_PER_CASE,),
             )
 
+    def cleanup_ai_previews(self, now=None):
+        """Discard expired unused bodies; a transmitted attempt is historical evidence."""
+        self.db.execute(
+            "DELETE FROM ai_requests WHERE status='preview' AND expires<? AND NOT EXISTS "
+            "(SELECT 1 FROM ai_attempts a WHERE a.request_id=ai_requests.id)",
+            (time.time() if now is None else now,),
+        )
+
+    def ai_storage(self):
+        sizes = self.rows(
+            "SELECT coalesce(sum(kind='request'),0) request_count,"
+            "coalesce(sum(stored_bytes),0) stored_bytes FROM ai_storage_sizes"
+        )[0]
+        promises = self.rows(
+            "SELECT "
+            "coalesce(sum(status IN ('preview','sending') OR EXISTS "
+            "(SELECT 1 FROM ai_attempts a JOIN usage u ON u.id=a.usage_id "
+            "WHERE a.request_id=ai_requests.id AND u.status='reserved')),0) promises "
+            "FROM ai_requests"
+        )[0]
+        stored = sizes["stored_bytes"]
+        promised = promises["promises"] * AI_RESULT_RESERVE_BYTES
+        return {
+            "request_count": sizes["request_count"],
+            "stored_bytes": stored,
+            "promised_result_bytes": promised,
+            "available_request_slots": max(0, AI_MAX_REQUESTS - sizes["request_count"]),
+            "available_payload_bytes": max(0, AI_MAX_STORAGE_BYTES - stored - promised),
+            "max_requests": AI_MAX_REQUESTS,
+            "max_storage_bytes": AI_MAX_STORAGE_BYTES,
+            "result_reserve_bytes": AI_RESULT_RESERVE_BYTES,
+        }
+
     def prune(self, days):
         before = time.time() - days * 86400
         # Billing ledger is retained for 400 days so retention cannot reset budgets.
@@ -767,6 +889,8 @@ class Store:
             )
             self.db.execute("DELETE FROM issues WHERE active=0 AND last_seen<?", (before,))
             self.prune_case_history(before)
+            self.cleanup_ai_previews()
+            self.db.execute("DELETE FROM ai_requests WHERE created<?", (before,))
             self.db.execute("DELETE FROM analyses WHERE created<?", (before,))
             self.db.execute("DELETE FROM usage WHERE created<?", (time.time() - 400 * 86400,))
             self.db.execute("DELETE FROM configuration_changes WHERE observed_at<?", (before,))

@@ -1,5 +1,43 @@
 # Changelog
 
+## 0.2.0-rc.1 — release candidate, qualification pending
+
+- Lead with at most three grouped priorities and one primary investigation step;
+  move supporting counts, long evidence and history behind concise summaries.
+- Present dossiers as problem → evidence → manual plan → validation, with bounded
+  visual step-start timelines, visible coverage gaps and preserved run comparisons.
+- Show three short AI proposals first, with full explanations and further proposals
+  available on demand. Preserve exact previews, consent and explicit withdrawal.
+- Preserve completed exact-request audit access and browser Back navigation;
+  keep known priorities visible during supporting-read and background failures.
+- Wrap long identifiers and trace paths on narrow screens without hiding evidence.
+- Bind local manual plans to the matching typed problem step, retaining source
+  guidance, gap dates, all declared references and related observation links.
+- Recover an unsent request only after the server confirms its unused status;
+  keep unknown transport outcomes conservative and watch an accepted job to completion.
+
+
+- Add distinct task instructions and relevant local evidence for eleven investigation
+  types, including template errors, missing targets, refused starts, wait timeouts
+  and device communication, with manual solutions, validation and contrary evidence.
+- Add local-only/compact/explicit diagnostic privacy profiles, round-scoped evidence
+  references and exact immutable primary/backup request previews before sending.
+- Add scoped reviewed follow-ups over the original frozen local snapshot, preserving
+  selected runs and run-bound configuration; no HA tools or automatic evidence fetch.
+- Preserve legacy analyses/search, compact daily audits, conservative attempt budgets,
+  provider failover/recovery and billed refusal/incomplete/invalid-response accounting.
+- Add native provider structured output with strict local validation and quoted-secret/
+  identifier sanitization; no paid model/provider qualification is claimed.
+
+- Run approved requests as bounded server jobs with light status polling, preserve
+  exact bodies under fail-closed storage admission and retain billing receipts for
+  400 days after ordinary body pruning. Load full/legacy analyses only on demand.
+- Block unsupported targeted requests before payment, preserve in-flight revocation,
+  enumerate current citations in both native schemas and improve compact follow-ups.
+- Extend selectable output limits to 65,536 without changing defaults/saved limits;
+  retain safe HTTP diagnostics and billed context-window/incomplete outcomes.
+- Prioritize newest trace evidence independently of bounded historical error backfill.
+
 ## 0.2.0-dev.1 — 2026-10-20
 
 Development preview of the accepted data and local-investigation foundation.

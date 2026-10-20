@@ -39,7 +39,8 @@ The existing FastAPI/SQLite/vanilla JavaScript stack and light interface with a
 dark Vision wordmark, small green dot and burgundy/gold accents remain. No new
 HA write, service, configuration, repair, template execution or generic transport
 capability is authorized. AI has no HA credentials or tools. No paid provider
-request is required or enabled by this release work.
+request is required by release checks; any actual provider qualification needs
+separate owner opt-in and its results must be recorded independently.
 
 Repository: `vision-homeassistant`. License: MIT. Public custom Home Assistant
 app repository. Philosophy: **Jarvis controls the house. Vision understands the
@@ -110,8 +111,10 @@ Settings display masked configuration; credentials are entered via Supervisor.
 Expected-offline exceptions change only Vision's own database.
 
 The interface uses a light white/warm-white base. Vision's visual identity is
-deep red for navigation and primary actions, gold for brand accents and green
-for positive statuses. Keep text contrast and keyboard focus visible. Statuses
+dark neutral navigation and one dark-green primary investigation action.
+Burgundy emphasizes actual errors, gold marks limited/unknown evidence and green
+can also mark positive observed statuses. Keep text contrast and keyboard focus
+visible. Statuses
 always include text; never convey an execution outcome through color alone.
 Use original interface styling rather than embedding third-party character art.
 The owner-approved 0.1.1 identity uses a dark Vision wordmark with a subtle green
@@ -134,3 +137,27 @@ claims. A release must report exactly which have been verified. HA traces are
 bounded by HA retention and permissions. Missing events during downtime cannot
 be reconstructed as known outcomes. Providers need live credentials for a real
 billable test; transport simulations do not prove live provider access.
+
+## Owner-directed 0.2.0 presentation acceptance
+
+Show at most three compact prioritized problem cards and one primary investigation
+step before supporting counts. Each card states the short observed conclusion,
+affected components and one concrete manual next check. Dossiers lead through
+problem, retained evidence, manual solution/check and validation; longer context
+belongs behind details. Distinguish source facts, local attention and AI hypotheses.
+Use a visual step/observation timeline tied to the selected run/configuration;
+step-start timestamps never become invented execution durations. Intelligence
+findings follow the same concise problem→manual plan→validation structure.
+Preserve selected runs/comparisons, mobile text wrapping, focus/open panels during
+refresh and accessible exact bodies/consent. No automatic repair/HA-action buttons.
+The RC implementation is subject to D browser/review and public/live acceptance;
+the earlier prototype is not evidence of delivered behavior.
+
+## Deferred 0.2.1 public-source research
+
+Separate tested feature, not part of 0.2.0: research a grouped problem using official
+HA/integration documentation and relevant GitHub sources first, with Reddit only
+as supplementary evidence. Bind proposals to versions and cited sources, list
+prerequisites, manual steps and validation, cache results and use a separate research
+budget. Minimize public queries; HA credentials never enter research tools. No web
+research executor, scheduled work or new HA capability is authorized by this backlog.
