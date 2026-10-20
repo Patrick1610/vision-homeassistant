@@ -14,7 +14,7 @@ ROOT = Path(__file__).parents[1]
 
 def test_supervisor_metadata_and_default_options():
     config = yaml.safe_load((ROOT / "config.yaml").read_text())
-    assert config["version"] == __version__ == "0.2.0-rc.1"
+    assert config["version"] == __version__ == "0.2.0"
     project = tomllib.loads((ROOT / "pyproject.toml").read_text())
     assert project["project"]["version"] == __version__
     assert f'io.hass.version="{__version__}"' in (ROOT / "Dockerfile").read_text()
@@ -58,13 +58,13 @@ def test_static_assets_use_ingress_relative_paths():
 
 def test_visible_http_version_uses_runtime_metadata(tmp_path, monkeypatch):
     # A changed runtime value must reach the visible wordmark without editing HTML.
-    monkeypatch.setattr("vision.app.__version__", "0.2.0-rc.1-visible-probe")
+    monkeypatch.setattr("vision.app.__version__", "0.2.0-visible-probe")
     runtime = SimpleNamespace(supervised=False, data=tmp_path, token="")
     with TestClient(
         create_app(runtime, Settings(), connect=False), client=("127.0.0.1", 123)
     ) as client:
         response = client.get("/")
         assert response.status_code == 200
-        assert '<small id="app-version">0.2.0-rc.1-visible-probe</small>' in response.text
+        assert '<small id="app-version">0.2.0-visible-probe</small>' in response.text
         assert "{{VISION_VERSION}}" not in response.text
-        assert client.get("/api/health").json()["version"] == "0.2.0-rc.1-visible-probe"
+        assert client.get("/api/health").json()["version"] == "0.2.0-visible-probe"

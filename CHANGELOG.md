@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.2.0-rc.1 — release candidate, qualification pending
+## 0.2.0
+
+Version-bound qualification and dated release checkpoints: [validation](docs/VALIDATION.md).
 
 - Lead with at most three grouped priorities and one primary investigation step;
   move supporting counts, long evidence and history behind concise summaries.

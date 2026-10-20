@@ -789,3 +789,25 @@ Syntax/format/lint/diff checks passed. All runtime/config/package bytes remain
 identical to the prior accepted candidate; its green 341-test Python/container
 evidence is carried, not claimed as a new Python rerun. Public Linux CI rerun
 remains pending with the controller.
+
+### Stable 0.2.0 metadata checkpoint — 2026-10-20
+
+The controller accepted D3 and both test-only CI repairs, published exact RC tree
+`4ffd54df7066c9ee2efb22cb86ecde80e1bcd709` through PR #3/main CI and qualified the
+same live Supervisor install with backup, fresh read-only sync, bounded history/
+settings preservation, 16/16 native historical-trace checks and one real compact
+Anthropic structured-output investigation. VALIDATION records the exact scope,
+including pending historical backfill, no exported live-image digest and no real
+OpenAI/diagnostic claim. No private configuration values or raw IDs are published.
+
+The authorized stable delta is version fields/tests and current documentation only;
+functional D3, defaults, schema, providers and the deferred 0.2.1 scope remain
+unchanged. At this checkpoint stable review/public CI, the final Vision update/
+history check and then immutable tag/release are still pending controller work.
+
+Stable metadata checkpoint local checks: **341 Python tests passed in 38.08 s**
+with the existing single Starlette/httpx warning; exact Node 22.23.3 passed all
+**34 DOM tests**. Ruff lint/format (57 files), JS syntax and diff checks passed.
+All 18 Vision source/assets match the qualified RC except `__version__`; the five
+linked packaging/test files contain version substitutions only. No feature,
+provider/model, option/default, schema/store or 0.2.1-backlog change is included.

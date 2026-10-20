@@ -136,3 +136,12 @@ D1. The controller authorized D3's minimal width/wrap correction and four cheap
 lows covering replacement-history scope, attention-total wording, changes-only
 uncertainty and refresh-notice preservation. Scratch Safari layout preflight is
 separate from the required immutable D3 same-channel follow-up; no D3 GO is claimed.
+
+D critical sequence 3 accepted `7808551f431c59c1f04c8ab91e12945378b75bdd` with
+zero open critical/high/medium findings. Three nonblocking lows (refresh-warning
+recovery, future wrap guards, singular-case grammar) remain deferred; none is
+changed in stable packaging. Both later CI-only repairs received normal-review GO.
+Public RC CI/readback and live qualification subsequently passed within the bounds
+recorded in VALIDATION. The 2026-10-20 stable metadata-only checkpoint requires its
+own normal review and public/final-live/tag gates; no such outcome is preclaimed.
+Jev remains unavailable without its required key, so no score is claimed.

@@ -1,6 +1,6 @@
 name: Vision
 url: https://github.com/Patrick1610/vision-homeassistant
-version: 0.2.0-rc.1
+version: 0.2.0
 slug: vision
 description: Read-only observability and optional AI intelligence for Home Assistant
 arch:
