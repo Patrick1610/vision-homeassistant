@@ -260,3 +260,25 @@ write, schema or dispatch. Explicit old audits and current-active withdrawal bot
 remain accessible. The low's pre/post-POST failure wording and status-only recovery
 are also covered. New source freeze requires the same critical stream follow-up;
 there is no public/live/human acceptance or timing-gate waiver.
+
+### Stage B sequence 3 — accepted runtime / technical closure, 2026-10-22
+
+Critical stream 0d98f7ed-49fa-422b-9a0c-0a87a758d5e1 sequence 3 returned GO with
+zero findings (0 critical/high/medium) on runtime 3322963b0d7eaa32d2a189a75f587c0dcafeae2b.
+The controller verified the saved report and reset the completed stream. Independent
+B3 discovery/read-only/legacy probes, root 569-Python/127-DOM, lint/three-JS parsers,
+both architecture HTTP/start/restart and native viewports passed. Deep persistence/
+hot-journal/WAL/A32 evidence is carried by unchanged components only. Sequence 2's
+external GO did not erase its independent composite FAILs; B3 corrected them.
+
+The same runtime tree reached public PR9/main 3b06704c, all push/PR/main/tag CI
+succeeded, anonymous main/tag bytes matched, and the dev.2 prerelease was API-read
+back. Controller live Supervisor update with backup enabled verified connected/
+read-only status, served interface bytes and bounded original history/settings/
+preferences/start-time preservation. Full real-database retention is not claimed.
+Exact bindings and the release link are recorded in VALIDATION.
+
+New one-click consent is still OFF, with no new provider dispatch; real one-click
+language/semantic/billed-price checks remain pending. Five-real-human usability is
+OPEN (0 participants; owner decision pending), and the 493.4 ms / 200 ms capacity gate remains
+OPEN FAIL. Source/public/live-install GO is not a stable 0.3.0 or overall-gates GO.

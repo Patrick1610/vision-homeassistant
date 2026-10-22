@@ -4,9 +4,12 @@ Canonical repository root: this directory. Serious open-source software, MIT,
 source package v0.3.0-dev.2. The qualified 0.2.1 foundation remains preserved.
 The local Today/problems/intake Stage A received source-functional acceptance.
 Stage B adds separately authorized compact one-click orchestration and explicit
-v4 output; its independent qualification is pending. Critical review, public/live
-release and real human usability gates remain with the controller. The separate
-full-capacity latency gate remains OPEN FAIL. See docs/VALIDATION.md for evidence.
+v4 output. Exact runtime 3322963 received independent qualification and critical GO;
+the dev.2 prerelease is public and its read-only live installation is verified.
+New live one-click/provider semantic and billing checks remain pending with consent
+still off. The five-real-human gate is OPEN (0 participants; owner decision pending).
+The separate 493.4 ms / 200 ms full-capacity gate remains OPEN FAIL. These limits
+prevent an overall stable 0.3.0 acceptance claim. See docs/VALIDATION.md for evidence.
 Read `docs/VISION_SPEC.md`, `docs/ARCHITECTURE.md` and `PLANS.md` before changes.
 
 The owner authorized 0.3.0 on 2026-10-22: a local, bilingual Today → problem →
