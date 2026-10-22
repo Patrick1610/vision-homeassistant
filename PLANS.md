@@ -1370,3 +1370,79 @@ Final local checks: 545 Python PASS / 52.34 s (existing warning), 90 Node 22 DOM
 PASS / 3.90 s, Ruff lint/format (62 files), JS syntax, diff and publication scan.
 The only Python runtime delta is the fixed internal-error boundary in Home.feedback;
 Store, reliability, schema, HA, AI/research, settings and packaging stay exact A4.
+
+### 0.3.0 Stage B — accepted implementation scope, 2026-10-22
+
+Stage A source-functional GO is bound to abcd98ac82b6d90922341d364c4eb6bab97e8748.
+Root authorized the one-click/v4 phase: durable versioned compact consent and
+slot/highwater idempotency; one bounded public-research phase and one existing AI
+round; exact typed device/source/run-pair/group scope; explicit NL/EN human-v4
+short results and optional source-grounded manual plans. No new HA reads/actions,
+paid/publication operations by the builder, auto retry after restart or legacy
+request rewrite. Additive operation/consent storage preserves all 32 older tables.
+Dev.2 requires coherent tests, source freeze and independent critical review.
+The human usability gate and the separate 200 ms capacity OPEN FAIL remain open.
+
+### 0.3.0 Stage B — coherent dev.2 candidate, 2026-10-22
+
+Implemented the accepted one-click/v4 scope on accepted A5 abcd98ac. Schema 11 adds
+only home_ai_consent and home_investigations; existing 32 tables and migrations
+1–10 remain preserved. Separate default-off consent/generation, read-only context,
+slot/highwater durable admission, active/revoked in-flight pins and shared busy
+protect one frozen scope, one public phase and one logical provider round. Restart
+never replays; lost POST/reload reads status only. Local first checks remain ahead
+of optional AI. V4 short results preserve full plans/validation behind disclosures,
+with original language/scope and manual-only continuation. Both native bodies and
+receipts are committed before dispatch; default v2/v3 serializers remain literal.
+
+Builder checks: 568 Python PASS / 51.36 s (existing warning), 105 Node 22 DOM PASS /
+3.91 s; Ruff lint/format 65 files, three JS syntax checks, diff/publication hygiene.
+Source-default comparison covers both providers × v2/v3; cloned populated A32
+Store/AI upgrade/restart preserves all old rows/options/backups. Operational empty
+reference-sidecar creation is recorded explicitly, without original cleanup or
+changed manifest bytes. All accepted-A 545/90 tests remain. No live/public/paid or
+semantic nl/en answer claim follows; root independent critical/container/native B
+and five-real-human usability gates are pending. The separate documented 200 ms
+full-capacity OPEN FAIL remains unchanged. No kernel/SQLite pragma tuning occurred.
+
+### 0.3.0 Stage B2 — bounded review correction, 2026-10-22
+
+B1 critical sequence 1 found one admission-pointer medium and three bounded lows.
+The server had admitted nothing on 400/409/410, yet the browser replaced its saved
+pointer before POST. Pending intent now stays separate from confirmed work; matching
+conditional updates preserve other-tab confirmations and current navigation. Lost
+202/transport errors retain status-only recovery. Late first admission can confirm
+after a rejected second-tab attempt without overwriting newer confirmed work.
+Null/non-array v4 results degrade locally; research revocation uses its correct
+existing reason. Operation cleanup is eligibility after 90 days/closed start slot
+on the next admission only, not a periodic purge. No timer/meta/schema change.
+
+Root B1 tests/real both-image recovery/WAL/start/restart, old-table preservation,
+independent AI/A32 and source/privacy guards passed, while the critical UI medium
+remained NO_GO. This new delta still requires the same critical stream and targeted
+independent/root acceptance. Builder B2: 568 Python PASS / 54.89 s (existing warning),
+119 Node22 DOM PASS / 4.61 s, Ruff65/three-JS/diff/publication PASS. The runtime delta
+is only API error status, one-click browser recovery/result fallback and research
+reason mapping. Store/oneclick.py/schema/options/HA/metrics/legacy serializers remain
+literal B1. No public/live/paid/human-semantic claim; capacity200ms remains OPEN FAIL.
+
+### 0.3.0 Stage B3 — authoritative recovery correction
+
+B2 external sequence 2 was source GO, while independent root/AI UI probes correctly
+kept acceptance NO_GO for lost202/second409 pointer recovery, including an old
+terminal confirmation. Root authorized server authority through the existing
+read-only context only: exact-problem active/in-flight first, then latest admission
+rowid. Plain/fresh browser opens recover retained work; older explicit audit links
+keep a route to current active withdrawal. No additional pending-history structure,
+new endpoint/schema/meta, capture or restart action is added. Conditional pointer/
+route guards remain. Outer browser failures distinguish before versus after POST.
+Multi-admission native observer selection is repaired without weakening byte/
+reservation/receipt assertions; repeated GET snapshots retain all 34 table rows.
+Final immutable checks and same-review-stream qualification are required. The
+separate 200 ms capacity OPEN FAIL and human/provider/public/live gates remain open.
+
+Final B3 local result: 569 Python PASS / 54.21 s (existing warning), 127 Node22 DOM
+PASS / 4.44 s; Ruff65/three-JS/diff/publication PASS. Only context lookup and browser
+recovery change runtime; all non-context OneClick methods, constructor/admission,
+Store/schema11, HA/settings and old AI/research/provider bytes remain exact B2.
+Root owns the next immutable same-channel review and independent/native checks.

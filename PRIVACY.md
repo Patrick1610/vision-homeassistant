@@ -60,6 +60,21 @@ analyses or completed exact bodies merely to admit another request. These bounds
 do not cap the complete SQLite/WAL/backups on disk. Consistent migration snapshots also contain full private database history. Keep
 those backups local and allow storage for retained generations. Uninstalling or
 deleting app data removes the local database; old HA backups may retain copies.
+
+One-click operation metadata has separate cleanup eligibility: terminal rows older
+than 90 days with a closed start window are removed on the next new admission.
+There is no periodic operation-metadata purge; an idle installation can retain it
+longer. Active/in-flight work remains pinned, including withdrawal while awaiting
+a dispatched response. The 1,000-operation cap refuses new work without eviction.
+This exception is not a promise that `retention_days` purges every local table.
+
+One-click authorization is separately versioned and defaults off. Each explicit
+problem click may freeze local evidence, fetch bounded generic sources and send
+one compact logical round under the configured provider/budget policy. Exact bodies
+remain inspectable afterwards; use the separate manual preview route when reviewing
+them before transmission. Diagnostic always retains fresh per-preview consent.
+Lost responses/reloads only inspect durable status; they never restart a request.
+
 Public research is a separate explicit action: only a shown closed technical
 category, bundled integration slug and current authenticated Core version can
 enter public HA/GitHub queries. Household identifiers, questions, errors, keys

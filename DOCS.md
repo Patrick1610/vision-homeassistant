@@ -8,7 +8,7 @@ back to safe defaults, disables AI and is reported as degraded configuration.
 | --- | --- |
 | `allowed_user_ids` | HA Ingress user IDs allowed to see diagnostics. Empty locks the UI. |
 | `poll_seconds` | Inventory, traces, Repairs and log polling, 15–3600 s; default 60. State/trigger events are also subscribed live. |
-| `retention_days` | Incident, interval, execution and analysis retention, 7–730 days; default 90. Billing records remain 400 days to protect budget accounting. |
+| `retention_days` | Incident, interval, execution and analysis retention, 7–730 days; default 90. Billing records remain 400 days. One-click operation metadata has separate admission-triggered cleanup, described below. |
 | `ai_enabled` | Explicit consent to send reviewed evidence to configured providers; default false. |
 | `ai_privacy` | `local_only`, `compact` (default) or explicitly configured `diagnostic`. Diagnostic also requires consent for each preview. Existing options default to compact. |
 | `daily_audit` / `audit_hour_utc` | Optional once-daily attempt after this UTC hour. Only runs with fresh connected monitoring data; no automatic retry that day after a failed scheduled attempt. |
@@ -20,6 +20,11 @@ back to safe defaults, disables AI and is reported as degraded configuration.
 | `{provider}_model` | Exact compatible model ID from your provider account. No model is silently selected or substituted. |
 | `{provider}_daily_budget_usd` | Per-provider application estimate ceiling, UTC day; default $1. |
 | `{provider}_input_usd_per_million` / `{provider}_output_usd_per_million` | Your model's current USD rates. Both must be positive to permit requests. Defaults 0, blocking AI until priced. |
+
+One-click operation metadata becomes cleanup-eligible after 90 days and a closed
+start window; cleanup runs only on the next new admission. Idle installations can
+retain it longer. Active/in-flight rows remain pinned; a 1,000-row cap refuses new
+work without eviction. This is not a timer or a `retention_days` purge of all data.
 
 Use a model supporting the configured provider protocol: OpenAI Responses with
 strict JSON Schema output; Anthropic Messages with native structured output (`output_config.format`).

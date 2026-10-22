@@ -80,9 +80,19 @@ class Provider(Protocol):
 
 
 def request_body(
-    provider, model, system, prompt, max_tokens, *, evidence_refs=None, source_refs=None
+    provider,
+    model,
+    system,
+    prompt,
+    max_tokens,
+    *,
+    evidence_refs=None,
+    source_refs=None,
+    output_contract=None,
 ):
-    schema = provider_schema(provider, evidence_refs, source_refs=source_refs)
+    schema = provider_schema(
+        provider, evidence_refs, source_refs=source_refs, output_contract=output_contract
+    )
     if provider == "anthropic":
         return encoded(
             {

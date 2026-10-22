@@ -1,5 +1,78 @@
 # Architecture
 
+## Accepted 0.3 Stage B boundary — 2026-10-22
+
+Stage A received source-functional GO on abcd98ac; the separate human/public/live
+gates and the disclosed full-capacity latency failure remain distinct. Stage B
+adds a small durable one-click service alongside existing Intelligence/research:
+versioned default-off compact consent, server-resolved problem/revision/language,
+slot-bound idempotency before async work, bounded public research, then exactly
+one existing provider execution. Active base/final requests are pinned; restart
+never resumes dispatch. New human-v4 local/source variants are explicit opt-ins;
+old v2/v3 payloads/native bytes stay literal. Group evidence is an explicit bounded
+aggregate, never a representative first device. Names/rooms/preferences stay local.
+
+Schema 11 adds only `home_ai_consent` and `home_investigations`; migrations 1–10
+stay literal. Scope is at most 8 KiB, public plan at most 12 KiB; bounded internal
+identifiers keep metadata below 32 KiB per row. At most 1,000 operations are admitted.
+Terminal rows become cleanup-eligible after 90 days and a closed start window;
+cleanup runs on the next new admission, not a timer. Idle installations can retain
+metadata longer, subject to the 1,000-row admission cap. Active/in-flight
+rows stay pinned, including revoked work awaiting a dispatched response. Capacity
+refuses new work without eviction. Bodies/results retain existing AI admission and
+90/400-day heavy/receipt retention, without a second native-body copy here.
+
+Read-only GET `/api/problems/{id}/investigation-context` exposes typed selection,
+revision, consent, provider/rate/budget policy and server slot.
+
+The context's `operation` is null or the existing light status DTO for exactly that
+problem: active/in-flight first, then latest admission by rowid, never wall-clock
+creation time. This is a bounded read-only lookup: no capture, preview, pin, meta
+write or dispatch. Plain dossier opens use this server authority above old local
+pointers, including a fresh browser. Explicit older operation links stay inspectable
+with a visible link to current active work/withdrawal. Conditional pointer promotion
+still protects newer other-tab confirmations; lost intent remains status-only.
+
+POST
+`/api/problems/{id}/investigate` returns 202 after durable admission, binding
+operation_id/revision/language. Light GET `/api/home/investigations/{id}` reports
+status/linked IDs; `/audit` adds local scope/public plan; POST `/revoke` stops future
+dispatch. Settings GET/POST `/api/home/investigation-consent` uses exact version
+`vision-oneclick-compact-1`. Explicit saves increment its generation; off→on never
+resurrects earlier authorization. AI/local-only and process/config binding still apply.
+
+IDs are `op1_<15-minute server epoch slot>_<128-bit crypto nonce>`. Existing IDs
+compare their original input digest before status lookup. Missing IDs admit only
+current/previous slots; expired IDs return 410 with no automatic replacement.
+Meta `oneclick-slothighwater` is a monotonic integer in 900-second slot units,
+written atomically on admission/prune only, never context/constructor. Restart
+marks active work interrupted/uncertain without replay. Shared manual/daily/research
+admission permits one logical round; existing retry/technical failover can involve
+multiple separately reserved HTTP attempts. Final request ID/claim/phase commit
+before execution; reservation/attempt/billing receipt commit before each dispatch.
+
+Group capture selects at most 12 affected plus four healthy devices (16 total),
+retaining aggregate state/transition/coverage and omissions within the existing
+120-record/48 KiB bundle. Healthy contrary evidence is separate; no member/history
+multiplication, representative entity, refetch, name/room/preference or raw group/
+cohort digest enters the bundle. Source executions bind the exact entity/run pair.
+
+Explicit `human-v4` plus closed nl/en freezes schema `vision-diagnosis-4` and variant
+local/sources. Unknown versions/variants reject before claim/reserve. Sources variant
+retains real passages and source/manual-step validation; local has no fake refs.
+Default v2/v3 serialization omits all new fields. Manual continuation preserves
+contract/language/scope/sources without automatic research/send. Title (120), core
+explanation (400) and next check (240 characters) are locally validated beside the
+original evidence/uncertainty fields. UI labels requested language, without claiming
+semantic compliance; full plans/validation expand without truncating stored prose.
+
+Official schema basis checked by the controller on 2026-10-22:
+[OpenAI Responses structured outputs](https://developers.openai.com/api/docs/guides/structured-outputs?api-mode=responses)
+and [Anthropic structured outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs).
+Existing text.format/output_config.format transport stays; provider-safe normalization
+retains local length/ref validation. Refusal/incomplete and uncertain cost preserve
+billing behavior. Documentation/mocks do not qualify a real model, semantics or invoice.
+
 ## 0.3.0 local experience boundary
 
 The local HomeExperience readmodel composes existing device reliability and incident

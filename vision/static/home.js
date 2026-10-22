@@ -703,6 +703,7 @@ window.VisionHome = (() => {
         "plan",
         `<p class="home-next-check">${x(manual(p))}</p>${p.expert_href ? `<a href="${x(p.expert_href)}">${x(t("sourceOpen"))}</a>` : ""}<form id="home-feedback" data-problem="${x(p.problem_id)}" data-episode="${x(p.episode)}"><fieldset><legend>${x(t("feedback"))}</legend><select name="kind" aria-label="${x(t("feedback"))}">${options(["checked", "no_change", "seems_recovered", "later"], "checked")}</select><details><summary>${x(t("note"))}</summary><textarea name="note" maxlength="400"></textarea></details><button type="submit">${x(t("saveFeedback"))}</button></fieldset></form>`,
       ) +
+      ((await window.VisionInvestigation?.panel(id)) || "") +
       layout(
         "validation",
         `<p>${x(t("validate"))}</p><div class="followthrough-grid"><div><h3>${x(t("reported"))}</h3><small>${x(t("userOnly"))}</small>${data.feedback.length ? `<ol>${data.feedback.map(reportEntry).join("")}</ol>` : `<p>${x(t("noReport"))}</p>`}${data.earlier_feedback?.length ? `<details class="earlier-reports"><summary>${x(t("earlierReports"))} (${data.earlier_feedback.length})</summary><ol>${data.earlier_feedback.map(reportEntry).join("")}</ol></details>` : ""}</div><div><h3>${x(t("observed"))}</h3>${device?.checks?.length ? `<ul>${device.checks.map((c) => `<li>${x(t(c.validation))} · ${x(when(c.created))}</li>`).join("")}</ul>` : `<p>${x(t("noObserved"))}</p>`}<small>${x(t("changedCohort"))}</small></div></div>`,
@@ -765,6 +766,7 @@ window.VisionHome = (() => {
   }
   function bind() {
     applyLocale();
+    window.VisionInvestigation?.bind();
     const feedback = document.querySelector("#home-feedback");
     if (feedback)
       feedback.addEventListener("submit", async (e) => {

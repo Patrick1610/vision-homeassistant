@@ -1,10 +1,88 @@
 # Validation and release status — 2026-10-22
 
-**Current source package: 0.3.0-dev.1.** This is the local Stage A preview.
-Its new local tests are recorded below; independent critical review, root browser/
-container/migration acceptance, public/live gates and real human usability remain
-open. One-click orchestration and v4 output are not implemented; historical AI
-requests/results and existing manual expert workflows remain intact.
+**Current source package: 0.3.0-dev.2.** Stage A source-functional acceptance is
+bound to abcd98ac; Stage B one-click/v4 independent qualification is pending.
+Historical AI requests/results and manual expert workflows remain intact. Real-human
+usability and Stage B public/live gates remain open. The separately scoped 200 ms
+full-capacity latency gate remains **OPEN FAIL**, as detailed below.
+
+## 0.3.0 Stage B — builder-local checkpoint, 2026-10-22
+
+Stage A critical sequence 4 accepted exact abcd98ac with zero critical/high/medium.
+Controller checks passed 545 Python/90 DOM, both architecture HTTP/restart, native
+locale/intake/focus and independent privacy/feedback/preservation probes. Root then
+published that functional tree as dev.1 and verified a backup-enabled Supervisor
+update, connected/read-only Ingress, served-interface binding and bounded history/
+settings/start-time preservation. These are Stage A technical/live facts, not a B or
+real-human usability pass.
+
+Dev.2 adds separately authorized one-click/v4 orchestration. Synthetic native HTTP
+and separate SQLite readers verify durable scope, final frozen claim and per-attempt
+reservation/receipt before dispatch. Tests cover duplicate/lost POST, slot/highwater
+prune/rollback/restart rejection, revoked in-flight pins, shared busy, per-dispatch
+off→on revocation, conservative failover/deadline billing, exact device/group/run pair,
+unknown-schema precharge rejection and frozen manual follow-up/locale. Whole-app DOM
+uses actual synthetic ASGI DTOs for reload/revoke/audit, overlapping context/status
+races, separate consent, group/v4 continuation, escaping, local-first checks and
+maximum-length collapsed plans. No actual public/provider or semantic answer test
+is claimed by the builder.
+
+Source-contract checks compare both native serializers for v2/v3 with isolated A5,
+all migrations 1–10 and unchanged HA/settings/metric/Home/privacy modules.
+A cloned populated accepted-A fixture preserved all 32 old tables, v2/v3 bodies/
+results/receipts, options and old backups through Store/AI schema 10→11 startup/
+restart. This does not claim normal Monitor freshness metadata stays untouched.
+Schema 11 adds only operation/consent tables. Independent populated preservation,
+critical review, both architecture/native B, public/live and five-real-human gates
+remain pending at this checkpoint.
+
+An operational QA deviation remains in ignored proof: an initial read-only reference
+connection created empty WAL/SHM sidecars in the synthetic fixture. Original manifest
+files/hashes/modes stayed exact; sidecars were left intact. Subsequent checks used
+owned clones. No product mutation or concealed baseline cleanup is inferred.
+
+The Stage A **OPEN FAIL** 200 ms full-capacity transition remains unrepaired. No
+SQLite pragma, input/limit, recovery algorithm or durability change obtains a pass.
+Two nonblocking A lows remain scoped: unavailable intake preferences may display
+auto while unchanged locale is correctly omitted from saves, and unexpected check
+failure has no durable safe operator marker. Real-human usability is still open.
+
+Final builder-local commands: `.venv/bin/python -m pytest -q` **568 passed / 51.36 s**
+(one existing Starlette warning); Node 22.23.3 `node --test tests/dom/*.test.cjs`
+**105 passed / 3.91 s**; Ruff lint/format **65 files**, all three JS syntax checks,
+whitespace and publication scan passed. All 545 Python/90 DOM accepted-A cases
+remain; 23 Python and 15 DOM cases add the B boundaries above. Logs, literal-source
+checks and cloned-fixture proof stay ignored under work/030-stageb-validation.
+These results do not change the explicit capacity FAIL or pending independent gates.
+
+### Stage B2 — bounded admission-pointer correction, 2026-10-22
+
+Critical B1 sequence 1 (0d98f7ed-49fa-422b-9a0c-0a87a758d5e1) returned NO_GO for
+one medium: a definitively rejected start left a false admitted pointer and could
+hide another tab's running operation. B2 keeps separate durable pending intent and
+confirmed pointer. HTTP-status-aware rejection clears only its own matching pending
+intent and restores the current confirmation; lost responses remain status-only.
+Late response/promotion guards preserve a newer other-tab confirmation and the
+current route. Tests include 400/409/410, same-problem tabs, delayed first 202 after
+second-tab rejection, reload/revoke and navigation while a response is outstanding.
+
+The three lows degrade null/non-array v4 results safely, map owner/configuration
+withdrawal to the existing research reason and clarify admission-triggered metadata
+cleanup after 90-day/closed-slot eligibility. There is no new timer, meta behavior,
+schema, option, recovery, billing or HA change. Privacy/config/README disclosure
+distinguishes this metadata from ordinary retention. Other scoped residuals remain.
+
+Root independently qualified B1 with 568 Python/105 DOM, lint, literal runtime/
+migration invariants, both real architecture HTTP/start/restart/RO-WAL/hot-journal
+recovery and populated old-history preservation. Independent A32 and AI lifecycle/
+native-byte/legacy checks also passed. These are source-bound B1 results carried
+only through unchanged code, not fresh B2 container or review claims. Real-human,
+semantic-provider and public/live B acceptance still remain open.
+
+B2 builder checks: **568 Python PASS / 54.89 s**, existing warning; **119 Node 22
+DOM PASS / 4.61 s**; Ruff lint/format 65 files, three JS syntax, diff and publication
+checks. Store, oneclick.py, schema 11, HA/config/metrics and legacy request/receipt
+serialization stay byte-exact B1. The explicit 200 ms capacity **OPEN FAIL** remains.
 
 ## 0.3.0 Stage A — builder-local checkpoint, 2026-10-22
 
@@ -1488,3 +1566,44 @@ Local stable-metadata verification: `.venv/bin/python -m pytest -q` passed all
 (59 Python files), JavaScript syntax, diff and tracked/reachable-history publication
 scans passed. A SHA-256 manifest verifies every other tracked file against f146ec01;
 each of the six metadata files has only the exact dev.2-to-stable version replacement.
+
+### Stage B3 — server-authoritative retained-operation recovery, 2026-10-22
+
+External sequence 2 accepted B2 with zero critical/high/medium and one robustness
+low, but root correctly retained functional NO_GO: independent same-problem-tab
+probes showed lost first 202 after second 409 could remove the browser's only
+confirmation; an older completed pointer made missing-only restoration insufficient.
+Both failing probes remain intact. No client pending-history stack is introduced.
+
+The existing read-only context now includes a light `operation` for exactly the
+problem: active/in-flight first, otherwise latest admission-rowid. Plain opens use
+that server authority even without local storage. Explicit older links remain
+inspectable, with a current-active link to withdrawal. Existing intent/confirmed
+conditional guards still prevent late responses replacing newer other-tab state.
+No context read captures, prepares, reserves, writes meta or schedules work.
+An actual multi-admission test snapshots all 34 tables and total_changes around
+repeated context reads, checks exact-problem isolation and proves rowid order despite
+an older record's future wall clock. DOM covers old terminal A/new B/lost response/
+rejected C/reopen, fresh browser active/completed, older audit/current-active links
+and unchanged late-route guards. Outer error handling distinguishes pre-dispatch
+failure from post-dispatch rejection/status-only, including history restoration
+failure after 409; it never retries POST automatically.
+
+The multi-admission native observer initially selected the first operation row,
+which was an incorrect single-operation fixture assumption. It now selects the
+actual active request ID and still independently verifies committed operation,
+receipt/reservation and exact outgoing bytes before the mock dispatch. This is an
+operational harness repair, not weaker admission/billing assertions.
+
+Only OneClick.context and the browser recovery module change runtime from B2;
+constructor, pipeline, schema/version, settings, HA, metric kernels and literal
+legacy serialization remain unchanged. Same-stream review and new independent/root
+checks remain pending; public/live/real-human/real-model semantics are not claimed.
+The separate 200 ms full-capacity OPEN FAIL remains unchanged.
+
+Final builder checks for B3: **569 Python PASS / 54.21 s** (existing warning),
+**127 Node 22 DOM PASS / 4.44 s**, Ruff lint/format 65 files, three JS syntax,
+whitespace and publication checks. All earlier passing tests remain; previously
+failed pointer probes remain separately preserved. Source invariants bind every
+other runtime file and all non-context OneClick methods literally to B2. No new
+container/live/public/human or semantic-model pass is inferred from these tests.

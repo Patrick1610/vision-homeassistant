@@ -31,7 +31,28 @@ and rooms never enter AI/public queries. Public/live/release gates and five real
 human usability participants belong to the controller; no such pass is preclaimed.
 Use additive migrations, preserve all existing history/options/usage, and retain
 the existing metric kernels and bounded work. Stage A may package 0.3.0-dev.1 once
-coherent; Stage B implementation waits for explicit Stage A acceptance.
+coherent. Stage A received source-functional acceptance on abcd98ac; the controller
+then explicitly authorized Stage B. Real-human usability remains a separate gate.
+
+### Accepted Stage B contract
+
+One explicit problem action may run one bounded public-source phase and one compact
+AI round only after separate versioned, default-off authorization. Context/status
+reads are side-effect-free. Durable slot-bound operation admission precedes async
+work; repeated clicks/reloads reuse status, and restart never resumes transmission.
+The operation binds exact typed scope, episode/revision and closed Dutch/English
+answer language. Device groups use an explicit bounded aggregate plus separate
+healthy contrary evidence; they never silently substitute their first device.
+Source runs bind their complete entity/run pair. Stale/missing scope fails closed.
+Active base/final requests remain pinned, with shared manual/daily admission,
+per-dispatch revocation and the existing conservative receipts/budget/failover rules.
+
+New human-v4 local/source variants explicitly opt in to short title/explanation/
+next-check fields. Existing v2/v3 payloads, native bodies, digests, historical prose
+and results remain literal. Keep the local first check ahead of optional AI; show
+up to three short proposals, with full plans, validation and evidence expandable.
+Exact frozen bodies remain locally inspectable; diagnostic retains fresh per-send
+manual consent. No automatic additional rounds, HA actions or new HA reads follow.
 
 The initial functional baseline was delivered as v0.1.0. Presentation amendments
 are recorded below; patch releases retain the same read-only functional scope.

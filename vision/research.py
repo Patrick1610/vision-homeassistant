@@ -282,6 +282,11 @@ class PublicResearch:
         return {"plan_id": plan_id, "plan_digest": plan_digest, "plan": copy.deepcopy(public)}
 
     def valid(self, row):
+        if row.get("operation_id"):
+            try:
+                self.ai.oneclick.check(row["operation_id"])
+            except AIError:
+                raise ResearchError("revoked_or_configuration_changed") from None
         if row.get("revoked") or row["configuration"] != self.ai.configuration():
             raise ResearchError("revoked_or_configuration_changed")
         return self.base(SendInput(**row["base"]))
@@ -291,6 +296,8 @@ class PublicResearch:
         row = self.plans.get(value.plan_id)
         if not row or not hmac.compare_digest(row["digest"], value.plan_digest):
             raise ResearchError("plan_expired_or_digest_mismatch")
+        if self.ai.oneclick.busy(row.get("operation_id")):
+            raise ResearchError("investigation_busy")
         self.valid(row)
         if row["claimed"] or self.task and not self.task.done():
             raise ResearchError("job_already_claimed_or_busy")
@@ -965,6 +972,8 @@ class PublicResearch:
                 diagnostic_consent=consent.diagnostic_consent,
                 research_id=research_id,
                 research_digest=consent.research_digest,
+                output_contract=payload.get("output_contract"),
+                language=payload.get("language"),
             )
         except (ValidationError, ValueError, TypeError, KeyError):
             raise ResearchError("stored_preview_reconstruction_failed") from None

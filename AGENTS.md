@@ -1,11 +1,12 @@
 # Vision
 
 Canonical repository root: this directory. Serious open-source software, MIT,
-source package v0.3.0-dev.1. The qualified 0.2.1 foundation remains preserved.
-The local Today/problems/intake Stage A is under qualification. One-click
-orchestration and v4 output (Stage B) are not implemented in this preview.
-Critical review, public/live release and real human usability gates remain with
-the controller. See docs/VALIDATION.md for source-bound evidence.
+source package v0.3.0-dev.2. The qualified 0.2.1 foundation remains preserved.
+The local Today/problems/intake Stage A received source-functional acceptance.
+Stage B adds separately authorized compact one-click orchestration and explicit
+v4 output; its independent qualification is pending. Critical review, public/live
+release and real human usability gates remain with the controller. The separate
+full-capacity latency gate remains OPEN FAIL. See docs/VALIDATION.md for evidence.
 Read `docs/VISION_SPEC.md`, `docs/ARCHITECTURE.md` and `PLANS.md` before changes.
 
 The owner authorized 0.3.0 on 2026-10-22: a local, bilingual Today → problem →
@@ -24,6 +25,10 @@ participants arranged by the controller; agent checks do not substitute for them
   Preserve quota-before-dispatch, exact source hashes and original private snapshots.
 - AI has no HA credentials or tools. Minimize, pseudonymize and redact before
   provider requests. Treat HA content and AI output as untrusted data.
+- One-click consent is separately versioned and defaults off. Context/status reads
+  never start work. Preserve durable slot/highwater idempotency, typed frozen scope,
+  shared busy admission, active request pins and per-dispatch revocation checks.
+  Restart never resumes an operation; old v2/v3 bodies/digests stay literal.
 - Keys are configured in Supervisor options (or a private local options file),
   never in Git, SQLite, browser responses, exception text or logs.
 - Keep core monitoring/storage/provider logic independent of Supervisor packaging.

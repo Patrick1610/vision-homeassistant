@@ -4,7 +4,7 @@
 
 Read-only observability for Home Assistant OS, with optional Anthropic and OpenAI
 intelligence. Local monitoring works without AI, cloud accounts or API keys.
-MIT licensed. **0.3.0-dev.1 — local daily-experience development preview**; see [validation](docs/VALIDATION.md) for version-bound
+MIT licensed. **0.3.0-dev.2 — optional one-click investigation development preview**; see [validation](docs/VALIDATION.md) for version-bound
 qualification evidence and [releases](https://github.com/Patrick1610/vision-homeassistant/releases)
 for publication status.
 
@@ -15,13 +15,20 @@ choices keep importance, known issues and usual behaviour independent. Cancel
 saves nothing; preferences never implicitly acknowledge worsening or reset an
 existing device-policy baseline. All these workflows work without AI.
 
-This Stage A preview keeps the existing device charts, history and expert
-investigation/exact-preview routes. One-click orchestration and v4 findings belong
-to the separately reviewed Stage B and are not part of this preview. AI remains off
-by default; existing privacy, provider options and budgets are retained. Device
+The local experience keeps device charts, history and expert exact-preview routes.
+Optional one-click investigation requires separate compact authorization in Settings,
+then an explicit problem click: freeze its evidence, read bounded generic public
+sources and receive one short AI proposal. Local checks remain first; full plans,
+validation and source/evidence details expand on demand. Reload reads durable status
+without starting again. Exact requests remain inspectable; diagnostic still requires
+fresh manual preview consent. No automatic repair or follow-up research is added.
+AI remains off by default; privacy, provider options and budgets are retained. Device
 measurement starts at the first device-reliability upgrade and survives later
 updates; older entity history cannot establish historical device membership.
 Qualification and scoped limitations are recorded in validation.
+One-click terminal metadata becomes cleanup-eligible after 90 days and a closed
+start window, then is cleaned on the next new admission. Idle retention can be
+longer; the 1,000-operation cap refuses new work without evicting history.
 
 ## What it does
 

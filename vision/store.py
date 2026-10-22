@@ -15,7 +15,7 @@ from pathlib import Path
 
 from .evidence import fingerprint
 
-SCHEMA_VERSION = 10
+SCHEMA_VERSION = 11
 AI_MAX_REQUESTS = 512
 AI_MAX_STORAGE_BYTES = 64 * 1024 * 1024
 AI_RESULT_RESERVE_BYTES = 1024 * 1024
@@ -354,6 +354,25 @@ MIGRATIONS[10] = (
     "CHECK(length(cast(basis AS BLOB))<=4096),check_id INTEGER "
     "REFERENCES device_checks(id))",
     "CREATE INDEX home_feedback_problem ON home_feedback(problem_id,created,id)",
+)
+
+
+MIGRATIONS[11] = (
+    "CREATE TABLE home_ai_consent (id INTEGER PRIMARY KEY CHECK(id=1),version TEXT NOT NULL,"
+    "enabled INTEGER NOT NULL CHECK(enabled IN (0,1)),generation INTEGER NOT NULL,"
+    "updated REAL NOT NULL)",
+    "CREATE TABLE home_investigations (id TEXT PRIMARY KEY,problem_id TEXT NOT NULL,"
+    "episode TEXT NOT NULL,revision TEXT NOT NULL,language TEXT NOT NULL "
+    "CHECK(language IN ('nl','en')),input_digest TEXT NOT NULL,config_binding TEXT NOT NULL,"
+    "consent_generation INTEGER NOT NULL,start_slot INTEGER NOT NULL,created REAL NOT NULL,"
+    "updated REAL NOT NULL,"
+    "status TEXT NOT NULL,in_flight INTEGER NOT NULL CHECK(in_flight IN (0,1)),error TEXT,"
+    "scope TEXT NOT NULL CHECK(length(CAST(scope AS BLOB))<=8192),"
+    "base_request_id TEXT REFERENCES ai_requests(id) ON DELETE SET NULL,"
+    "final_request_id TEXT REFERENCES ai_requests(id) ON DELETE SET NULL,"
+    "research_id TEXT,plan TEXT CHECK(length(CAST(plan AS BLOB))<=12288),"
+    "analysis_id INTEGER REFERENCES analyses(id) ON DELETE SET NULL)",
+    "CREATE INDEX home_investigations_problem ON home_investigations(problem_id,created)",
 )
 
 
@@ -1001,7 +1020,10 @@ class Store:
         """Discard expired unused bodies; a transmitted attempt is historical evidence."""
         self.db.execute(
             "DELETE FROM ai_requests WHERE status='preview' AND expires<? AND NOT EXISTS "
-            "(SELECT 1 FROM ai_attempts a WHERE a.request_id=ai_requests.id)",
+            "(SELECT 1 FROM ai_attempts a WHERE a.request_id=ai_requests.id) AND NOT EXISTS "
+            "(SELECT 1 FROM home_investigations o WHERE (o.in_flight=1 OR o.status IN "
+            "('admitted','preparing','researching','freezing','sending')) AND "
+            "ai_requests.id IN (o.base_request_id,o.final_request_id))",
             (time.time() if now is None else now,),
         )
 
@@ -1045,7 +1067,13 @@ class Store:
             self.db.execute("DELETE FROM issues WHERE active=0 AND last_seen<?", (before,))
             self.prune_case_history(before)
             self.cleanup_ai_previews()
-            self.db.execute("DELETE FROM ai_requests WHERE created<?", (before,))
+            self.db.execute(
+                "DELETE FROM ai_requests WHERE created<? AND NOT EXISTS "
+                "(SELECT 1 FROM home_investigations o WHERE (o.in_flight=1 OR o.status IN "
+                "('admitted','preparing','researching','freezing','sending')) AND "
+                "ai_requests.id IN (o.base_request_id,o.final_request_id))",
+                (before,),
+            )
             self.db.execute("DELETE FROM analyses WHERE created<?", (before,))
             self.db.execute("DELETE FROM usage WHERE created<?", (time.time() - 400 * 86400,))
             self.db.execute("DELETE FROM configuration_changes WHERE observed_at<?", (before,))

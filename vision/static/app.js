@@ -53,10 +53,13 @@ async function api(path, options = {}) {
     headers: { "Content-Type": "application/json", "X-Vision-Request": "1" },
   });
   const data = await r.json();
-  if (!r.ok)
-    throw Error(
+  if (!r.ok) {
+    const error = Error(
       typeof data.detail === "string" ? data.detail : "Request failed",
     );
+    error.status = r.status;
+    throw error;
+  }
   return data;
 }
 pages.filter(p=>p!=="Intake").forEach((p,index) => {
@@ -130,6 +133,8 @@ function findings(analysis) {
     return empty(
       "No retained AI investigation. Local evidence is available without AI.",
     );
+  if ((parse(analysis.evidence)?.schema_version === "vision-diagnosis-4" || analysis.output_contract === "human-v4") && window.VisionInvestigation)
+    return window.VisionInvestigation.results(analysis) + researchView(parse(analysis.evidence)?.research);
   const result = parse(analysis.result) || {},
     entries = Array.isArray(result.diagnoses) ? result.diagnoses : [],
     research = parse(analysis.evidence)?.research;
@@ -1191,7 +1196,7 @@ async function issues(route) {
 function requestView(data, enabled) {
   const value = data.preview,
     selection = data.local_selection;
-  return `<h3>Frozen request · round ${esc(value.round)}</h3><p class="request-state">${badge(data.status || "preview")} ${data.in_flight ? "· response pending" : ""}</p>${value.readiness?.supported === false ? `<p class="warning">${esc(value.readiness.reason)} This local preview cannot be sent.</p>` : ""}<p>Task ${esc(value.task)} · Profile ${esc(value.profile)} · Captured ${esc(date(value.bundle.captured_at))}</p><p class="evidence-text">Local target ${esc(selection.target || selection.entity || selection.device || "System")} · Run ${esc(selection.run_id || "None")} · Compare ${esc(selection.compare || "None")} · Selection ${esc(selection.basis || selection.selection_basis)}</p><p class="muted">${esc(value.privacy_notice)} This preview covers this round only; follow-ups require their own preview and send.</p><p class="evidence-text">SHA-256 <code>${esc(data.digest)}</code></p><details><summary>Coverage, provenance & selected evidence</summary><pre>${esc(JSON.stringify(value.bundle, null, 2))}</pre></details>${Object.entries(
+  return `${data.operation ? `<p class="coverage-note">Policy-authorized compact investigation · <a href="#problems/${encodeURIComponent(data.operation.problem_id)}?operation=${encodeURIComponent(data.operation.id)}">Open durable status</a>. This audit never starts another request.</p>` : ""}<h3>Frozen request · round ${esc(value.round)}</h3><p class="request-state">${badge(data.status || "preview")} ${data.in_flight ? "· response pending" : ""}</p>${value.readiness?.supported === false ? `<p class="warning">${esc(value.readiness.reason)} This local preview cannot be sent.</p>` : ""}<p>Task ${esc(value.task)} · Profile ${esc(value.profile)} · Captured ${esc(date(value.bundle.captured_at))}</p><p class="evidence-text">Local target ${esc(selection.target || selection.entity || selection.device || selection.group || "System")} · Run ${esc(selection.run_id || "None")} · Compare ${esc(selection.compare || "None")} · Selection ${esc(selection.basis || selection.selection_basis)}</p><p class="muted">${esc(value.privacy_notice)} This preview covers this round only; follow-ups require their own preview and send.</p><p class="evidence-text">SHA-256 <code>${esc(data.digest)}</code></p><details><summary>Coverage, provenance & selected evidence</summary><pre>${esc(JSON.stringify(value.bundle, null, 2))}</pre></details>${Object.entries(
     value.requests,
   )
     .map(
@@ -1200,7 +1205,7 @@ function requestView(data, enabled) {
     )
     .join(
       "",
-    )}${researchView(value.research)}${data.status === "preview" && value.round === 1 && value.task !== "audit" && value.profile !== "local_only" && !value.research && value.readiness?.supported !== false ? `<section class="research-prepare"><h4>Optional public-source research</h4><p>Preview generic public queries before fetching. No household identifiers or questions enter public searches. AI sending stays separate.</p><button type="button" id="plan-research">Preview public query plan</button><div id="public-research" aria-live="polite"></div></section>` : ""}<details><summary>Exact preview envelope, policy & bounded prior context</summary><pre>${esc(JSON.stringify(value, null, 2))}</pre></details><details><summary>Local evidence and identifier mapping · stays in Vision</summary><pre>${esc(JSON.stringify({ evidence: data.local_mapping, identifiers: data.local_aliases }, null, 2))}</pre></details><div class="toolbar"><button id="send-ai" class="primary" ${!enabled || data.in_flight || value.readiness?.supported === false || value.profile === "local_only" || !Object.keys(value.requests).length || (data.status && data.status !== "preview") ? "disabled" : ""}>Send this exact reviewed request</button><button id="revoke-ai">Revoke this request</button></div><p class="muted">Every attempt has its own conservative cost reservation. Technical failover can use only the exact configured alternative shown above, at these rates and limits. Budget failover requires separate configured consent. Local-only never sends.</p>`;
+    )}${researchView(value.research)}${data.status === "preview" && value.round === 1 && value.task !== "audit" && value.profile !== "local_only" && !value.research && value.readiness?.supported !== false ? `<section class="research-prepare"><h4>Optional public-source research</h4><p>Preview generic public queries before fetching. No household identifiers or questions enter public searches. AI sending stays separate.</p><button type="button" id="plan-research">Preview public query plan</button><div id="public-research" aria-live="polite"></div></section>` : ""}<details><summary>Exact preview envelope, policy & bounded prior context</summary><pre>${esc(JSON.stringify(value, null, 2))}</pre></details><details><summary>Local evidence and identifier mapping · stays in Vision</summary><pre>${esc(JSON.stringify({ evidence: data.local_mapping, identifiers: data.local_aliases }, null, 2))}</pre></details><div class="toolbar"><button id="send-ai" class="primary" ${!enabled || data.operation || data.in_flight || value.readiness?.supported === false || value.profile === "local_only" || !Object.keys(value.requests).length || (data.status && data.status !== "preview") ? "disabled" : ""}>Send this exact reviewed request</button><button id="revoke-ai">Revoke this request</button></div><p class="muted">Every attempt has its own conservative cost reservation. Technical failover can use only the exact configured alternative shown above, at these rates and limits. Budget failover requires separate configured consent. Local-only never sends.</p>`;
 }
 async function intelligence(route) {
   const params = new URLSearchParams((route || "").replace(/^\?/, ""));
@@ -1250,7 +1255,7 @@ async function intelligence(route) {
       : "") +
     `<details class="ai-setup" ${selectedAnalysis || rounds.length ? "" : "open"}><summary>${rounds.length ? "Prepare a scoped follow-up" : "Prepare an optional AI investigation"}</summary>${card(
       "Focused AI investigation",
-      `<p>${badge(data.enabled ? "AI opted in" : "AI disabled", data.enabled ? "success" : "warning")} ${badge(data.running ? "Analysis running" : "Idle")} · Configured privacy ceiling ${esc(data.privacy)}</p>${data.storage ? `<p class="muted">AI history headroom: ${esc((data.storage.available_payload_bytes / 1048576).toFixed(1))} MiB · ${esc(data.storage.available_request_slots)} request slots.</p><details><summary>AI storage limits</summary><p>${esc((data.storage.stored_bytes / 1048576).toFixed(1))} MiB retained payloads + ${esc((data.storage.promised_result_bytes / 1048576).toFixed(1))} MiB promised results; limit ${esc(data.storage.max_storage_bytes / 1048576)} MiB and ${esc(data.storage.max_requests)} requests. Existing history is preserved when admission stops. Ordinary retention applies across local history; there is no selective deletion control.</p></details>` : ""}<p>Each task uses its own instructions and relevant local evidence. Preview is local; sending requires configured AI opt-in, a model, prices and budget. Diagnostic consent applies to one reviewed request only.</p>${data.last_error ? `<p class="warning">${esc(data.last_error)}</p>` : ""}${data.daily ? `<p class="muted">Daily compact audit: ${esc(data.daily.day)} · ${esc(data.daily.status)}</p>` : ""}<form id="ai-form" data-enabled="${data.enabled}" data-running="${data.running}" data-conversation="${esc(params.get("conversation") || "")}"><label>Investigation<select name="kind" ${initial ? "disabled" : ""}>${Object.entries(
+      `<p>${badge(data.enabled ? "AI opted in" : "AI disabled", data.enabled ? "success" : "warning")} ${badge(data.running ? "Analysis running" : "Idle")} · Configured privacy ceiling ${esc(data.privacy)}</p>${data.storage ? `<p class="muted">AI history headroom: ${esc((data.storage.available_payload_bytes / 1048576).toFixed(1))} MiB · ${esc(data.storage.available_request_slots)} request slots.</p><details><summary>AI storage limits</summary><p>${esc((data.storage.stored_bytes / 1048576).toFixed(1))} MiB retained payloads + ${esc((data.storage.promised_result_bytes / 1048576).toFixed(1))} MiB promised results; limit ${esc(data.storage.max_storage_bytes / 1048576)} MiB and ${esc(data.storage.max_requests)} requests. Existing history is preserved when admission stops. Ordinary retention applies across local history; there is no selective deletion control.</p></details>` : ""}<p>Each task uses its own instructions and relevant local evidence. Preview is local; sending requires configured AI opt-in, a model, prices and budget. Diagnostic consent applies to one reviewed request only.</p>${data.last_error ? `<p class="warning">${esc(data.last_error)}</p>` : ""}${data.daily ? `<p class="muted">Daily compact audit: ${esc(data.daily.day)} · ${esc(data.daily.status)}</p>` : ""}<form id="ai-form" data-enabled="${data.enabled}" data-running="${data.running}" data-conversation="${esc(params.get("conversation") || "")}" data-contract="${esc(initial?.output_contract || "")}" data-language="${esc(initial?.language || "")}"><label>Investigation<select name="kind" ${initial ? "disabled" : ""}>${Object.entries(
         data.tasks,
       )
         .map(
@@ -1259,7 +1264,7 @@ async function intelligence(route) {
         )
         .join(
           "",
-        )}</select></label><label>Target scope<select name="target_type" ${initial ? "disabled" : ""}><option value="entity" ${targetType === "entity" ? "selected" : ""}>Entity or retained dossier</option><option value="device" ${targetType === "device" ? "selected" : ""}>Exact registered device · availability only</option></select></label><label>Local target<input name="target" maxlength="500" value="${esc(target)}" ${initial ? "readonly" : ""} placeholder="System audit uses no target"></label><label>Exact selected run<input name="run_id" maxlength="200" value="${esc(initial?.run_id || params.get("run_id") || "")}" ${initial ? "readonly" : ""} ${targetType === "device" ? "disabled" : ""}></label><label>Exact comparison run<input name="compare" maxlength="200" value="${esc(initial?.compare_id || params.get("compare") || "")}" ${initial ? "readonly" : ""} ${targetType === "device" ? "disabled" : ""}></label><label>Privacy profile<select name="profile" ${initial ? "disabled" : ""}>${[...new Set(["local_only", "compact", ...(data.privacy === "diagnostic" ? ["diagnostic"] : []), ...(initial ? [profile] : [])])].map((value) => `<option ${value === profile ? "selected" : ""}>${value}</option>`).join("")}</select></label><label>Follow-up focus<select name="followup_focus">${["clarify", "manual_solution", "counterevidence", "validation"].map((value) => `<option>${value}</option>`).join("")}</select></label><label class="wide">Optional question · diagnostic only<textarea name="question" maxlength="800" rows="3" placeholder="Compact investigations use the focus selector. No raw templates, credentials or personal details."></textarea></label><label class="check wide"><input type="checkbox" name="diagnostic_consent">I explicitly allow sanitized diagnostic identifiers, errors and safe structural operands for this preview. Redaction cannot guarantee removal of all personal data; I will inspect every body before sending.</label>${initial ? `<fieldset class="wide"><legend>One reviewed local evidence expansion</legend><p>Only initially frozen sections of this dossier can be added. No HA refetch, tools or free-form evidence requests.</p>${(data.tasks[kind]?.extra_sections || []).map((section) => `<label class="check"><input type="checkbox" name="sections" value="${esc(section)}">${esc(section)}</label>`).join("")}</fieldset>` : ""}<button type="submit" ${rounds.some((row) => row.status === "revoked") ? "disabled" : ""}>Prepare exact local preview</button>${rounds.some((row) => row.status === "revoked") ? '<p class="warning">This conversation includes a withdrawn round. Inspect its retained result below; start a new reviewed investigation to continue.</p>' : ""}</form><div id="ai-preview" aria-live="polite"></div>`,
+        )}</select></label><label>Target scope<select name="target_type" ${initial ? "disabled" : ""}><option value="entity" ${targetType === "entity" ? "selected" : ""}>Entity or retained dossier</option><option value="device" ${targetType === "device" ? "selected" : ""}>Exact registered device · availability only</option>${targetType === "group" ? `<option value="group" selected>Exact retained group · compact availability only</option>` : ""}</select></label><label>Local target<input name="target" maxlength="500" value="${esc(target)}" ${initial ? "readonly" : ""} placeholder="System audit uses no target"></label><label>Exact selected run<input name="run_id" maxlength="200" value="${esc(initial?.run_id || params.get("run_id") || "")}" ${initial ? "readonly" : ""} ${targetType === "device" ? "disabled" : ""}></label><label>Exact comparison run<input name="compare" maxlength="200" value="${esc(initial?.compare_id || params.get("compare") || "")}" ${initial ? "readonly" : ""} ${targetType === "device" ? "disabled" : ""}></label><label>Privacy profile<select name="profile" ${initial ? "disabled" : ""}>${[...new Set(["local_only", "compact", ...(data.privacy === "diagnostic" ? ["diagnostic"] : []), ...(initial ? [profile] : [])])].map((value) => `<option ${value === profile ? "selected" : ""}>${value}</option>`).join("")}</select></label><label>Follow-up focus<select name="followup_focus">${["clarify", "manual_solution", "counterevidence", "validation"].map((value) => `<option>${value}</option>`).join("")}</select></label><label class="wide">Optional question · diagnostic only<textarea name="question" maxlength="800" rows="3" placeholder="Compact investigations use the focus selector. No raw templates, credentials or personal details."></textarea></label><label class="check wide"><input type="checkbox" name="diagnostic_consent">I explicitly allow sanitized diagnostic identifiers, errors and safe structural operands for this preview. Redaction cannot guarantee removal of all personal data; I will inspect every body before sending.</label>${initial ? `<fieldset class="wide"><legend>One reviewed local evidence expansion</legend><p>Only initially frozen sections of this dossier can be added. No HA refetch, tools or free-form evidence requests.</p>${(data.tasks[kind]?.extra_sections || []).map((section) => `<label class="check"><input type="checkbox" name="sections" value="${esc(section)}">${esc(section)}</label>`).join("")}</fieldset>` : ""}<button type="submit" ${rounds.some((row) => row.status === "revoked") ? "disabled" : ""}>Prepare exact local preview</button>${rounds.some((row) => row.status === "revoked") ? '<p class="warning">This conversation includes a withdrawn round. Inspect its retained result below; start a new reviewed investigation to continue.</p>' : ""}</form><div id="ai-preview" aria-live="polite"></div>`,
     )}</details>` +
     `<details class="history-disclosure"><summary>Provider usage & estimated costs</summary>${card(
       "Provider usage & estimated costs",
@@ -1306,6 +1311,15 @@ async function bindIntelligence(route) {
   let prepared = null,
     autoOpen = params.get("watch") === "1";
   const viewGeneration = generation;
+  if (params.get("target_type") === "group" || form.elements.target_type.value === "group") {
+    const option = document.createElement("option");
+    option.value = "group"; option.textContent = "Exact retained group · compact availability only";
+    if (!form.elements.target_type.querySelector('[value="group"]')) form.elements.target_type.append(option);
+    form.elements.target_type.value = "group";
+    form.elements.kind.value = "availability";
+    form.elements.profile.value = "compact";
+    form.elements.run_id.disabled = form.elements.compare.disabled = true;
+  }
   const navigate = (hash) => {
     if (location.hash === hash) render();
     else location.hash = hash;
@@ -1505,7 +1519,7 @@ async function bindIntelligence(route) {
       ),
     );
   form.elements.target_type.addEventListener("change", () => {
-    const device = form.elements.target_type.value === "device";
+    const device = ["device", "group"].includes(form.elements.target_type.value);
     form.elements.run_id.disabled = device;
     form.elements.compare.disabled = device;
   });
@@ -1557,7 +1571,10 @@ async function bindIntelligence(route) {
         conversation_id: form.dataset.conversation || null,
         sections: fields.getAll("sections"),
       };
-      if (form.elements.target_type.value === "device") value.target_type = "device";
+      if (["device", "group"].includes(form.elements.target_type.value)) value.target_type = form.elements.target_type.value;
+      if (form.dataset.contract === "human-v4") {
+        value.output_contract = form.dataset.contract; value.language = form.dataset.language;
+      }
       display(
         await api("intelligence/preview", {
           method: "POST",
@@ -1716,7 +1733,7 @@ async function render({ background = false } = {}) {
       issues: () => issues(encoded || null),
       intelligence: () => intelligence(encoded || null),
       history: () => history(encoded || null),
-      settings: async () => (window.VisionHome?.settingsLinks() || "") + await settings(),
+      settings: async () => (window.VisionHome?.settingsLinks() || "") + (await window.VisionInvestigation?.settings() || "") + await settings(),
     };
     const html = await views[active]();
     if (id !== generation) return;
