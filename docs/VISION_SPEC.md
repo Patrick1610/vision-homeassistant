@@ -1,5 +1,38 @@
 # Vision specification
 
+## Authorized 0.3.0 scope — 2026-10-22
+
+The owner accepted the complete proposed 0.3.0 plan and instructed execution.
+Stage A delivers an installable local experience: Today, Problems, Devices,
+History and Settings as primary navigation; legacy automations/intelligence/cases
+remain reachable as expert views. Dutch and English cover the new journey and
+navigation; historical analyses keep their original text. Within 30 seconds a user
+can identify up to three meaningful priorities, inspect proven facts/coverage/
+unknowns, choose one manual check and record follow-through in Vision only.
+
+Local importance, preferences, optional rerunnable/prepopulated intake and per-case
+feedback are separate from existing known/expected policy and observation facts.
+Known issue and usual behaviour are independent nullable choices alongside
+importance; selecting both is valid. Untouched fields retain their existing value.
+Cancel performs no write. Intake and ordinary preference changes never reset a
+policy baseline or acknowledge worsening. User-reported improvement is not observed
+recovery; gaps, changed cohorts and removal remain unknown. Grouping needs actual
+covered transitions within the existing five-minute bound, not shared integration
+or first-observation/bootstrap coincidence. Declared upstream links are stronger
+evidence than integration correlation; neither proves a physical cause or impact.
+Healthy counterevidence and bounded/omitted evidence stay visible. Friendly entity,
+device and room names are local only; the only new HA operation may be the exact
+officially verified area-registry list read. No HA write or numeric-state capture.
+
+Stage B follows separate Stage A review: durable one-click orchestration over the
+existing research/preview/send hooks and an opt-in v4 typed/localized brief, without
+changing old v2/v3 request/result/native bytes, billing or consent ceilings. Names
+and rooms never enter AI/public queries. Public/live/release gates and five real
+human usability participants belong to the controller; no such pass is preclaimed.
+Use additive migrations, preserve all existing history/options/usage, and retain
+the existing metric kernels and bounded work. Stage A may package 0.3.0-dev.1 once
+coherent; Stage B implementation waits for explicit Stage A acceptance.
+
 The initial functional baseline was delivered as v0.1.0. Presentation amendments
 are recorded below; patch releases retain the same read-only functional scope.
 

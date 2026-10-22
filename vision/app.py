@@ -18,6 +18,7 @@ from .ai import AIError, AnalysisInput, Intelligence, evidence_bundle
 from .ai_contract import TASKS, SendInput
 from .ai_provider import AIConflict
 from .config import Runtime, Settings
+from .home import FeedbackError, FeedbackInput, PreferencesInput
 from .monitor import Monitor
 from .research import ResearchAttach, ResearchError, ResearchStart
 from .security import Redactor, protect_logging
@@ -104,6 +105,7 @@ def create_app(runtime=None, settings=None, *, connect=True):
                 task.cancel()
             await asyncio.gather(*app.state.tasks, return_exceptions=True)
             await app.state.ai.close()
+            app.state.monitor.home.close()
             await app.state.monitor.reliability.close()
             app.state.store.close()
 
@@ -200,6 +202,57 @@ def create_app(runtime=None, settings=None, *, connect=True):
     @app.get("/api/reliability")
     async def reliability(window: Literal["24h", "7d", "30d"] = "24h"):
         return app.state.monitor.reliability.snapshot(window)
+
+    @app.get("/api/today")
+    async def today(window: Literal["24h", "7d", "30d"] = "24h"):
+        return app.state.monitor.home.overview(window)
+
+    @app.get("/api/home/preferences")
+    async def home_preferences():
+        return app.state.monitor.home.preferences()
+
+    @app.get("/api/home/devices")
+    async def home_devices(
+        page: int = Query(default=1, ge=1, le=10000),
+        limit: int = Query(default=25, ge=1, le=100),
+        q: str = Query(default="", max_length=120),
+    ):
+        return app.state.monitor.home.devices(page, limit, q)
+
+    @app.post("/api/home/preferences")
+    async def home_preferences_save(value: PreferencesInput):
+        try:
+            return app.state.monitor.home.save_preferences(value)
+        except ValueError as error:
+            raise HTTPException(400, "Invalid local preferences or capacity reached") from error
+
+    @app.get("/api/problems")
+    async def problems(
+        page: int = Query(default=1, ge=1, le=10000),
+        limit: int = Query(default=25, ge=1, le=100),
+        mode: Literal["attention", "backlog", "all"] = "attention",
+    ):
+        return app.state.monitor.home.problems(page, limit, mode)
+
+    @app.get("/api/problems/{problem_id}")
+    async def problem(problem_id: str):
+        try:
+            return app.state.monitor.home.dossier(problem_id)
+        except LookupError as error:
+            raise HTTPException(404, "Local problem not retained") from error
+
+    @app.post("/api/problems/{problem_id}/feedback")
+    async def problem_feedback(problem_id: str, value: FeedbackInput):
+        try:
+            return app.state.monitor.home.feedback(problem_id, value)
+        except LookupError as error:
+            raise HTTPException(404, "Local problem not retained") from error
+        except FeedbackError as error:
+            raise HTTPException(409, str(error)) from error
+        except ValueError as error:
+            raise HTTPException(
+                409, "Evidence changed or local feedback capacity reached"
+            ) from error
 
     @app.get("/api/reliability/devices")
     async def reliability_devices(

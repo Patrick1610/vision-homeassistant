@@ -1,5 +1,102 @@
 # Architecture
 
+## 0.3.0 local experience boundary
+
+The local HomeExperience readmodel composes existing device reliability and incident
+facts with separately stored importance, locale/intake preferences and episode-bound
+user feedback. It does not modify metric kernels or old device-policy baselines.
+Today and problem dossiers use bounded local reads; expensive history remains in
+the existing cached metric worker. UI actions persist only Vision-owned records.
+Friendly room names come from a separately bounded area-registry projection, never
+the AI/research evidence pipeline. Local feedback and observed recovery have distinct
+provenance. Historical analyses and expert links remain available unchanged.
+Future Stage B hooks must consume explicit typed problem scope, not UI prose or room
+names; existing consent, exact-preview, quota and per-attempt billing still apply.
+
+Schema 10 adds only `home_preferences`, `home_device_preferences`, `home_problems`
+and `home_feedback`. Migrations 1–9 and the Store implementation are unchanged.
+Device importance (`low`, `normal`, `high`) and nullable `known_issue` /
+`usual_behavior` booleans are independent; null inherits the old local policy for
+presentation. Ordinary saves do not call that policy or acknowledge worsening.
+A separate explicit per-problem acknowledgment updates only the new preference
+baseline. Covered same-cohort partial→offline worsening remains durable through
+unknown observations and ordinary preference edits.
+
+`monitor.home` refreshes a bounded readmodel after sync. Relevant device-evidence
+changes coalesce into event refreshes at least two seconds apart (minimum 250 ms
+debounce); unchanged available/numeric values do not invalidate the daily view.
+GET `/api/today`, `/api/problems`, `/api/home/devices` and
+their detail routes do not compile metric history or write. Sync/pending/capacity
+gaps cannot become a quiet day. Source admission precedes the three-card limit:
+active critical cases respect episode-bound annotations; recent native-trace runs
+use their exact entity/run pair, not poll-refreshed issue timestamps. Whole-run
+and step-error records from that pair produce one daily card while both source
+records remain available. Problem and feedback identity bind the source episode.
+Pending refresh retains coherent priorities with their original `as_of`; a stale
+empty snapshot cannot claim a quiet day after a relevant change. Disconnects keep
+retained links but show current state as unknown. Sync failure always releases
+the syncing flag. Refresh reads only small problem-ID/present metadata; body hashes
+are process-local and SQL conditionally updates actual changes without rereading
+every retained snapshot. Explicit preference saves and completed sync may refresh
+immediately; no new worker or metric scheduling layer is introduced.
+
+Groups require covered transitions within 300 seconds, a known common integration
+and compatible declared-upstream context; bootstrap observations do not qualify.
+Current declared links and healthy peers remain correlation/counterevidence, not
+proof of a physical cause. Selection is typed device, source case, automation-run
+pair or frozen device-group membership. No first-member substitution is provided
+for future group AI. User reports remain separate from later covered device-check
+validation; retrospective reports use their real submission time, never backdate
+a check or clear an underlying observation.
+Group identity binds integration plus sorted device/cohort identities; member
+episodes change the snapshot, not the group key. Earlier-episode feedback/checks
+are separated from the current report. Exact feedback replay is checked before
+the current episode gate and binds the check kind, preventing a second marker.
+If a device pointer was reclaimed or check capacity is full, subjective feedback
+still persists with an explicit unavailable-marker reason. HTTP feedback uses a
+cryptographic getRandomValues fallback when secure-context randomUUID is absent.
+
+Admission bounds are 6,000 device preferences, 10,000 retained problems with at
+most 4,096 encoded snapshot bytes, and 20,000 feedback records with a 4,096-byte
+typed basis and 400-character redacted note. Admission refuses excess new rows.
+Only retired, feedback-unreferenced presentation snapshots expire after ordinary
+configured retention, in batches of at most 1,000 no more than once per minute.
+Retirement records its actual time so a long-unchanged active dossier does not
+expire immediately after recovery. Owner feedback and all pre-existing source,
+AI, check, policy and billing history are never deleted by this cleanup. If all
+slots remain referenced/current, capacity stays explicitly limited. Lists page at most 100 rows; intake
+edits at most 100 devices per save. Dossiers show the latest 50 feedback records,
+up to 32 group members, two recognition labels and eight healthy peers with
+omission counts. The 24-hour grouping-coverage read caps at 1,024 rows; truncation
+disables transition grouping. These bounds are not a physical SQLite-file limit.
+
+The sole additional HA read is parameterless `config/area_registry/list`, verified
+against [the official handler](https://github.com/home-assistant/core/blob/8d7fd8b68677c2585be36ec86043308f403875b8/homeassistant/components/config/area_registry.py#L23-L37)
+and [area representation](https://github.com/home-assistant/core/blob/8d7fd8b68677c2585be36ec86043308f403875b8/homeassistant/helpers/area_registry.py#L84-L100).
+It retains at most 512 local ID/name pairs (200/120 characters), with a two-second
+optional-read deadline after essential state sync. Failure affects room-name
+coverage only. An entity's explicit area wins; missing explicit areas remain
+unknown. Device parent-area inheritance follows `parent_device_id`, never
+`via_device_id`: one main-parent hop as confirmed by the
+[list handler](https://github.com/home-assistant/core/blob/8d7fd8b68677c2585be36ec86043308f403875b8/homeassistant/components/config/device_registry.py#L74-L101),
+[child JSON field](https://github.com/home-assistant/core/blob/8d7fd8b68677c2585be36ec86043308f403875b8/homeassistant/helpers/device_registry.py#L736-L757)
+and [effective-area implementation](https://github.com/home-assistant/core/blob/8d7fd8b68677c2585be36ec86043308f403875b8/homeassistant/helpers/device_registry.py#L4775-L4790).
+Dangling, cyclic or child-parent chains remain unknown, not inferred native inheritance.
+New room/location/upstream projections stay separate from the
+existing AI/research inputs. HA event subscriptions and all write prohibitions
+remain unchanged. Stage B one-click/v4 orchestration is not implemented in dev.1.
+Primary and expert routes attempt the shared stored interface language read before
+rendering; a failed read is cosmetic, preserves browser/cached locale and can retry.
+Successful preference saves replace that cache only with a validated returned
+locale. Intake writes locale only after an explicit selection change; a failed
+read or an unrelated device edit cannot overwrite the server's language choice.
+The Settings/History shell localizes only app-owned text/markers, without rewriting
+entity options, user reasons, historical result prose or typed values. Initial
+visual positioning leaves keyboard focus unchanged; later foreground route changes
+focus main, and background refresh preserves focus/scroll. Device lists expose only working controls and
+accurately labeled links. A compact integration strip is visible next to the
+chart; grouping method and full bounded evidence stay in disclosures.
+
 Browser → Ingress → FastAPI → domain services → SQLite. Monitor → closed HA
 read gateway → HA Core proxy. Intelligence → minimized evidence → provider
 adapters → validated diagnosis → local history. AI never receives a transport.

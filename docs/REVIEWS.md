@@ -168,3 +168,48 @@ At the dated 2026-10-20 checkpoint, the 0.2.1 metadata/documentation-only delta
 requires its own controller review and stable publication/final-live/tag gates.
 No stable gate is preclaimed. Jev remains unavailable without its configured key;
 no scalar score is invented.
+
+## 0.3.0 Stage A — corrective review checkpoint
+
+Critical stream `846d4361-b968-43de-8a32-df21573f69e4` returned NO_GO on original
+`1395854bc22bad77dbe803cc68671094dce1bcaa`. Independent controller/QA evidence
+separately confirmed the original tests, populated released-table preservation,
+both architecture recovery checks, scale and local/privacy/legacy boundaries;
+those passes did not close the identified daily-journey defects.
+
+The bounded follow-up addresses pending visibility, HTTP crypto, group identity/
+presentation retention, body-read/coalescing work, unavailable optional markers,
+episode/replay semantics, explicit-null inheritance, locale/device-control and
+retained-group presentation. Parent-area source evidence confirms one main-parent
+hop; it is now cited and tested. No model/protocol/billing/HA capability extension
+is included. At this dated checkpoint the new immutable candidate still requires
+the controller's same-session critical follow-up and independent acceptance.
+Five real-human usability/public/live gates remain open; no review GO is preclaimed.
+
+Sequence 2 on `a8cb4f2c317b13febd57f05ba395998bcaee9f3f` closed the earlier critical/
+high and functional-medium findings. Its NO_GO concerns one documentary medium:
+the 200 ms full-capacity latency gate must be explicitly **OPEN FAIL**. The full
+6,000-device/250,000-history/10,000 × 4 KiB workload had a 493.4 ms heartbeat gap;
+isolated current/baseline heartbeat was 281.8 / 271.9 ms (observe 274.9 / 264.3 ms).
+Interval closure 83.9 ms, pointer clearing 12.4 ms and outer commit 174.5 ms identify
+the unchanged released path's one-shot capacity transition. A 16 MiB cache probe
+still failed at 267.8 ms. No data loss/false recovery, changed input/limit or new
+writer/checkpointer architecture is concealed; WAL causality is unproven. The
+failure remains separately scoped and unrepaired despite other passing checks.
+
+Four bounded lows are addressed in the next candidate: app-owned shell translation
+with drift/data-preservation tests; no initial focus theft; cosmetic locale-read
+failure/retry; and a pinned exact native check-capacity message test without a
+kernel rewrite. Root native/both-architecture checks remain version-bound technical
+evidence, not human usability. Same-session follow-up is still required; no Stage B
+or overall-gate approval is inferred from local tests.
+
+Sequence 3 on `186d633d6e474e9f20c50d68f4f2bf23a751d9fb` returned NO_GO for one
+new medium: successful preference saves did not replace the memoized locale,
+allowing a later intake save to undo the explicit language choice. The bounded
+correction updates all save paths and sends intake locale only when edited.
+The one robustness low maps an unexpected check failure to a fixed internal error,
+with generic 500 and full rollback rather than a misleading evidence/capacity 409.
+Known capacity behavior and old history remain intact. The next immutable delta
+requires the same critical stream; Stage B remains closed and the documented
+200 ms full-capacity OPEN FAIL is neither repaired nor reclassified.

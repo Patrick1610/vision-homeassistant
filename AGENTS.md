@@ -1,11 +1,20 @@
 # Vision
 
 Canonical repository root: this directory. Serious open-source software, MIT,
-source package v0.2.1. The 0.2.0 foundation remains preserved. Device reliability
-and source-backed investigations passed their source-bound dev.1/dev.2 public/live
-gates. Stable packaging changes metadata/documentation only; release qualification
-remains with the controller. See docs/VALIDATION.md for version-bound evidence.
+source package v0.3.0-dev.1. The qualified 0.2.1 foundation remains preserved.
+The local Today/problems/intake Stage A is under qualification. One-click
+orchestration and v4 output (Stage B) are not implemented in this preview.
+Critical review, public/live release and real human usability gates remain with
+the controller. See docs/VALIDATION.md for source-bound evidence.
 Read `docs/VISION_SPEC.md`, `docs/ARCHITECTURE.md` and `PLANS.md` before changes.
+
+The owner authorized 0.3.0 on 2026-10-22: a local, bilingual Today → problem →
+manual follow-through journey, then separately reviewed durable AI orchestration.
+Importance is independent of known/expected policy. Intake never implicitly
+acknowledges worsening or resets a baseline. Friendly names/rooms stay local.
+The existing direct single-writer mandate applies; no custom workflow runtime,
+profiles, controller or watchdog is activated. Human usability gates require real
+participants arranged by the controller; agent checks do not substitute for them.
 
 - Vision observes Home Assistant and MUST NEVER call services, change state,
   edit configuration, ignore repairs or execute actions. Only the closed read

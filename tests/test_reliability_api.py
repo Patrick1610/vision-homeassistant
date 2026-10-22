@@ -109,7 +109,7 @@ def test_schema_nine_is_additive_and_keeps_old_rows_backups_options_and_accounti
     options = tmp_path / "options.json"
     options.write_bytes(b'{"ai_enabled":false,"private":"unchanged"}')
     store = Store(path)
-    assert store.db.execute("PRAGMA user_version").fetchone()[0] == SCHEMA_VERSION == 9
+    assert store.db.execute("PRAGMA user_version").fetchone()[0] == SCHEMA_VERSION == 10
     for table, rows in old.items():
         assert [
             tuple(r) for r in store.db.execute('SELECT * FROM "' + table + '" ORDER BY rowid')

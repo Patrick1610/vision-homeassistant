@@ -4,20 +4,23 @@
 
 Read-only observability for Home Assistant OS, with optional Anthropic and OpenAI
 intelligence. Local monitoring works without AI, cloud accounts or API keys.
-MIT licensed. **0.2.1 — device reliability and source-backed investigations**; see [validation](docs/VALIDATION.md) for version-bound
+MIT licensed. **0.3.0-dev.1 — local daily-experience development preview**; see [validation](docs/VALIDATION.md) for version-bound
 qualification evidence and [releases](https://github.com/Patrick1610/vision-homeassistant/releases)
 for publication status.
 
-Start with a 24 h / 7 d / 30 d device-observation chart and up to three grouped
-manual-check priorities, then follow the retained evidence,
-a concrete manual plan and a way to validate it. Focused AI proposals are optional:
-review each frozen request before sending. AI stays off by default; existing
-installations retain their settings and compact privacy unless explicitly changed.
+Today shows up to three meaningful priorities with friendly local names and one
+first manual check. Follow a problem's facts, declared dependencies, uncertainty
+and later observations. Optional Dutch/English intake and gradual per-problem
+choices keep importance, known issues and usual behaviour independent. Cancel
+saves nothing; preferences never implicitly acknowledge worsening or reset an
+existing device-policy baseline. All these workflows work without AI.
 
-This release adds timestamped registry-device observations and local check markers.
-Device measurement begins after upgrade: earlier entity history remains available,
-but cannot establish historical device membership. Optional public-source research previews generic technical queries before fetching, then
-prepares a new exact AI request over the original local snapshot and real sources.
+This Stage A preview keeps the existing device charts, history and expert
+investigation/exact-preview routes. One-click orchestration and v4 findings belong
+to the separately reviewed Stage B and are not part of this preview. AI remains off
+by default; existing privacy, provider options and budgets are retained. Device
+measurement starts at the first device-reliability upgrade and survives later
+updates; older entity history cannot establish historical device membership.
 Qualification and scoped limitations are recorded in validation.
 
 ## What it does
@@ -100,7 +103,7 @@ npm test
 .venv/bin/ruff check .
 .venv/bin/ruff format --check vision tests
 node --check vision/static/app.js
-docker build --build-arg BUILD_ARCH=amd64 -t vision:0.2.1 .
+docker build --build-arg BUILD_ARCH=amd64 -t vision:0.3.0-dev.1 .
 ```
 
 Run locally (loopback only): `VISION_DATA=./data .venv/bin/python -m vision`.

@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.3.0-dev.1
+
+Local daily-experience development preview; Stage A qualification is pending.
+
+- Start with Today and up to three local priorities, friendly names and room
+  context, an explicit first manual check and progressive evidence disclosures.
+- Follow persistent problem dossiers with declared dependencies, healthy contrary
+  evidence, coverage gaps and subjective feedback beside later observations.
+- Use optional rerunnable Dutch/English intake or adjust individual problems.
+  Importance, known issues and usual behaviour are independent; cancel writes
+  nothing and ordinary changes never acknowledge worsening or reset old policy.
+- Add bounded Vision-owned preference/problem/feedback tables through migration
+  10; preserve existing metrics, history, options, AI request bytes and billing.
+- Keep expert links and exact previews. One-click orchestration and v4 findings
+  are Stage B work and are not implemented in this preview.
+
 ## 0.2.1
 
 - Lead with 24 h / 7 d / 30 d registered-device observations, coverage-aware

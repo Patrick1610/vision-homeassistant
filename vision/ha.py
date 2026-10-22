@@ -13,6 +13,7 @@ READS = {
     "get_states": set(),
     "config/device_registry/list": set(),
     "config/entity_registry/list": set(),
+    "config/area_registry/list": set(),
     "repairs/list_issues": set(),
     "system_log/list": set(),
     "trace/list": {"domain", "item_id"},

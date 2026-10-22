@@ -6,5 +6,5 @@ RUN pip install --no-cache-dir --require-hashes -r requirements.txt
 COPY vision ./vision
 ARG BUILD_ARCH
 LABEL io.hass.name="Vision" io.hass.description="Read-only Home Assistant observability" \
-      io.hass.version="0.2.1" io.hass.type="addon" io.hass.arch="${BUILD_ARCH}"
+      io.hass.version="0.3.0-dev.1" io.hass.type="addon" io.hass.arch="${BUILD_ARCH}"
 CMD ["python", "-m", "vision"]
