@@ -6,17 +6,19 @@
     <meta name="theme-color" content="#286650" />
     <title>Vision · Home Assistant</title>
     <link rel="stylesheet" href="static/style.css" />
+    <script src="static/home.js" defer></script>
     <script src="static/app.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <aside>
-      <a class="brand" href="#overview">
+      <a class="brand" href="#today">
         <span class="wordmark">Vision<span class="brand-accent" aria-hidden="true"></span></span>
         <small id="app-version">{{VISION_VERSION}}</small>
       </a>
       <p class="tagline">Understand your home.</p>
       <nav id="nav" aria-label="Main navigation"></nav>
+      <details id="expert-nav"><summary>Expert views</summary><nav id="expert-links" aria-label="Expert navigation"></nav></details>
       <div class="safety">
         ◈ READ ONLY<br /><small>No controls. Just clarity.</small>
       </div>

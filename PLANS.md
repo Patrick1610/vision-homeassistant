@@ -1165,3 +1165,208 @@ Local metadata-freeze checks passed: 519 Python tests / 39.86 s (existing warnin
 65 Node 22.23.3 DOM tests / 2.85 s, lint/format/JS/diff/publication scans and exact
 source invariants. Six metadata replacements and six documentation files are the
 entire delta; all other tracked bytes match f146ec01. Freeze for controller review.
+
+## Vision 0.3.0 — authorized execution, 2026-10-22
+
+Owner instruction “Voer plan uit” authorizes the accepted complete 0.3.0 plan.
+Canonical input is clean 1dbc2f71d6643cf8710569088588cf362f60486c. The same sole
+tracked writer implements directly in this repository; the controller handles
+immutable external reviews, independent QA, publication/live HA and real human
+usability availability. No new custom workflow runtime/profile/controller.
+
+Stage A builds the local Today/problem/intake journey immediately after recording
+scope in VISION_SPEC. Additive local importance/preferences/episode-feedback storage
+preserves metric/known/expected baselines and old history/billing. NL/EN, friendly
+local names/rooms, truthful grouping/counterevidence, at most three priorities and
+manual follow-through must work end-to-end without AI. Version 0.3.0-dev.1 only when
+installable. Preserve all 519 Python/65 DOM baseline checks and add meaningful
+API/DOM/migration/privacy/noise/coverage regressions. Freeze a coherent candidate
+for mandatory critical review; no Stage B product work before explicit A GO.
+
+Stage B then adds durable one-click orchestration and opt-in v4 typed localized
+results over existing research/provider hooks. Old native bodies, consent, usage
+and receipts remain immutable. Five human participants are an owner/controller
+acceptance gate, not five agent personas. Requested writer remains gpt-6.1-sol /
+ultra; effective runtime identity is not independently observable here.
+
+### 0.3.0 Stage A — local dev.1 freeze checkpoint, 2026-10-22
+
+The local Today → problem → manual-check/report journey now works without AI.
+Five primary routes, bilingual daily labels, local names/rooms, optional cancellable
+intake, independent importance/known/usual choices and later observational feedback
+are implemented. Covered grouping, exact typed source scope, critical-case admission,
+healthy contrary evidence and concrete declared dependency links retain uncertainty.
+Healthy/unassessed devices open their exact existing evidence route, not a fabricated
+problem; capacity or sync-pending states cannot imply a quiet day. New local feedback
+does not resolve source facts or rewrite the user's earlier device-policy baseline.
+
+Schema 10 adds four tables: home_preferences, home_device_preferences,
+home_problems and home_feedback. New admission refuses excess rows without evicting
+existing history. Source comparison confirms migrations 1–9 and the entire Store
+class, reliability kernel, AI/research/config code, locked dependencies and CI bytes
+equal the accepted 0.2.1 input. Only the exact optional area-list read is added to
+the closed HA gateway; local room metadata is outside external evidence projection.
+Six version fields coordinate 0.3.0-dev.1. Existing expert routes and historical
+analysis prose remain intact. Stage B one-click orchestration/v4 is not implemented.
+
+Builder-local final checks: 534 Python PASS / 44.95 s (the existing Starlette warning),
+74 Node 22.23.3 DOM PASS / 3.26 s, Ruff check/format (62 Python files), both JavaScript
+syntax checks, diff whitespace and tracked-tree/all-reachable-history publication
+scans passed. The earlier local 534/73 checkpoint
+predated the added concrete-impact DOM regression; it remains a local checkpoint,
+not independent acceptance. Source-bound API/DOM tests cover cancelled/rerun intake,
+explicit-only edits, both independent booleans, durable worsening/explicit ack,
+subjective and retrospective feedback, no false recovery, admitted links, capacity,
+pending/unknown views, area bounds/failure, exact source episodes, read-only GETs,
+additive migration/restart and preserved compact external evidence.
+
+Ignored local logs/proofs are under work/030-stagea-validation; they contain synthetic
+fixtures only. The controller's early native prototype review is not a frozen-source
+acceptance result. Independent critical review, populated-table/container/performance
+qualification, final native desktop/mobile checks and any public/live update remain
+open. The five-real-human usability criterion also remains open; agent checks do not
+count as users. Freeze this local A candidate for controller review; do not start
+Stage B until explicit A GO. No builder HA/provider/publication operation occurred.
+
+### 0.3.0 Stage A — bounded corrective freeze, 2026-10-22
+
+Initial critical review `846d4361-b968-43de-8a32-df21573f69e4` returned NO_GO on
+`1395854bc22bad77dbe803cc68671094dce1bcaa`. The controller independently confirmed
+534 Python/74 DOM, all 28 released tables/options/backups across upgrade/restart,
+both architecture HTTP/restart/hot-journal/RO-WAL checks, and the full synthetic
+6,000-device/250,000-interval workload. That source-bound technical evidence did
+not qualify the pending/feedback/storage/locale user-journey findings. Its near-cap
+probe measured 40.96 MB of needless snapshot reads, but did not demonstrate an
+event-loop stall over 200 ms on that host; no new thread framework was warranted.
+
+The bounded correction keeps coherent priorities/as_of during pending work and
+shows retained unknown-state evidence during disconnect. Empty stale snapshots
+cannot claim quiet after a relevant event; unchanged numeric/available states do
+not invalidate the daily view. Sync flags clear on failure. Feedback works on HTTP
+without randomUUID, retains its idempotency key, and replays the original check
+kind before evaluating a new episode. Subjective reports survive missing devices
+and check-capacity refusal with explicit unavailable-marker reasons; old reports
+and their checks are disclosed separately from the current episode.
+
+Group IDs now bind stable device/cohort membership and integration while episodes
+stay in the snapshot. Only expired retired presentation rows without feedback may
+be reclaimed, at most 1,000 per minute after configured retention; retirement gets
+its own current timestamp. Owner reports and every earlier history/billing table
+remain outside cleanup. Refresh reads small metadata and caches body hashes,
+performs conditional batched writes and coalesces relevant event work every two
+seconds. A direct refresh remains available after sync and for synthetic seeding.
+No Store/migration, HA allowlist, options, metric or AI/research code changes.
+
+Explicit null now restores legacy inheritance while absence preserves a previous
+boolean. All direct primary routes resolve server locale; Settings/History shell
+labels follow NL/EN without changing typed values or old analysis prose. Device
+lists have no dead intake controls, healthy links accurately open device evidence,
+group cards avoid repeated caveats, and a bounded integration strip is visible by
+the chart. Parent-area inheritance is restricted to the officially verified main-
+parent hop with own-area precedence and dangling/cycle/via-device negatives.
+
+Corrective regressions cover all these paths: 25 focused Python and 15 whole-app
+DOM cases. The released 519/65 baseline stays active. Local near-cap Home-only
+measurement (6,000 devices, 10,000 × 4,095-byte snapshots) returned zero snapshot
+body bytes; one cold batched refresh took 191 ms, warm refreshes 71–84 ms. A 2.6 s
+coalescer probe produced one refresh, 157 retained-attention samples and an 84 ms
+maximum heartbeat gap. These are bounded host measurements, not a hardware SLA;
+the controller repeats full workload/native layout checks on the next immutable
+source. Initial prototype and initial freeze proofs are preserved separately.
+
+Final corrective checks: 544 Python PASS / 46.83 s (existing warning), 80 Node
+22.23.3 DOM PASS / 4.06 s, Ruff lint/format (62 files), both JS syntax and diff
+checks passed. The additional cold-write batching change was followed by the full
+Python suite; DOM/source boundaries remained unchanged. Stage A source invariants
+keep 21 core/packaging files exactly equal to the first freeze.
+The tracked-tree/all-reachable-history publication scan also passed.
+
+The candidate remains 0.3.0-dev.1 / schema 10 / four new local tables. Stage B is
+still not implemented. Same-session critical follow-up, independent corrective
+acceptance and the real-human usability/public/live gates remain open. Builder
+performed no HA/provider/publication operation; requested model configuration is
+still gpt-6.1-sol / ultra without independent effective-runtime proof.
+
+Immediately before handoff, the controller requested one final existing-scope
+guard: a first unknown-coverage Today now gives a short manual connection/freshness
+check and opens the existing technical coverage view, without inventing a device
+problem. A real initial API response drives its DOM regression. Final DOM is
+81 PASS / 3.02 s; the unchanged Python source retains the 544-PASS result above.
+The main correction commit is retained, followed by this small UI/test/doc commit;
+no history rewrite or additional feature scope. Freeze both as one review delta.
+
+### 0.3.0 Stage A — native-observed UI-only follow-up
+
+Native and independent API/DOM checks on 404c86b found two remaining presentation
+defects. The visible integration caption omitted unassessed/partial counts and
+could present a cached zero-unavailable fraction as current during disconnection.
+Intake cancel preserved data correctly but retained the old page scroll, placing
+the next daily action above the visible viewport. The authorized follow-up changes
+only two JS files, their DOM regressions and documentation.
+
+Integration captions now identify the retained snapshot/time and list unavailable,
+partial and unassessed counts separately. Missing/failed/pending/unreliable cache
+explicitly leaves current availability unknown; no complete-looking offline
+fraction is shown. Foreground route navigation focuses and scrolls the main region
+to its start, while successful/engaged background refresh keeps scroll and focus.
+All 61 tracked Python files and 71 selected source/packaging contracts are byte-
+exact 404c86b, carrying its 544-Python result. Full DOM: 83 PASS / 3.49 s; lint/
+format/syntax/diff passed. Native layout and critical follow-up remain controller
+gates, as does the separately measured full-capacity admission-path investigation.
+No kernel, schema, allowlist, provider, option or version change is included.
+
+### 0.3.0 Stage A — sequence-2 bounded documentation/robustness correction
+
+Critical sequence 2 on a8cb4f2 returned NO_GO for omitted latency-failure disclosure
+(zero critical/high; one documentary medium and four robustness lows). Record the
+separate **OPEN FAIL: 200 ms full-capacity gate**. With 6,000 devices, 250,000 device
+history rows and 10,000 × 4 KiB snapshots, the full probe measured 493.4 ms heartbeat.
+Isolated 404c86b measured 281.8 ms heartbeat / 274.9 ms observe; identical-checkpoint
+1395854b measured 271.9 / 264.3 ms. Closing 6,000 intervals took 83.9 ms, NULLing
+pointers 12.4 ms, outer commit 174.5 ms. The released reliability/Store path is
+unchanged: a pre-existing one-shot capacity-transition spike, without old-row loss
+or false recovery. Device-history capture stops explicitly with gap/limited status.
+The one-off 16 MiB cache experiment still measured 267.8 ms and FAILED. WAL cause
+is unproven; no input, threshold, pragma, durability or concurrency architecture
+is altered for a PASS. This remains separately scoped OPEN FAIL, not “all qualified.”
+
+The small code/test correction confines exact-copy localization to app-owned shell
+nodes, keeping entity options, notes and original AI prose unchanged. Initial body
+or already-chosen focus remains untouched; a default initial visual scroll still
+keeps the daily action visible without moving initial keyboard focus. Later route
+changes focus main; background keeps scroll/drafts. Locale GET failure falls back
+cosmetically and retries, including primary/intake/expert routes. A native exact-
+message regression pins the existing check-capacity contract; unexpected check
+errors are not converted into capacity-success reports. No kernel or request bytes
+change. Stage B remains closed pending explicit A GO and the same review stream.
+
+Root source-bound a8cb4f2 native scenes (quiet/outage/group/insufficient 320×700,
+outage 390/1280×700) had visible actions/no overflow; intake cancel retained API
+bytes, and both architecture HTTP/start/restart passed. These do not substitute
+for human participants or erase the explicit failed full-capacity timing gate.
+
+Final bounded-candidate checks: 545 Python PASS / 51.32 s (existing warning),
+86 Node 22.23.3 DOM PASS / 4.11 s, Ruff lint/format (62 files), both JS syntax
+and diff checks passed. Thirty runtime/packaging contracts, including every Python
+runtime module, are byte-exact a8cb4f2. Changes are labels/focus/fallback, tests and
+explicit failure documentation; no capacity timing repair or Stage B is claimed.
+Publication hygiene (tracked tree and reachable history) passed; the explicit
+full-capacity latency gate remains OPEN FAIL regardless of these passing checks.
+
+### 0.3.0 Stage A — sequence-3 preference-preservation correction
+
+Critical sequence 3 found a same-window stale preference cache: a saved language
+could be reset by the next intake save. All four successful preference-save paths
+now cache the validated server response. Intake sends locale only after an explicit
+change, preserving server choices through a failed read or another-window edit;
+failed saves keep the prior cache and dirty draft. An unexpected check ValueError
+now becomes a fixed internal error with a generic 500, preserving rollback and
+keeping raw exception text private. The known capacity fallback remains unchanged.
+The controller's A4 545-Python/86-DOM, both-architecture HTTP/restart and native
+focus/layout checks passed; this new delta still requires same-session review.
+The separate 200 ms full-capacity gate remains OPEN FAIL. Stage B stays closed.
+
+Final local checks: 545 Python PASS / 52.34 s (existing warning), 90 Node 22 DOM
+PASS / 3.90 s, Ruff lint/format (62 files), JS syntax, diff and publication scan.
+The only Python runtime delta is the fixed internal-error boundary in Home.feedback;
+Store, reliability, schema, HA, AI/research, settings and packaging stay exact A4.

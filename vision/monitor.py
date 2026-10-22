@@ -9,6 +9,7 @@ from datetime import datetime
 
 from .evidence import MAX_STEPS, dependency_graph, fingerprint, structure, trace_summary, trace_time
 from .ha import IDENTIFIER, HAClient, HAError
+from .home import HomeExperience
 from .insights import Insights
 from .reliability import BINARY_CLASSES, DIAGNOSTIC_CLASSES, MEASUREMENT_CLASSES, DeviceReliability
 
@@ -115,6 +116,9 @@ class Monitor:
         self.devices = []
         self.registry = {}
         self.registry_digests = {}
+        self.local_areas, self.local_device_locations, self.local_entity_areas = {}, {}, {}
+        self.local_upstream = {}
+        self.local_area_status = {"available": False, "limited": False, "observed_at": None}
         self.availability_metadata = {}
         self.structures = self.store.structures()
         self.config_attempts = {}
@@ -128,6 +132,7 @@ class Monitor:
         self.gap()
         self.insights = Insights(self)
         self.insights.refresh()
+        self.home = HomeExperience(self)
 
     def gap(self):
         now = time.time()
@@ -208,7 +213,14 @@ class Monitor:
             )
         self.store.set_meta("last_observation", now)
         if track_device:
+            device_id = self.registry.get(entity_id, {}).get("device_id")
+            prior_device = self.reliability.current.get(device_id)
             self.reliability.observe(entity_id, now)
+            if (
+                hasattr(self, "home")
+                and self.reliability.current.get(device_id) is not prior_device
+            ):
+                self.home.invalidate()
 
     def event(self, event):
         kind = event.get("event_type")
@@ -687,9 +699,61 @@ class Monitor:
             value is not None and previous.get(key) != value for key, value in incoming.items()
         )
 
+    async def refresh_local_areas(self, ha):
+        # Presentation only. Failure never invalidates device-state coverage.
+        try:
+            areas = await asyncio.wait_for(
+                self.optional(ha, "config/area_registry/list"), timeout=2
+            )
+        except TimeoutError:
+            areas = None
+            self.capabilities["config/area_registry/list"] = "unavailable (read timeout)"
+        self.local_areas = {}
+        self.local_area_status = {
+            "available": isinstance(areas, list),
+            "limited": isinstance(areas, list) and len(areas) > 512,
+            "observed_at": time.time() if isinstance(areas, list) else None,
+        }
+        for area in areas[:512] if isinstance(areas, list) else []:
+            if (
+                isinstance(area, dict)
+                and isinstance(area.get("area_id"), str)
+                and 0 < len(area["area_id"]) <= 200
+                and isinstance(area.get("name"), str)
+                and 0 < len(area["name"]) <= 120
+            ):
+                self.local_areas[area["area_id"]] = self.redactor.text(area["name"], 120)
+
     async def sync(self, ha):
+        self.home.syncing = self.home.pending = True
+        if self.home.timer:
+            self.home.timer.cancel()
+            self.home.timer = None
+        try:
+            await self._sync(ha)
+        finally:
+            self.home.syncing = False
+        self.home.refresh()
+
+    async def _sync(self, ha):
         devices = await self.optional(ha, "config/device_registry/list")
         if devices is not None:
+            self.local_upstream = {
+                d["id"]: d.get("via_device_id")
+                for d in devices[:6000]
+                if isinstance(d, dict)
+                and isinstance(d.get("id"), str)
+                and isinstance(d.get("via_device_id"), str)
+                and len(d["via_device_id"]) <= 200
+            }
+            self.local_device_locations = {
+                d["id"]: {
+                    k: d.get(k) if isinstance(d.get(k), str) and len(d[k]) <= 200 else None
+                    for k in ("area_id", "parent_device_id")
+                }
+                for d in devices[:6000]
+                if isinstance(d, dict) and isinstance(d.get("id"), str)
+            }
             self.devices = [
                 self.redactor.clean(
                     {
@@ -710,6 +774,14 @@ class Monitor:
             ]
         registry = await self.optional(ha, "config/entity_registry/list")
         if registry is not None:
+            self.local_entity_areas = {
+                e["entity_id"]: e["area_id"]
+                for e in registry[:20000]
+                if isinstance(e, dict)
+                and isinstance(e.get("entity_id"), str)
+                and isinstance(e.get("area_id"), str)
+                and len(e["area_id"]) <= 200
+            }
             current, digests = {}, {}
             for entry in registry:
                 entity_id = entry["entity_id"]
@@ -803,6 +875,7 @@ class Monitor:
         self.store.set_meta("last_sync", self.last_sync)
         self.store.prune(self.settings.retention_days)
         self.insights.refresh()
+        await self.refresh_local_areas(ha)
 
     async def run(self):
         if not self.runtime.token:

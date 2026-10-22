@@ -15,7 +15,7 @@ from pathlib import Path
 
 from .evidence import fingerprint
 
-SCHEMA_VERSION = 9
+SCHEMA_VERSION = 10
 AI_MAX_REQUESTS = 512
 AI_MAX_STORAGE_BYTES = 64 * 1024 * 1024
 AI_RESULT_RESERVE_BYTES = 1024 * 1024
@@ -331,6 +331,30 @@ MIGRATIONS = {
         "CREATE INDEX device_checks_device ON device_checks(device_id,created,id)",
     ),
 }
+
+
+MIGRATIONS[10] = (
+    "CREATE TABLE home_preferences (id INTEGER PRIMARY KEY CHECK(id=1),locale TEXT NOT NULL "
+    "CHECK(locale IN ('auto','nl','en')),intake TEXT NOT NULL "
+    "CHECK(intake IN ('new','draft','complete','skipped')),updated REAL NOT NULL)",
+    "INSERT INTO home_preferences VALUES (1,'auto','new',0)",
+    "CREATE TABLE home_device_preferences (device_id TEXT PRIMARY KEY,importance TEXT NOT NULL "
+    "CHECK(importance IN ('low','normal','high')),known_issue INTEGER "
+    "CHECK(known_issue IN (0,1)),usual_behavior INTEGER CHECK(usual_behavior IN (0,1)),"
+    "baseline_state TEXT NOT NULL,"
+    "baseline_cohort TEXT NOT NULL,acknowledged_at REAL,worsened_at REAL,"
+    "worsened_cohort TEXT,updated REAL NOT NULL)",
+    "CREATE TABLE home_problems (problem_id TEXT PRIMARY KEY,kind TEXT NOT NULL,target TEXT NOT "
+    "NULL,episode TEXT NOT NULL,snapshot TEXT NOT NULL,first_observed REAL NOT NULL,"
+    "updated REAL NOT NULL,present INTEGER NOT NULL)",
+    "CREATE INDEX home_problems_present ON home_problems(present,updated,problem_id)",
+    "CREATE TABLE home_feedback (id INTEGER PRIMARY KEY,request_id TEXT NOT NULL UNIQUE,"
+    "problem_id TEXT NOT NULL REFERENCES home_problems(problem_id),episode TEXT NOT NULL,"
+    "created REAL NOT NULL,kind TEXT NOT NULL,note TEXT NOT NULL,basis TEXT NOT NULL "
+    "CHECK(length(cast(basis AS BLOB))<=4096),check_id INTEGER "
+    "REFERENCES device_checks(id))",
+    "CREATE INDEX home_feedback_problem ON home_feedback(problem_id,created,id)",
+)
 
 
 class Store:

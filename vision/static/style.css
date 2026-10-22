@@ -1386,3 +1386,75 @@ summary {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* 0.3 daily journey. All data labels wrap; no clipping to hide layout faults. */
+#expert-nav { margin: 1.2rem 0; font-size: .9rem; }
+#expert-links a { font-size: .9rem; }
+.today-hero { display: flex; gap: 1.5rem; justify-content: space-between; align-items: flex-start; padding: 1.2rem 0; }
+.today-hero h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); margin: .2rem 0; line-height: 1.25; }
+.today-hero p { max-width: 64ch; margin: .5rem 0; }
+.today-hero small, .home-location { color: var(--muted); }
+.home-priorities { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,260px),1fr)); gap: 1rem; margin: .8rem 0 1.3rem; }
+.today-priority { min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: .75rem; padding: 1.1rem; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.home-priorities .today-priority:first-child { background: var(--green-soft); border-color: #b3cfc0; }
+.today-priority h2 { font-size: 1.15rem; margin: .25rem 0; }
+.today-priority p { margin: .5rem 0; }
+.today-priority small { color: var(--muted); }
+.home-primary { align-self: flex-start; }
+.home-integrations { margin: .65rem 0; }
+.home-integrations h3 { margin: .2rem 0; font-size: 1rem; }
+.home-integrations > small { display: block; margin-bottom: .35rem; color: var(--muted); }
+.home-chart .device-chart { max-height: 210px; }
+.home-section-heading { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.home-section-heading nav { display: flex; gap: .65rem; }
+.home-section-heading [aria-current] { font-weight: 700; text-decoration-thickness: 3px; }
+.home-section { padding: 1.2rem; border: 1px solid var(--line); border-radius: 14px; background: white; margin: 1rem 0; }
+.home-section h2 { font-size: 1.2rem; margin-top: 0; }
+.home-next-check { font-size: 1.12rem; max-width: 70ch; }
+.followthrough-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.home-device-list { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,260px),1fr)); gap: 1rem; margin: 1rem 0; }
+.home-device { padding: 1rem; border: 1px solid var(--line); border-radius: 12px; background: white; min-width: 0; }
+.home-device h3 { margin: 0; }
+.home-device label { margin-top: .7rem; }
+.check-label { display: flex; gap: .6rem; align-items: flex-start; }
+.check-label input { flex: 0 0 auto; width: 20px; min-height: 20px; margin-top: .25rem; }
+.home-actions { display: flex; flex-wrap: wrap; gap: .7rem; margin: 1rem 0; }
+.home-problem-list { display: grid; gap: 1rem; }
+.home-device, .today-priority, .home-section, .today-hero { overflow-wrap: anywhere; }
+.home-device > *, .today-priority > *, .home-section > *, .today-hero > * { min-width: 0; max-width: 100%; }
+#home-intake, #home-personal, #home-feedback { display: block; min-width: 0; }
+#home-personal { max-width: 600px; }
+#home-personal > label, #home-personal > small, #home-personal > button { margin: .6rem 0; }
+#home-feedback fieldset { min-width: 0; border: 0; padding: 0; }
+#home-feedback select, #home-feedback textarea { width: 100%; max-width: 600px; }
+#home-feedback details { margin: .7rem 0; }
+.quiet-button { background: transparent; color: var(--green); border-color: var(--line); }
+@media (max-width: 600px) {
+  .today-hero { flex-direction: column; gap: .6rem; }
+  .today-hero h2 { font-size: 1.55rem; }
+  .followthrough-grid { grid-template-columns: 1fr; }
+  .home-section { padding: .9rem; }
+}
+@media (max-width: 600px) {
+  aside { padding: .65rem 1rem; gap: .25rem; }
+  aside .tagline, aside .safety { display: none; }
+  #nav { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); overflow: visible; margin: .6rem 0 .2rem; gap: .2rem; }
+  #nav a { padding: .45rem .25rem; min-height: 38px; text-align: center; font-size: .85rem; }
+  #expert-nav { margin: .2rem 0 0; }
+  #expert-nav summary { font-size: .8rem; }
+  #expert-links { margin: .4rem 0; }
+  main > header { margin-bottom: .65rem; padding-bottom: .5rem; gap: .5rem; }
+  main > header .eyebrow { display: none; }
+  main > header h1 { font-size: 1.3rem; margin: 0; }
+  main > header #connection { font-size: .7rem; }
+  .today-hero { padding: .4rem 0; gap: .2rem; }
+  .today-hero h2 { font-size: 1.35rem; }
+  .today-hero .overline { display: none; }
+  .today-hero p { margin: .3rem 0; font-size: .9rem; }
+  .today-hero > a { font-size: .85rem; }
+  .home-priorities { margin-top: .6rem; }
+  .today-priority { padding: .8rem; }
+  .today-priority { gap: .5rem; }
+  .today-priority p { margin: .35rem 0; }
+  .home-integrations .heatmap-row { grid-template-columns: minmax(0,1fr); gap: .15rem; }
+}

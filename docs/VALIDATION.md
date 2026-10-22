@@ -1,6 +1,167 @@
-# Validation and release status — 2026-10-20
+# Validation and release status — 2026-10-22
 
-**Current source package: 0.2.1.** Both phases are accepted, public and live on
+**Current source package: 0.3.0-dev.1.** This is the local Stage A preview.
+Its new local tests are recorded below; independent critical review, root browser/
+container/migration acceptance, public/live gates and real human usability remain
+open. One-click orchestration and v4 output are not implemented; historical AI
+requests/results and existing manual expert workflows remain intact.
+
+## 0.3.0 Stage A — builder-local checkpoint, 2026-10-22
+
+From accepted input `1dbc2f71d6643cf8710569088588cf362f60486c`, the local dev.1
+implements Today/problems/intake and manual follow-through. This is Stage A only;
+there is no new one-click paid orchestration or v4 result implementation.
+
+| Local evidence | Result and scope |
+| --- | --- |
+| `.venv/bin/python -m pytest -q` | 534 passed / 44.95 s, one existing Starlette warning; all 519 original tests retained. Fifteen new API/domain cases cover source/episode identity, covered grouping, independent preferences/worsening, feedback, migration, capacity/pending and area/privacy bounds. |
+| `node --test tests/dom/*.test.cjs` on Node 22.23.3 | 74 passed / 3.26 s; all 65 original DOM cases retained. Nine new whole-app scenarios use real synthetic ASGI responses for daily navigation, Dutch labels, cancel/explicit-only draft saves, subjective feedback, unknown coverage, focus, healthy-device routing and local declared impact. |
+| Ruff / format / syntax / whitespace | Passed: `ruff check .`, `ruff format --check vision tests scripts` (62 files), `node --check` for app.js and home.js, `git diff --check`. Only the new home.js module received targeted JS formatting; no runtime dependency was added. |
+| Preservation lineage | Migrated schema 9→10 and restart retain fixture rows and backup hash. Migrations 1–9 and the Store class are source-exact; reliability, AI/research/config code, dependency locks and CI are unchanged. The optional area read is the only HA allowlist addition; event subscriptions remain exact. |
+| Publication hygiene | The tracked tree and all reachable Git history passed `scripts/check_publication.py`; synthetic fixtures and local logs stay excluded from Git. |
+
+The initial local 534-Python/73-DOM checkpoint preceded the ninth concrete-impact
+DOM case. Both are builder-local results, not root or human qualification. Logs
+and invariant proof are ignored under work/030-stagea-validation. Schema 10 adds
+only home_preferences, home_device_preferences, home_problems and home_feedback;
+new caps refuse admission without deleting existing records. Feedback is subjective;
+a later covered check may support observation of recovery, never causal proof.
+
+At this dated freeze checkpoint, independent critical review, populated-history
+migration/performance and both-architecture container checks, final native browser
+acceptance and public/live gates remain pending with the controller. An earlier
+synthetic prototype inspection does not qualify the final candidate. Five real
+human usability participants (not agent personas) remain an open acceptance gate.
+No actual HA/provider/publication operation or human usability pass is claimed by
+the builder. Requested implementation configuration remains gpt-6.1-sol / ultra;
+effective runtime identity is not independently observable.
+
+### Stage A corrective candidate — 2026-10-22
+
+**OPEN FAIL — full-capacity latency gate (200 ms).** The independent workload
+with 6,000 devices, 250,000 device-history rows and 10,000 × 4 KiB presentation
+snapshots measured a 493.4 ms heartbeat gap at the first history-capacity stop.
+An isolated replay on `404c86b` measured 281.8 ms heartbeat / 274.9 ms observe time;
+the same-source comparison on initial `1395854b` measured 271.9 / 264.3 ms. The
+released reliability/Store path is unchanged: closing 6,000 intervals took
+83.9 ms, clearing current observation pointers 12.4 ms and outer commit 174.5 ms.
+This is a pre-existing one-shot spike per capacity transition, distinct from the
+passing ordinary cached-read/rebuild and Home-only probes below. Existing rows
+remain intact; new device-history capture stops with an explicit gap/limitation,
+not silent eviction, data loss or observed recovery.
+
+A one-shot 16 MiB SQLite cache experiment still measured 267.8 ms and **FAILED**
+the unchanged 200 ms gate. WAL/checkpoint causality is unproven. No production
+input, limit, SQLite pragma, durability setting or writer/checkpointer architecture
+was changed to obtain a pass. This separately scoped latency failure remains
+unrepaired and open; the rest of the qualification must not be read as “all gates
+passed.” Original measurements/proofs remain retained by the controller.
+
+The controller independently qualified original `1395854b`: 534 Python/74 DOM,
+populated preservation of all 28 released tables/options/backups and restart,
+both actual architecture images including HTTP/restart/hot-journal/RO-WAL, and
+6,000-device/250,000-interval scale (Today GET at most 6.2 ms; measured loop gap
+42 ms). Separate near-cap evidence measured 10,000 snapshot bodies / 40.96 MB read
+per refresh and the pending/cap/churn defects. These technical passes are historical
+source-bound evidence, not initial critical GO. Critical review returned NO_GO;
+the following correction needs its own independent acceptance.
+
+The local corrective suite adds ten Python and six whole-app DOM cases to the
+first freeze. It covers event cadence, meaningful versus unchanged state updates,
+retained pending/disconnected evidence, sync failure, stable group/episode identity,
+retirement-based expiry with feedback protection, explicit null versus absence,
+missing-device/check-capacity subjective reports, exact successful replay after a
+new episode, parent-area semantics, HTTP crypto fallback/retry, locale deep links,
+working device controls, earlier-episode disclosure and visible integration context.
+Settings/History shell translation leaves actual option values, raw outcomes and
+original analysis prose intact. No baseline test is disabled or skipped.
+Final local results are 544 Python PASS / 46.83 s (one existing warning), 80 Node
+22.23.3 DOM PASS / 4.06 s, Ruff lint/format (62 files), both JS syntax and diff
+checks passed. The final batched-write source reran the full Python suite.
+The tracked-tree/all-reachable-history publication scan passed as well.
+
+An ignored local Home-only probe with 6,000 devices and 10,000 × 4,095-byte retained
+snapshots returned zero snapshot body bytes from SQL; cold batched refresh 191 ms,
+warm 71–84 ms. During a 2.6 s coalescer probe, all 157 sampled statuses retained
+attention, one refresh ran and the largest heartbeat gap was 84 ms. An earlier
+unbatched cold measurement was 217 ms; it prompted batching rather than a new
+worker architecture. Raw prep logs are preserved under work/030-stagea-validation.
+These figures are local workload measurements, not a device-wide response guarantee.
+Unchanged numeric/available Monitor events are separately tested to remain quiet
+without pending; a relevant new outage after an empty snapshot remains updating.
+
+Schema 10 and its four new tables are unchanged from the initial freeze. Cleanup
+is restricted to ordinary-retention-expired retired presentation snapshots without
+owner feedback, never older source/AI/check/policy/billing records. A fully referenced
+cap remains explicitly limited. Earlier retained group details are restored with
+unknown state or explicitly reported missing. Same-session critical review, root
+corrective migration/container/browser/performance acceptance, real human usability
+and public/live gates remain open. Stage B one-click/v4 remains absent.
+
+The final UI-only coverage-follow-through guard adds one actual initial API→DOM
+case: unknown initial coverage offers a connection/freshness check linking to
+existing evidence, not a fabricated device priority. Final full DOM suite is
+81 PASS / 3.02 s. Backend/Python source is unchanged from the 544-PASS checkpoint.
+
+The subsequent bounded UI-only native follow-up distinguishes cached integration
+counts from current availability: snapshot time, partial/unassessed counts and
+missing/failed/pending coverage are explicit. An all-unknown group no longer has
+the same caption as a known healthy zero. Foreground intake cancel/navigation
+scrolls to the main region; background refresh preserves scroll/focus/drafts.
+Six caption states and foreground/background scroll spies are in the shipped DOM
+suite (83 PASS / 3.49 s). All 61 tracked Python files and 71 selected source/
+packaging contracts remain byte-exact 404c86b; its 544-Python result carries forward.
+No repeated Python test run or new kernel result is claimed for this JS-only delta.
+Root native/critical gates and the separate full-capacity admission-path latency
+investigation remain open; no limit/input adjustment is hidden in this follow-up.
+
+### Stage A review sequence 2 — bounded documentation/robustness delta
+
+Critical sequence 2 on exact `a8cb4f2` returned NO_GO for the missing explicit
+failed-capacity disclosure above, with zero critical/high findings and four lows.
+The follow-up restricts localization to app-owned shell nodes/markers, preserves
+initial body or user-selected focus, makes locale-read failure cosmetic with retry,
+and pins the existing native check-capacity error contract in a regression.
+No reliability/Store/HA/provider/schema/limit or request-history change is made.
+The controller's source-bound native checks on a8cb4f2 showed quiet/outage/group/
+insufficient scenes at 320×700, outage at 390/1280×700, visible first actions and
+no overflow; intake cancel preserved the API bytes. Both architecture HTTP/start/
+restart checks passed. These are technical checks, not real-human usability proof.
+The new candidate still requires the controller's same-session review and native
+acceptance; Stage B remains closed, and the 200 ms full-capacity gate remains FAIL.
+Local bounded-candidate checks: 545 Python PASS / 51.32 s (one existing warning),
+86 Node 22.23.3 DOM PASS / 4.11 s, Ruff lint/format (62 files), JS syntax and diff
+passed. All Python runtime modules and 30 selected runtime/packaging contracts
+remain byte-exact a8cb4f2; the extra Python case pins the native capacity message
+and rejects unexpected check errors. No kernel timing fix is included or implied.
+The publication hygiene scan passed. The full-capacity 200 ms gate remains OPEN FAIL.
+
+### Stage A review sequence 3 — preference cache and internal-error boundary
+
+Sequence 3 returned NO_GO for a real stale-locale-cache regression, plus one
+nonblocking internal-error classification low. Successful preference POSTs now
+cache the validated returned locale; unchanged intake locale is omitted, including
+when preference reads fail or another window changes the server choice. Failed
+saves preserve both the prior cache and dirty draft. Whole-app tests cover intake
+and Settings saves, rerun, device-only saves, Skip and per-issue preference saves.
+An actual check INSERT followed by an unexpected ValueError must roll back and
+return only the generic safe 500; ordinary native check-capacity fallback remains.
+
+The controller's exact A4 qualification passed 545 Python / 53.57 s, 86 DOM /
+4.87 s, both actual architecture HTTP/restart checks and six native layout/focus
+views. Independent UI and native-capacity/partial-rollback checks also passed.
+These are source-bound technical checks, not human usability or a pass for the
+separate full-capacity 200 ms gate, which remains **OPEN FAIL**. No capacity/kernel
+repair, schema change, Stage B implementation or new review GO is claimed.
+
+Local final verification: 545 Python PASS / 52.34 s (existing warning), 90 Node
+22.23.3 DOM PASS / 3.90 s, Ruff lint/format (62 files), both JS syntax, diff and
+publication scans passed. The sole Python runtime change is the fixed unexpected-
+check error boundary; all other runtime/packaging contracts stay exact A4.
+
+## Previous 0.2.1 qualification checkpoint
+
+**Previous source package: 0.2.1.** Both phases are accepted, public and live on
 their source-bound dev.1/dev.2 candidates. Stable packaging preserves the accepted
 functional source; its dated metadata-freeze checkpoint appears below. Live checks
 were performed by the controller. Completed and pending gates remain separate.

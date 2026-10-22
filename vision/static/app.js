@@ -1,12 +1,15 @@
 "use strict";
 const pages = [
-  "Overview",
+  "Today",
+  "Problems",
   "Devices",
+  "History",
+  "Settings",
+  "Overview",
   "Automations",
   "Issues",
   "Intelligence",
-  "History",
-  "Settings",
+  "Intake",
 ];
 const $ = (s) => document.querySelector(s),
   content = $("#content"),
@@ -56,14 +59,17 @@ async function api(path, options = {}) {
     );
   return data;
 }
-pages.forEach((p) => {
+pages.filter(p=>p!=="Intake").forEach((p,index) => {
   const a = document.createElement("a");
   a.href = "#" + p.toLowerCase();
-  a.textContent = p;
-  $("#nav").append(a);
+  a.dataset.label = p;
+  a.textContent = window.VisionHome?.label(p) || p;
+  $(index<5?"#nav":"#expert-links").append(a);
 });
+window.VisionHome?.applyLocale();
 let generation = 0,
-  lastRefreshFailure = "";
+  lastRefreshFailure = "",
+  lastRenderedRoute = null;
 function searchTable() {
   const input = $("#search");
   if (input)
@@ -524,7 +530,9 @@ function deviceStorageView(storage) {
       : "Ordinary-retention eligibility is unknown until a cached snapshot identifies an eligible closed interval; no resumption time is promised.";
   return `${storage.blocked ? `<p class="coverage-note">Device-history capacity reached: ${esc(summary)}. Existing history remains preserved. Uncaptured time and new worsening cannot be proved while history capture is blocked. Current evidence remains inspectable. ${esc(eligibility)}</p>` : ""}<details class="history-capacity"><summary>Device-history capacity</summary><p>${esc(summary)}.</p><p>${number(storage.remaining_rows, 0)} rows and ${number(storage.remaining_encoded_bytes / 1048576)} MiB encoded headroom. Encoded fields exclude SQLite/index/WAL overhead; this is not a file-size limit.</p><p>${esc(eligibility)}</p><p>Eligibility snapshot ${esc(date(storage.retention_estimate_as_of))}. Configured retention only; history is not evicted to make room.</p></details>`;
 }
-function deviceChart(data) {
+function deviceChart(data, locale = null) {
+  const nl = locale === "nl";
+  const label = {persistent:nl?"Aanhoudend / basis":"Persistent / baseline",new:nl?"Nieuwe waargenomen overgangen":"New observed transitions",expected:nl?"Verwacht":"Expected"};
   const points = data.points || [],
     width = 640,
     height = 140;
@@ -550,10 +558,10 @@ function deviceChart(data) {
           if (value == null) return "";
           const h = (value / max) * height;
           y -= h;
-          return `<rect class="series-${kind}" x="${i * bar + 1}" y="${y}" width="${Math.max(1, bar - 2)}" height="${h}"><title>${esc(kind)}: ${esc(value)} devices</title></rect>`;
+          return `<rect class="series-${kind}" x="${i * bar + 1}" y="${y}" width="${Math.max(1, bar - 2)}" height="${h}"><title>${esc(label[kind])}: ${esc(value)} ${nl?"apparaten":"devices"}</title></rect>`;
         })
         .join("");
-      return `${p.coverage < 1 || p.observed === 0 || p.observed === null || p.selection_limited || p.persistent == null ? `<rect class="chart-gap" x="${i * bar}" y="0" width="${bar}" height="${height}"><title>${esc(date(p.start))}: ${coverageLabel(p.coverage)} monitoring coverage; missing membership or omitted evidence remains unknown</title></rect>` : ""}${stacks}`;
+      return `${p.coverage < 1 || p.observed === 0 || p.observed === null || p.selection_limited || p.persistent == null ? `<rect class="chart-gap" x="${i * bar}" y="0" width="${bar}" height="${height}"><title>${esc(date(p.start))}: ${coverageLabel(p.coverage)} ${nl?"meetdekking; ontbrekende leden of weggelaten gegevens blijven onbekend":"monitoring coverage; missing membership or omitted evidence remains unknown"}</title></rect>` : ""}${stacks}`;
     })
     .join("");
   const ticks = [
@@ -563,13 +571,13 @@ function deviceChart(data) {
     data.end,
   ];
   const tickLabel = (at) =>
-    new Date(at * 1000).toLocaleString(undefined, {
+    new Date(at * 1000).toLocaleString(locale === "nl" ? "nl-NL" : locale === "en" ? "en-GB" : undefined, {
       month: "short",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
-  return `<figure class="device-chart"><div class="chart-plot"><div class="chart-scale" aria-label="Unavailable registered devices"><span>${esc(max)} devices</span><span>${number(Math.floor(max / 2), 0)}</span><span>0</span></div><svg viewBox="0 0 ${width} ${height + 12}" role="img" aria-label="Unique observed unavailable devices at bucket ends. Grey marks missing coverage.">${bars}<line class="chart-axis" x1="0" x2="${width}" y1="${height}" y2="${height}"/></svg></div><figcaption>${ticks.map((at) => `<span>${esc(tickLabel(at))}</span>`).join("")}</figcaption><div class="chart-legend"><span class="legend-persistent">Persistent / baseline</span><span class="legend-new">New observed transitions</span><span class="legend-expected">Expected</span><span class="legend-gap">Unknown coverage</span></div></figure>`;
+  return `<figure class="device-chart"><div class="chart-plot"><div class="chart-scale" aria-label="${nl?"Niet-beschikbare geregistreerde apparaten":"Unavailable registered devices"}"><span>${esc(max)} ${nl?"apparaten":"devices"}</span><span>${number(Math.floor(max / 2), 0)}</span><span>0</span></div><svg viewBox="0 0 ${width} ${height + 12}" role="img" aria-label="${nl?"Unieke waargenomen niet-beschikbare apparaten aan het einde van meetvakken. Grijs betekent ontbrekende dekking.":"Unique observed unavailable devices at bucket ends. Grey marks missing coverage."}">${bars}<line class="chart-axis" x1="0" x2="${width}" y1="${height}" y2="${height}"/></svg></div><figcaption>${ticks.map((at) => `<span>${esc(tickLabel(at))}</span>`).join("")}</figcaption><div class="chart-legend"><span class="legend-persistent">${esc(label.persistent)}</span><span class="legend-new">${esc(label.new)}</span><span class="legend-expected">${esc(label.expected)}</span><span class="legend-gap">${nl?"Onbekende dekking":"Unknown coverage"}</span></div></figure>`;
 }
 function deviceActions(items, primary = true) {
   if (!items.length)
@@ -1577,7 +1585,7 @@ async function history(route) {
         autoLink(item.entity_id),
         badge(item.outcome, item.outcome),
         esc(item.start_source),
-        `<a href="#automations/${encodeURIComponent(item.entity_id)}?run_id=${encodeURIComponent(item.run_id)}">Inspect run</a>`,
+        `<a href="#automations/${encodeURIComponent(item.entity_id)}?run_id=${encodeURIComponent(item.run_id)}" data-home-shell>Inspect run</a>`,
       ];
     if (kind === "availability")
       return [
@@ -1609,7 +1617,7 @@ async function history(route) {
         esc(item.kind),
         esc(item.provider),
         esc(item.model),
-        `<p>${esc((parse(item.result) || {}).summary)}</p><a href="#intelligence/?analysis=${encodeURIComponent(item.id)}">Open findings and original evidence</a>`,
+        `<p>${esc((parse(item.result) || {}).summary)}</p><a href="#intelligence/?analysis=${encodeURIComponent(item.id)}" data-home-shell>Open findings and original evidence</a>`,
       ];
     return [
       esc(date(item.created)),
@@ -1631,7 +1639,7 @@ async function history(route) {
   if (data.next_cursor) next.set("cursor", data.next_cursor);
   return card(
     "Search retained history",
-    `<form id="history-filter"><label>Section<select name="kind">${["runs", "availability", "issues", "changes", "usage", "analyses"].map((value) => `<option ${value === kind ? "selected" : ""}>${value}</option>`).join("")}</select></label><label>Search<input name="q" maxlength="200" value="${esc(params.get("q") || "")}"></label><label>Entity (runs / availability / changes)<input name="entity" maxlength="200" value="${esc(params.get("entity") || "")}"></label><label>Outcome / state / source<input name="outcome" maxlength="100" value="${esc(params.get("outcome") || "")}"></label><label>Day (UTC)<input name="day" type="date" value="${esc(params.get("day") || "")}"></label><button type="submit">Search history</button></form><p class="muted">${esc(data.coverage)} Structural baselines record observation time, not HA edit time. Costs include conservative uncertain reservations.</p>${table(headers, rows)}${data.next_cursor ? `<a class="button" href="#history/${kind}?${next}">Next observations →</a>` : ""}<p><a href="#history/${kind}">Start of this section</a></p>`,
+    `<form id="history-filter"><label>Section<select name="kind">${["runs", "availability", "issues", "changes", "usage", "analyses"].map((value) => `<option ${value === kind ? "selected" : ""}>${value}</option>`).join("")}</select></label><label>Search<input name="q" maxlength="200" value="${esc(params.get("q") || "")}"></label><label>Entity (runs / availability / changes)<input name="entity" maxlength="200" value="${esc(params.get("entity") || "")}"></label><label>Outcome / state / source<input name="outcome" maxlength="100" value="${esc(params.get("outcome") || "")}"></label><label>Day (UTC)<input name="day" type="date" value="${esc(params.get("day") || "")}"></label><button type="submit">Search history</button></form><p class="muted">${esc(data.coverage)} <span data-home-shell>Structural baselines record observation time, not HA edit time. Costs include conservative uncertain reservations.</span></p>${table(headers, rows)}${data.next_cursor ? `<a class="button" href="#history/${kind}?${next}" data-home-shell>Next observations →</a>` : ""}<p><a href="#history/${kind}" data-home-shell>Start of this section</a></p>`,
   );
 }
 async function settings() {
@@ -1643,17 +1651,17 @@ async function settings() {
   return (
     card(
       "Configuration & privacy",
-      `<p>Configure provider keys, model IDs, opt-in, prices, budgets and the daily schedule in <strong>Settings → Apps → Vision → Configuration</strong>, then restart Vision. Credentials are never returned here. Prices are user supplied in USD per million tokens; a zero rate blocks AI requests.</p><details><summary>Current configuration (secrets excluded)</summary><dl>${Object.entries(
+      `<p data-home-shell>Configure provider keys, model IDs, opt-in, prices, budgets and the daily schedule in <strong data-home-shell>Settings → Apps → Vision → Configuration</strong>, then restart Vision. Credentials are never returned here. Prices are user supplied in USD per million tokens; a zero rate blocks AI requests.</p><details><summary data-home-shell>Current configuration (secrets excluded)</summary><dl>${Object.entries(
         data,
       )
         .map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`)
         .join(
           "",
-        )}</dl></details><p class="muted">Budget failover needs its own opt-in. Costs are estimates at configured rates; enforce provider-side spending limits too. Anthropic/OpenAI process only opt-in evidence requests.</p>`,
+        )}</dl></details><p class="muted" data-home-shell>Budget failover needs its own opt-in. Costs are estimates at configured rates; enforce provider-side spending limits too. Anthropic/OpenAI process only opt-in evidence requests.</p>`,
     ) +
     card(
       "Expected offline behavior",
-      `<p>Reduce attention for expected availability observations while preserving source facts. This changes only Vision's database. Reasons are redacted before storage.</p><form id="exception-form"><label>Entity<select name="entity_id" required>${devices.entities.map((e) => `<option value="${esc(e.entity_id)}">${esc(e.name)} (${esc(e.entity_id)})</option>`).join("")}</select></label><label>Reason<input name="reason" maxlength="300" required placeholder="For example, a battery device sleeps overnight"></label><label>Expires after hours<input name="hours" type="number" min="1" max="8760" value="24" required></label><button type="submit">Save exception</button></form>` +
+      `<p data-home-shell>Reduce attention for expected availability observations while preserving source facts. This changes only Vision's database. Reasons are redacted before storage.</p><form id="exception-form"><label>Entity<select name="entity_id" required>${devices.entities.map((e) => `<option value="${esc(e.entity_id)}">${esc(e.name)} (${esc(e.entity_id)})</option>`).join("")}</select></label><label>Reason<input name="reason" maxlength="300" required placeholder="For example, a battery device sleeps overnight"></label><label>Expires after hours<input name="hours" type="number" min="1" max="8760" value="24" required></label><button type="submit">Save exception</button></form>` +
         table(
           ["Entity", "Reason", "Expires", ""],
           exceptions.map((e) => [
@@ -1679,37 +1687,57 @@ function backgroundEngaged() {
 async function render({ background = false } = {}) {
   if (background && backgroundEngaged()) return;
   const id = ++generation;
+  const renderRoute = location.hash || "#today";
   const [page, encoded] = location.hash.slice(1).split("/");
   const active = pages.map((p) => p.toLowerCase()).includes(page)
     ? page
-    : "overview";
-  $("#title").textContent = pages.find((p) => p.toLowerCase() === active);
+    : "today";
+  const title = pages.find((p) => p.toLowerCase() === active);
+  $("#title").textContent = window.VisionHome?.label(title) || title;
   document
     .querySelectorAll("nav a")
     .forEach((a) => a.classList.toggle("active", a.hash === "#" + active));
   try {
     const health = await api("health");
+    await window.VisionHome?.resolveLocale();
     if (id !== generation) return;
     if (health.configuration_error)
       notice.textContent = health.configuration_error;
+    $("#connection").dataset.connected = String(health.connected);
     $("#connection").textContent =
       (health.connected ? "Connected" : "Disconnected") + " · Read only";
     const views = {
+      today: () => window.VisionHome.today(),
+      problems: () => window.VisionHome.problems(encoded || null),
+      intake: () => window.VisionHome.intake(encoded || null),
       overview,
-      devices: () => devices(encoded || null),
+      devices: () => !encoded && window.VisionHome ? window.VisionHome.devices(null) : encoded?.startsWith("?") && window.VisionHome ? window.VisionHome.devices(encoded) : devices(encoded || null),
       automations: () => automations(encoded || null),
       issues: () => issues(encoded || null),
       intelligence: () => intelligence(encoded || null),
       history: () => history(encoded || null),
-      settings,
+      settings: async () => (window.VisionHome?.settingsLinks() || "") + await settings(),
     };
     const html = await views[active]();
     if (id !== generation) return;
     if (background && backgroundEngaged()) return;
     content.innerHTML = html;
+    window.VisionHome?.localizeShell(active, content);
+    if (!background) {
+      if (lastRenderedRoute !== renderRoute) {
+        const main = $("#main");
+        if (lastRenderedRoute !== null) main.focus({ preventScroll: true });
+        if (lastRenderedRoute !== null || document.activeElement === document.body) {
+          main.scrollTop = 0;
+          main.scrollIntoView?.({ block: "start", behavior: "auto" });
+        }
+      }
+      lastRenderedRoute = renderRoute;
+    }
     searchTable();
     await bindIntelligence(encoded || null);
     bindReliability();
+    window.VisionHome?.bind();
     const localStatus = $("#case-status-form");
     if (localStatus)
       localStatus.addEventListener("submit", async (event) => {
@@ -1823,7 +1851,7 @@ window.addEventListener("hashchange", () => {
 });
 setInterval(() => {
   if (
-    ["", "#overview"].includes(location.hash.split("/")[0]) &&
+    ["", "#overview", "#today"].includes(location.hash.split("/")[0]) &&
     !document.querySelector("details[open]")
   )
     render({ background: true });
