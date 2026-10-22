@@ -1,10 +1,34 @@
 # Validation and release status — 2026-10-22
 
-**Current source package: 0.3.0-dev.2.** Stage A source-functional acceptance is
-bound to abcd98ac; Stage B one-click/v4 independent qualification is pending.
-Historical AI requests/results and manual expert workflows remain intact. Real-human
-usability and Stage B public/live gates remain open. The separately scoped 200 ms
-full-capacity latency gate remains **OPEN FAIL**, as detailed below.
+**Current source package: 0.3.0-dev.2.** Stage A and exact B3 runtime 3322963 have
+independent source-functional acceptance. The prerelease is public and its actual
+read-only HA installation is verified. New live one-click/provider semantic and
+billed-price checks remain pending; consent is still off. Five-real-human usability
+is OPEN (0 participants; owner decision pending). The separately scoped full-capacity
+gate remains **OPEN FAIL: 493.4 ms against 200 ms**. No stable 0.3.0 acceptance follows.
+
+## Dev.2 technical qualification closure — 2026-10-22
+
+This dated closure supersedes the earlier checkpoints' pending source/public/
+installation status; their historical results and failed probes remain intact.
+
+| Binding / gate | Verified result and boundary |
+| --- | --- |
+| Qualified runtime | `3322963b0d7eaa32d2a189a75f587c0dcafeae2b`, tree `dd365401cb3c550fc27db48ec2b27a2b334103cc`. |
+| Critical review | Stream `0d98f7ed-49fa-422b-9a0c-0a87a758d5e1`, sequence 3: GO, zero findings / critical / high / medium. Independent B3 data and AI discovery/no-write/legacy checks passed. |
+| Root immutable checks | 569 Python / 127 DOM; lint and three JS parsers; both actual architecture builds with HTTP/start/restart; native 320/390/1280 px. Deep Store/hot-journal/WAL, populated old-history/A32 and legacy-body evidence carries only through exact unchanged components, not as fresh B3 deep reruns. |
+| Public readback | PR [#9](https://github.com/Patrick1610/vision-homeassistant/pull/9), merged main `3b06704c58e8a956f75615b11469a08899f49930`; all 107 anonymous file bytes/tree matched the qualified source. Push `39748617497`, PR `39748704123`, main `39749052434` and tag `39751178034` CI streams all succeeded. |
+| Prerelease | Annotated tag `c14128edb47fc197f904e6aecc9c80d3eb22da76` peels to that public main. The [v0.3.0-dev.2 prerelease](https://github.com/Patrick1610/vision-homeassistant/releases/tag/v0.3.0-dev.2) was published and API-read back; all 107 anonymous tag files matched. This is not a stable v0.3.0 release. |
+| Actual live update | Controller used Supervisor with backup enabled; installed dev.2 is connected/read-only. Served investigate.js SHA-256 `4c590df6a7c74b6739e66a82d23664c48bd22993fb1d4303ba9a04a932310a25` matches the runtime. Existing settings/preferences and original measurement start are exact. All original bounded availability/run/issue/analysis/usage samples retained their stable fields. This is bounded live preservation, not a full real-database comparison. |
+
+One-click consent remains default OFF, generation 0; installation validation made
+no new provider calls. Action-time authorization, an actual one-click public-source/
+provider result, v4 language/semantic review and billed-price verification remain
+pending. Existing provider/model/key/rates/budgets/privacy were not changed.
+Five actual human participants have not been tested (0); the owner decision remains
+open. The unchanged full-capacity 493.4 ms heartbeat exceeds the 200 ms gate and
+remains separately scoped OPEN FAIL. Neither publication nor live installation
+converts these remaining gates into a pass.
 
 ## 0.3.0 Stage B — builder-local checkpoint, 2026-10-22
 

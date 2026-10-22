@@ -2,9 +2,11 @@
 
 ## 0.3.0-dev.2
 
-Development preview of separately authorized one-click investigations. Independent
-Stage B, public/live and real-human usability gates remain open; the disclosed
-pre-existing full-capacity latency gate remains OPEN FAIL.
+Published development prerelease of separately authorized one-click investigations.
+B3 independent source/critical, public readback and read-only live-install checks
+passed. New live one-click/model semantic and billing checks and real-human usability
+remain open; the pre-existing 493.4 ms / 200 ms capacity gate remains OPEN FAIL.
+This is not stable 0.3.0 acceptance; see the dated [validation closure](docs/VALIDATION.md).
 
 - Persist an exact problem/revision/language intent before bounded public research
   and one existing provider round. Reload polls; restart never replays the request.

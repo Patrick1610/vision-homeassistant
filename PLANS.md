@@ -1446,3 +1446,26 @@ PASS / 4.44 s; Ruff65/three-JS/diff/publication PASS. Only context lookup and br
 recovery change runtime; all non-context OneClick methods, constructor/admission,
 Store/schema11, HA/settings and old AI/research/provider bytes remain exact B2.
 Root owns the next immutable same-channel review and independent/native checks.
+
+### 0.3.0-dev.2 technical closure — 2026-10-22
+
+Exact B3 runtime 3322963b0d7eaa32d2a189a75f587c0dcafeae2b / tree dd365401 is
+accepted: critical stream 0d98f7ed-49fa-422b-9a0c-0a87a758d5e1 sequence 3 GO with
+zero findings, independent B3 probes, root 569 Python/127 DOM/lint/three JS parsers,
+both architecture HTTP/start/restart and native 320/390/1280 passed. Deeper Store/
+hot-journal/WAL/populated-history/A32/legacy evidence is carried only for unchanged
+components, not described as fresh B3 deep execution. Earlier failed probes remain.
+
+Root published PR9/main 3b06704c58e8a956f75615b11469a08899f49930 with exact anonymous
+107-file readback. Push/PR/main/tag CI all succeeded. Annotated v0.3.0-dev.2 points
+to that public main; the prerelease page and tag bytes were read back. The actual
+Supervisor update kept backup enabled; installed dev.2 is connected/read-only and
+served interface bytes match. Existing settings/preferences, measurement start and
+original bounded history samples survived with stable fields exact. No full comparison of the live database or private observations are published. See VALIDATION for bindings.
+
+Remaining gates: one-click consent remains OFF / generation 0 and no new provider call
+was made; action-time consent, real one-click/provider language/semantic/billed-price
+checks are pending. The five-real-human gate remains OPEN at 0 participants with
+owner decision pending. The 493.4 ms / 200 ms capacity gate remains OPEN FAIL. Technical/public/
+installation completion does not imply stable 0.3.0 or overall acceptance. This
+closure changes documentation only; runtime/config/version/schema are frozen.
