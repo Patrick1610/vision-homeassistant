@@ -98,11 +98,43 @@ class ResearchDiagnosis(Diagnosis):
     diagnoses: list[ResearchFinding] = Field(max_length=12)
 
 
+class HumanFinding(Finding):
+    title: str = Field(min_length=1, max_length=120)
+    core_explanation: str = Field(min_length=1, max_length=400)
+    next_check: str = Field(min_length=1, max_length=240)
+
+
+class HumanResearchFinding(ResearchFinding):
+    title: str = Field(min_length=1, max_length=120)
+    core_explanation: str = Field(min_length=1, max_length=400)
+    next_check: str = Field(min_length=1, max_length=240)
+
+
+class HumanDiagnosis(Diagnosis):
+    diagnoses: list[HumanFinding] = Field(max_length=12)
+
+
+class HumanResearchDiagnosis(Diagnosis):
+    diagnoses: list[HumanResearchFinding] = Field(max_length=12)
+
+
+def result_contract(version, variant=None):
+    if version == "vision-diagnosis-2" and variant is None:
+        return Diagnosis
+    if version == "vision-diagnosis-3" and variant is None:
+        return ResearchDiagnosis
+    if version == "vision-diagnosis-4" and variant in {"local", "sources"}:
+        return HumanResearchDiagnosis if variant == "sources" else HumanDiagnosis
+    raise ValueError("Unsupported diagnosis contract")
+
+
 class AnalysisInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
     kind: TaskKind = "audit"
     target: str | None = Field(default=None, max_length=500)
-    target_type: Literal["entity", "device"] = "entity"
+    target_type: Literal["entity", "device", "group"] = "entity"
+    output_contract: Literal["human-v4"] | None = None
+    language: Literal["nl", "en"] | None = None
     research_id: str | None = Field(default=None, pattern=r"^[a-f0-9]{32}$")
     research_digest: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     profile: Privacy = "compact"
@@ -249,9 +281,21 @@ TASKS = {
 }
 
 
-def provider_schema(provider, evidence_refs=None, *, source_refs=None):
+def provider_schema(provider, evidence_refs=None, *, source_refs=None, output_contract=None):
     research = source_refs is not None
-    schema = (ResearchDiagnosis if research else Diagnosis).model_json_schema()
+    if output_contract not in {None, "human-v4"}:
+        raise ValueError("Unsupported diagnosis contract")
+    contract = (
+        (HumanResearchDiagnosis if research else HumanDiagnosis)
+        if output_contract
+        else (ResearchDiagnosis if research else Diagnosis)
+    )
+    finding_name = (
+        ("HumanResearchFinding" if research else "HumanFinding")
+        if output_contract
+        else ("ResearchFinding" if research else "Finding")
+    )
+    schema = contract.model_json_schema()
 
     def normalize(value):
         if isinstance(value, list):
@@ -291,7 +335,7 @@ def provider_schema(provider, evidence_refs=None, *, source_refs=None):
         refs = sorted(set(evidence_refs))
         if not refs:
             raise ValueError("A provider schema requires current evidence references")
-        fields = result["$defs"]["ResearchFinding" if research else "Finding"]["properties"]
+        fields = result["$defs"][finding_name]["properties"]
         for field in ("evidence", "counter_evidence"):
             fields[field]["items"]["enum"] = refs.copy()
     if research:
@@ -299,7 +343,7 @@ def provider_schema(provider, evidence_refs=None, *, source_refs=None):
         if not refs:
             raise ValueError("A research schema requires actual current public-source references")
         for fields in (
-            result["$defs"]["ResearchFinding"]["properties"],
+            result["$defs"][finding_name]["properties"],
             result["$defs"]["ManualStep"]["properties"],
         ):
             fields["source_refs"]["items"]["enum"] = refs.copy()

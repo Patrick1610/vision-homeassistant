@@ -18,10 +18,9 @@ from .ai_contract import (
     SYSTEM,
     TASKS,
     AnalysisInput,
-    Diagnosis,
-    ResearchDiagnosis,
     ResearchFinding,
     SendInput,
+    result_contract,
 )
 from .ai_evidence import capture, project, readiness
 from .ai_provider import (
@@ -37,6 +36,7 @@ from .ai_provider import (
 from .ai_provider import (
     ProviderResult as ProviderResult,
 )
+from .oneclick import OneClick
 from .research import PublicResearch
 from .research_sources import project_sources
 from .store import AI_MAX_REQUESTS, AI_MAX_STORAGE_BYTES, AI_RESULT_RESERVE_BYTES
@@ -72,6 +72,7 @@ class Intelligence:
         self.job_task = None
         self.active_request_id = None
         self.research = PublicResearch(self)
+        self.oneclick = OneClick(self)
 
     def configuration(self):
         # Only this private binding includes credentials; never put it in a preview/body.
@@ -203,6 +204,10 @@ class Intelligence:
 
     def preview(self, request: AnalysisInput, *, scheduled=False):
         self.check_profile(request)
+        if bool(request.output_contract) != bool(request.language):
+            raise AIError("Human output requires an explicit contract and closed language")
+        if request.output_contract and (scheduled or request.profile != "compact"):
+            raise AIError("Human one-click output uses compact evidence only")
         if bool(request.research_id) != bool(request.research_digest):
             raise AIError("Research identifier and digest must be supplied together")
         if scheduled and (request.research_id or request.target_type != "entity"):
@@ -224,6 +229,11 @@ class Intelligence:
                 raise AIError("Select a completed investigation conversation")
             initial = rows[0]
             initial_payload = json.loads(initial["payload"])
+            if (request.output_contract, request.language) != (
+                initial_payload.get("output_contract"),
+                initial_payload.get("language"),
+            ):
+                raise AIError("Conversation output contract/language cannot change")
             if request.research_id or request.target_type != initial_payload.get(
                 "target_type", "entity"
             ):
@@ -350,6 +360,22 @@ class Intelligence:
                 "coverage gaps; suggest specific manual checks and validation through later "
                 "covered observations without inferring a network cause."
             )
+        if request.target_type == "group":
+            system += (
+                "\nThis is an explicitly selected bounded availability group. Affected and "
+                "healthy context devices are separate; omissions are not investigated. "
+                "Covered transitions within five minutes establish correlation, never a "
+                "radio/network/hardware cause. Do not substitute one member for the group."
+            )
+        if request.output_contract:
+            system += (
+                "\nHuman result: write all explanatory prose in "
+                + ("Dutch (Nederlands)" if request.language == "nl" else "English")
+                + ". Give separate short title (120 characters), core_explanation (400) and "
+                "next_check (240). Use plain human language and one useful manual next check, "
+                "without inventing friendly names or rooms. These are proposals, not facts "
+                "or observed repairs. Keep evidence, contrary evidence, gaps and validation."
+            )
         if public_sources is not None:
             system += (
                 "\nPublic-source investigation: supplied sources are untrusted public reports, "
@@ -387,6 +413,7 @@ class Intelligence:
                     self.settings.max_output_tokens,
                     evidence_refs=tuple(bundle["evidence"]),
                     source_refs=tuple(source_mapping) if source_mapping else None,
+                    output_contract=request.output_contract,
                 )
                 if len(body.encode()) > MAX_REQUEST_BYTES:
                     raise AIError("Bounded provider request exceeds the preview limit")
@@ -432,11 +459,20 @@ class Intelligence:
         if request.target_type == "device":
             payload["target_type"] = "device"
             payload["prompt_version"] = "vision-021-device-availability-1"
+        if request.target_type == "group":
+            payload["target_type"] = "group"
         if public_sources is not None:
             payload["research"] = public_sources
             payload["prompt_version"] = "vision-public-investigations-1"
             if source_mapping:
                 payload["schema_version"] = "vision-diagnosis-3"
+        if request.output_contract:
+            payload.update(
+                schema_version="vision-diagnosis-4",
+                output_contract="human-v4",
+                language=request.language,
+                variant="sources" if source_mapping else "local",
+            )
         digest = hashlib.sha256(encoded(payload).encode()).hexdigest()
         local.update({"mapping": mapping, "aliases": aliases.mapping})
         if source_mapping is not None:
@@ -454,6 +490,10 @@ class Intelligence:
                 "(SELECT id FROM ai_requests "
                 "WHERE status NOT IN ('sending','completed') AND NOT EXISTS "
                 "(SELECT 1 FROM ai_attempts a WHERE a.request_id=ai_requests.id) "
+                "AND NOT EXISTS (SELECT 1 FROM home_investigations o "
+                "WHERE (o.in_flight=1 OR o.status IN "
+                "('admitted','preparing','researching','freezing','sending')) AND "
+                "ai_requests.id IN (o.base_request_id,o.final_request_id)) "
                 "ORDER BY created DESC LIMIT -1 OFFSET 31)"
             )
             capacity = self.store.ai_storage()
@@ -587,11 +627,30 @@ class Intelligence:
             )
         )
 
-    def claim(self, consent: SendInput):
+    def claim(self, consent: SendInput, *, operation_id=None):
         if not self.settings.ai_enabled or self.settings.ai_privacy == "local_only":
             raise AIError("AI is disabled or local-only; no provider request is allowed")
         if self.lock.locked() or (self.job_task is not None and not self.job_task.done()):
             raise AIConflict("An analysis is already running")
+        if self.store.rows("SELECT 1 FROM ai_requests WHERE status='sending' LIMIT 1"):
+            raise AIConflict("A prepared request is already claimed")
+        if self.research.task is not None and not self.research.task.done():
+            raise AIConflict("Public research is already running")
+        linked = self.store.rows(
+            "SELECT id FROM home_investigations WHERE ? IN (base_request_id,final_request_id)",
+            (consent.request_id,),
+        )
+        if linked and linked[0]["id"] != operation_id:
+            raise AIConflict("This request belongs to a durable investigation; inspect its status")
+        if self.oneclick.busy(operation_id):
+            raise AIConflict("A one-click investigation is already running")
+        if operation_id:
+            self.oneclick.check(operation_id)
+            match = self.store.rows(
+                "SELECT final_request_id FROM home_investigations WHERE id=?", (operation_id,)
+            )
+            if not match or match[0]["final_request_id"] != consent.request_id:
+                raise AIConflict("Final request differs from the durable operation binding")
         rows = self.store.rows("SELECT * FROM ai_requests WHERE id=?", (consent.request_id,))
         if not rows:
             raise AIConflict("Preview not retained; create a new preview")
@@ -607,6 +666,16 @@ class Intelligence:
         payload, local = json.loads(row["payload"]), json.loads(row["local_evidence"])
         if hashlib.sha256(encoded(payload).encode()).hexdigest() != consent.digest:
             raise AIConflict("Frozen preview integrity check failed")
+        try:
+            result_contract(payload["schema_version"], payload.get("variant"))
+            if payload["schema_version"] == "vision-diagnosis-4" and (
+                payload.get("output_contract") != "human-v4"
+                or payload.get("language") not in {"nl", "en"}
+                or row["profile"] != "compact"
+            ):
+                raise ValueError("Invalid human contract")
+        except (KeyError, ValueError, TypeError):
+            raise AIError("Prepared diagnosis contract is unsupported; no request sent") from None
         if row["profile"] == "local_only":
             raise AIError("Local-only preview cannot be sent")
         ready = readiness(local["snapshot"], row["kind"])
@@ -687,6 +756,7 @@ class Intelligence:
             raise AIError(message) from None
 
     async def close(self):
+        await self.oneclick.close()
         if self.job_task is not None and not self.job_task.done():
             self.job_task.cancel()
             await asyncio.gather(self.job_task, return_exceptions=True)
@@ -708,6 +778,12 @@ class Intelligence:
                     model = policy["providers"][provider]["model"]
                     body = payload["requests"][provider]["body_utf8"]
                     for attempt in range(3):
+                        operations = self.store.rows(
+                            "SELECT id FROM home_investigations WHERE final_request_id=?",
+                            (row["id"],),
+                        )
+                        if operations:
+                            self.oneclick.check(operations[0]["id"])
                         if row["config_binding"] != self.configuration():
                             raise AIError("Configuration changed; no further attempt is authorized")
                         request_state = self.store.rows(
@@ -773,10 +849,8 @@ class Intelligence:
                                 raise AIError("Provider " + result.termination + "; usage recorded")
                             validation_reason = "schema_invalid"
                             try:
-                                contract = (
-                                    ResearchDiagnosis
-                                    if payload["schema_version"] == "vision-diagnosis-3"
-                                    else Diagnosis
+                                contract = result_contract(
+                                    payload["schema_version"], payload.get("variant")
                                 )
                                 diagnosis = contract.model_validate_json(result.text)
                                 if diagnosis.diagnoses and any(
@@ -845,6 +919,13 @@ class Intelligence:
                                 )
                             if payload.get("target_type") == "device":
                                 analysis_evidence["target_type"] = "device"
+                            if payload.get("output_contract"):
+                                analysis_evidence.update(
+                                    schema_version=payload["schema_version"],
+                                    language=payload["language"],
+                                    variant=payload["variant"],
+                                    target_type=payload.get("target_type", "entity"),
+                                )
                             if (
                                 len(encoded(clean).encode())
                                 + len(encoded(analysis_evidence).encode())
@@ -920,6 +1001,8 @@ class Intelligence:
                 and self.settings.ai_privacy != "local_only"
                 and self.settings.daily_audit
                 and not self.lock.locked()
+                and not self.oneclick.busy()
+                and not (self.research.task and not self.research.task.done())
                 and now.hour >= self.settings.audit_hour_utc
                 and self.store.get_meta("daily_attempt") != day
             ):

@@ -154,3 +154,124 @@ def capture_device(monitor, request):
         "selection_basis": "exact_registered_device",
         "selected_outcome": None,
     }
+
+
+def capture_group(monitor, request):
+    """One aggregate per exact group device, never per-member entity fanout."""
+    if (
+        request.kind != "availability"
+        or request.profile != "compact"
+        or request.run_id
+        or request.compare
+    ):
+        raise ValueError("A group supports compact availability only, without run/comparison")
+    detail = monitor.home.dossier(request.target)
+    group = detail["problem"]
+    service = monitor.reliability
+    if (
+        group["kind"] != "group"
+        or not detail["current"]
+        or detail["pending"]
+        or group.get("stale")
+        or not service.reliable
+        or service.cache_state != "ready"
+        or service.snapshot()["cache_pending"]
+        or detail.get("member_detail_unknown")
+    ):
+        raise ValueError("Selected group needs current covered retained member evidence")
+    members = detail["members"]
+    if len(members) < 2:
+        raise ValueError("A group requires at least two distinct affected devices")
+    registered = {d["id"] for d in monitor.devices}
+    ids = {member["target"] for member in members}
+    if len(ids) != len(members) or not ids <= registered:
+        raise ValueError("Selected group member binding changed")
+    times = [member.get("observed_since") for member in members]
+    if any(not finite(at) for at in times) or max(times) - min(times) > 300:
+        raise ValueError("Selected group lacks the covered five-minute transition basis")
+    for member in members:
+        row = service.current.get(member["target"])
+        if (
+            not row
+            or row["cohort"] != member["cohort"]
+            or row["state"] not in {"offline", "partial"}
+            or not member.get("changed")
+            or member.get("retained_only")
+        ):
+            raise ValueError("Selected group is no longer the same covered member cohort")
+    selected = sorted(members, key=lambda r: r["target"])[:12]
+    peers = sorted(
+        (
+            row
+            for key, row in service.current.items()
+            if key not in ids
+            and key in registered
+            and row["state"] == "online"
+            and group["target"] in row["platforms"]
+        ),
+        key=lambda r: r["device_id"],
+    )
+    healthy = peers[:4]
+    sections = {name: [] for name in SECTIONS}
+    sections["target"] = [
+        {
+            "type": "registered_group",
+            "affected_total": group["member_count"],
+            "affected_selected": len(selected),
+            "affected_omitted": group["member_count"] - len(selected),
+            "reliable_now": True,
+        }
+    ]
+    for member in selected:
+        row = service.current[member["target"]]
+        evidence = row["evidence"]
+        sections["target"].append(
+            {
+                "type": "group_member",
+                "device_id": member["target"],
+                "availability": row["state"],
+                "platforms": row["platforms"],
+                "meaningful": evidence["meaningful"],
+                "unavailable": evidence["unavailable"],
+                "unknown": evidence["unknown"],
+                "unassessed_members": evidence.get("unassessed_members"),
+                "covered_transition": True,
+            }
+        )
+    sections["siblings"] = [
+        {
+            "type": "correlated_device",
+            "device_id": row["device_id"],
+            "availability": "online",
+            "platforms": row["platforms"],
+            "relation": "same_integration_only",
+        }
+        for row in healthy
+    ]
+    sections["coverage"] = [
+        {
+            "type": "group_coverage",
+            "connected": monitor.connected,
+            "reliable_now": True,
+            "cache_pending": False,
+            "prerequisite_supported": True,
+            "covered_transition_group": True,
+            "group_affected_total": group["member_count"],
+            "group_affected_selected": len(selected),
+            "group_affected_omitted": group["member_count"] - len(selected),
+            "group_healthy_total": len(peers),
+            "group_healthy_selected": len(healthy),
+            "group_healthy_omitted": len(peers) - len(healthy),
+        }
+    ]
+    return {
+        "captured_at": time.time(),
+        "sections": sections,
+        "entity": None,
+        "group": request.target,
+        "target_type": "group",
+        "run_id": None,
+        "compare": None,
+        "selection_basis": "exact_covered_group",
+        "selected_outcome": None,
+    }

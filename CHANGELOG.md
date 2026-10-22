@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.3.0-dev.2
+
+Development preview of separately authorized one-click investigations. Independent
+Stage B, public/live and real-human usability gates remain open; the disclosed
+pre-existing full-capacity latency gate remains OPEN FAIL.
+
+- Persist an exact problem/revision/language intent before bounded public research
+  and one existing provider round. Reload polls; restart never replays the request.
+- Add default-off versioned compact consent, shared admission, active request pins,
+  per-dispatch revocation and slot/highwater duplicate protection.
+- Keep device, source-case, entity/run-pair and bounded group scope explicit; healthy
+  contrary evidence and omissions remain separate. Names and rooms stay local.
+- Add opt-in Dutch/English v4 short titles, explanations and next checks, with full
+  source-grounded manual plans/validation behind details and exact request audits.
+- Preserve literal legacy v2/v3 requests/results and billing; additive migration 11
+  adds only operation/consent storage. Existing HA reads, options and metrics stay intact.
+
 ## 0.3.0-dev.1
 
 Local daily-experience development preview; Stage A qualification is pending.

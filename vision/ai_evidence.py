@@ -139,6 +139,10 @@ def capture(monitor, request):
         from .ai_devices import capture_device
 
         return capture_device(monitor, request)
+    if request.target_type == "group":
+        from .ai_devices import capture_group
+
+        return capture_group(monitor, request)
     entity, case = resolve(monitor, request)
     insights, store = monitor.insights, monitor.store
     sections = {
@@ -596,6 +600,13 @@ def compact(section, value, captured_at):
                 "correlated_devices_omitted",
                 "measurement_started",
                 "coverage_available",
+                "group_affected_total",
+                "group_affected_selected",
+                "group_affected_omitted",
+                "group_healthy_total",
+                "group_healthy_selected",
+                "group_healthy_omitted",
+                "covered_transition_group",
             }
         }
         if "coverage" in value:
@@ -621,6 +632,24 @@ def compact(section, value, captured_at):
             else round(max(0, (value["ended"] or captured_at) - value["started"])),
         }
     if section == "target":
+        if value.get("type") in {"registered_group", "group_member"}:
+            return {
+                key: value[key]
+                for key in (
+                    "type",
+                    "availability",
+                    "meaningful",
+                    "unknown",
+                    "unavailable",
+                    "unassessed_members",
+                    "covered_transition",
+                    "affected_total",
+                    "affected_selected",
+                    "affected_omitted",
+                    "reliable_now",
+                )
+                if key in value
+            }
         if value.get("type") in {"registered_device", "device_member"}:
             return {
                 key: value[key]

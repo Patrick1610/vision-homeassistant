@@ -14,7 +14,7 @@ ROOT = Path(__file__).parents[1]
 
 def test_supervisor_metadata_and_default_options():
     config = yaml.safe_load((ROOT / "config.yaml").read_text())
-    assert config["version"] == __version__ == "0.3.0-dev.1"
+    assert config["version"] == __version__ == "0.3.0-dev.2"
     project = tomllib.loads((ROOT / "pyproject.toml").read_text())
     assert project["project"]["version"] == __version__
     assert f'io.hass.version="{__version__}"' in (ROOT / "Dockerfile").read_text()

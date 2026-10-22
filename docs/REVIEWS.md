@@ -213,3 +213,50 @@ with generic 500 and full rollback rather than a misleading evidence/capacity 40
 Known capacity behavior and old history remain intact. The next immutable delta
 requires the same critical stream; Stage B remains closed and the documented
 200 ms full-capacity OPEN FAIL is neither repaired nor reclassified.
+
+## 0.3.0 Stage A acceptance and Stage B freeze checkpoint — 2026-10-22
+
+Critical stream 846d4361-b968-43de-8a32-df21573f69e4 sequence 4 accepted A5 exact
+abcd98ac82b6d90922341d364c4eb6bab97e8748, with zero critical/high/medium findings.
+Root's 545-Python/90-DOM, both-image HTTP/restart, native and independent feedback/
+locale/preservation checks passed. The separately scoped full-capacity 200 ms gate
+remains OPEN FAIL and the five-human usability gate remains open. Root subsequently
+verified public/live dev.1 independently; that does not approve Stage B.
+
+Root explicitly authorized the dev.2 one-click/v4 phase. The coherent candidate has
+568 Python/105 DOM local passes, unchanged legacy-default/schema/HA/privacy lineage
+and populated A32 preservation proof. Its external critical review, independent
+B lifecycle/scope/byte/retention qualification, both architecture/native checks and
+public/live gates are still pending with the controller. Jev availability/score and
+real-model prose/semantic qualification are not preclaimed. The two scoped A lows
+(intake unknown-read display and absent internal-error marker) are not silently
+repaired here; no capacity-latency fix or HA capability extension is included.
+
+### Stage B critical sequence 1 — bounded B2 correction
+
+Review 0d98f7ed-49fa-422b-9a0c-0a87a758d5e1 on exact f1a90e7 returned NO_GO:
+zero critical/high, one medium and three lows. Browser admission-pointer recovery
+was the medium; server scope, authorization, reservations, receipts and legacy-byte
+boundaries remained intact. B2 separates unconfirmed/confirmed pointers, handles
+HTTP rejection and late/two-tab responses conditionally, keeps lost-response
+recovery read-only and retains running revoke access. The lows cover null result
+presentation, correct research withdrawal reason and honest admission-triggered
+retention. Same-stream delta review is pending; no new architecture or gate waiver.
+
+Root B1 full tests, actual both architecture/WAL/recovery and old-table checks plus
+independent AI/A32 probes passed. B2 local 568-Python/119-DOM passes do not replace
+new immutable review/native checks, real-user usability, real-provider semantics or
+public/live acceptance. The separate 200 ms capacity OPEN FAIL stays unchanged.
+
+### Stage B sequence 2 / B3 authority correction
+
+Sequence 2 returned GO (zero critical/high/medium, one robustness low) on B2 exact
+4bc1d5f, but root acceptance stayed NO_GO for an independently reproduced variant
+of the original pointer medium: first202 lost after second-tab409, with absent or
+older completed confirmation. The failed proofs are preserved. Root authorized a
+bounded server status lookup in existing context: exact problem, active/in-flight
+first then admission-rowid. This replaces local pointer guessing, without capture,
+write, schema or dispatch. Explicit old audits and current-active withdrawal both
+remain accessible. The low's pre/post-POST failure wording and status-only recovery
+are also covered. New source freeze requires the same critical stream follow-up;
+there is no public/live/human acceptance or timing-gate waiver.

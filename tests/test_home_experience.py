@@ -334,7 +334,7 @@ def test_migration_ten_is_additive_and_restart_preserves_v9_history(tmp_path):
         tables = [r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")]
         old = {t: db.execute(f'SELECT * FROM "{t}" ORDER BY rowid').fetchall() for t in tables}
     store = Store(path)
-    assert SCHEMA_VERSION == store.rows("PRAGMA user_version")[0]["user_version"] == 10
+    assert SCHEMA_VERSION == store.rows("PRAGMA user_version")[0]["user_version"] == 11
     for table, rows in old.items():
         assert [
             tuple(r.values()) for r in store.rows(f'SELECT * FROM "{table}" ORDER BY rowid')

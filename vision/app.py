@@ -20,6 +20,7 @@ from .ai_provider import AIConflict
 from .config import Runtime, Settings
 from .home import FeedbackError, FeedbackInput, PreferencesInput
 from .monitor import Monitor
+from .oneclick import ConsentInput, ExpiredOperation, StartInput
 from .research import ResearchAttach, ResearchError, ResearchStart
 from .security import Redactor, protect_logging
 from .store import STORAGE_FAILURES, StorageStartupError, Store
@@ -225,6 +226,55 @@ def create_app(runtime=None, settings=None, *, connect=True):
             return app.state.monitor.home.save_preferences(value)
         except ValueError as error:
             raise HTTPException(400, "Invalid local preferences or capacity reached") from error
+
+    @app.get("/api/home/investigation-consent")
+    async def investigation_consent():
+        return app.state.ai.oneclick.consent()
+
+    @app.post("/api/home/investigation-consent")
+    async def investigation_consent_save(value: ConsentInput):
+        return app.state.ai.oneclick.set_consent(value)
+
+    @app.get("/api/problems/{problem_id}/investigation-context")
+    async def investigation_context(problem_id: str):
+        try:
+            return app.state.ai.oneclick.context(problem_id)
+        except AIConflict as error:
+            raise HTTPException(409, str(error)) from None
+        except AIError as error:
+            raise HTTPException(400, str(error)) from None
+
+    @app.post("/api/problems/{problem_id}/investigate", status_code=202)
+    async def investigate_problem(problem_id: str, value: StartInput):
+        try:
+            return app.state.ai.oneclick.start(problem_id, value)
+        except ExpiredOperation as error:
+            raise HTTPException(410, str(error)) from None
+        except AIConflict as error:
+            raise HTTPException(409, str(error)) from None
+        except AIError as error:
+            raise HTTPException(400, str(error)) from None
+
+    @app.get("/api/home/investigations/{operation_id}")
+    async def investigation_status(operation_id: str):
+        try:
+            return app.state.ai.oneclick.status(operation_id)
+        except LookupError:
+            raise HTTPException(404, "Investigation is not retained") from None
+
+    @app.get("/api/home/investigations/{operation_id}/audit")
+    async def investigation_audit(operation_id: str):
+        try:
+            return app.state.ai.oneclick.status(operation_id, audit=True)
+        except LookupError:
+            raise HTTPException(404, "Investigation is not retained") from None
+
+    @app.post("/api/home/investigations/{operation_id}/revoke")
+    async def investigation_revoke(operation_id: str):
+        try:
+            return app.state.ai.oneclick.revoke(operation_id)
+        except LookupError:
+            raise HTTPException(404, "Investigation is not retained") from None
 
     @app.get("/api/problems")
     async def problems(
@@ -579,7 +629,7 @@ def create_app(runtime=None, settings=None, *, connect=True):
             raise HTTPException(404, "Prepared request not retained")
         row = rows[0]
         local = json.loads(row["local_evidence"])
-        return {
+        result = {
             "request_id": row["id"],
             "digest": row["digest"],
             "status": row["status"],
@@ -600,10 +650,19 @@ def create_app(runtime=None, settings=None, *, connect=True):
                     "selection_basis",
                     "device",
                     "target_type",
+                    "group",
                 )
                 if key in local["snapshot"]
             },
         }
+        operations = app.state.store.rows(
+            "SELECT id,problem_id FROM home_investigations WHERE ? IN "
+            "(base_request_id,final_request_id) LIMIT 1",
+            (request_id,),
+        )
+        if operations:
+            result["operation"] = operations[0]
+        return result
 
     @app.get("/api/intelligence/requests/{request_id}/status")
     async def request_status(request_id: str):
@@ -626,6 +685,9 @@ def create_app(runtime=None, settings=None, *, connect=True):
             "CASE WHEN json_valid(r.payload) THEN "
             "COALESCE(json_extract(r.payload,'$.target_type'),'entity') "
             "ELSE 'entity' END target_type,"
+            "CASE WHEN json_valid(r.payload) THEN json_extract(r.payload,'$.output_contract') "
+            "END output_contract,CASE WHEN json_valid(r.payload) THEN "
+            "json_extract(r.payload,'$.language') END language,"
             "a.id analysis_id,a.result,a.provider,a.model "
             "FROM ai_requests r LEFT JOIN analyses a ON a.id=r.analysis_id "
             "WHERE r.conversation_id=? AND (r.status='completed' OR "
@@ -635,6 +697,10 @@ def create_app(runtime=None, settings=None, *, connect=True):
         )
         if not rows:
             raise HTTPException(404, "Completed investigation not retained")
+        for row in rows:
+            if row["output_contract"] != "human-v4":
+                row.pop("output_contract")
+                row.pop("language")
         return {"conversation_id": conversation_id, "rounds": rows}
 
     @app.post("/api/intelligence", status_code=202)
